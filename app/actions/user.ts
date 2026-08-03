@@ -1,7 +1,7 @@
 "use server";
 
 import dbConnect from "@/lib/mongodb";
-import User from "@/models/User";
+import User, { isUserRole, type UserRole } from "@/models/User";
 import { getSession } from "@/lib/session";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
@@ -101,11 +101,16 @@ export async function createUserByAdmin(formData: FormData) {
   const lastName = formData.get("lastName")?.toString().trim();
   const email = formData.get("email")?.toString().trim();
   const password = formData.get("password")?.toString().trim();
-  const role = formData.get("role")?.toString().trim() || "user";
+  const roleInput = formData.get("role")?.toString().trim() || "user";
 
   if (!name || !email || !password) {
     return { error: "Todos los campos son obligatorios" };
   }
+
+  if (!isUserRole(roleInput)) {
+    return { error: "Rol inválido" };
+  }
+  const role: UserRole = roleInput;
 
   const existing = await User.findOne({ email });
   if (existing) return { error: "El correo ya está registrado" };

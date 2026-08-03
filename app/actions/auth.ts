@@ -1,7 +1,7 @@
 "use server";
 
 import dbConnect from "@/lib/mongodb";
-import User from "@/models/User";
+import User, { type UserRole } from "@/models/User";
 import bcrypt from "bcryptjs";
 import { createSession, deleteSession } from "@/lib/session";
 import { redirect } from "next/navigation";
@@ -105,17 +105,21 @@ export async function register(state: any, formData: FormData) {
   // Si no hay usuarios en la base de datos, el primero será admin por defecto 
   const userCount = await User.countDocuments();
   
-  let role = "user";
+  let role: UserRole = "user";
   if (userCount === 0) {
      role = "admin";
   } else {
      if (selectedRole === "cafeteria" || selectedRole === "user") {
         role = selectedRole;
-     } else if (["admin", "juez_local", "juez_internacional"].includes(selectedRole || "")) {
+     } else if (
+        selectedRole === "admin" ||
+        selectedRole === "juez_local" ||
+        selectedRole === "juez_internacional"
+     ) {
         const { getSession } = await import("@/lib/session");
         const session = await getSession();
         if (session && session.role === "admin") {
-           role = selectedRole!;
+           role = selectedRole;
         }
      }
   }

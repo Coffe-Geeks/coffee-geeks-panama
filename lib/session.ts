@@ -1,6 +1,8 @@
 
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+// import type: se borra al compilar, no arrastra mongoose al runtime edge del middleware
+import type { UserRole } from "@/models/User";
 
 const secretKey = process.env.JWT_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -11,7 +13,7 @@ if (!secretKey) {
 
 type SessionPayload = {
   userId: string;
-  role: string;
+  role: UserRole;
   expiresAt: Date;
 };
 
@@ -37,7 +39,7 @@ export async function decrypt(session: string | undefined = "") {
 }
 
 // Crear sesión y cookie
-export async function createSession(userId: string, role: string) {
+export async function createSession(userId: string, role: UserRole) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
   const session = await encrypt({ userId, role, expiresAt });
   

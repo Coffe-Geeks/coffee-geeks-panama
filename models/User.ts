@@ -1,6 +1,21 @@
 import mongoose, { Schema, model, models } from "mongoose";
 // Model updated with new roles: juez_local, juez_internacional
 
+// Debe coincidir con el enum del campo "role" del esquema
+export const USER_ROLES = [
+  "admin",
+  "user",
+  "cafeteria",
+  "juez_local",
+  "juez_internacional",
+] as const;
+
+export type UserRole = (typeof USER_ROLES)[number];
+
+export function isUserRole(value: string): value is UserRole {
+  return (USER_ROLES as readonly string[]).includes(value);
+}
+
 const BaristaSchema = new Schema({
   fullName: { type: String, required: true, trim: true },
   photo: { type: String, default: "" },
