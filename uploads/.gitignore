@@ -1,0 +1,3 @@
+# Ignorar imágenes subidas por usuarios, pero mantener la carpeta
+*
+!.gitignore
