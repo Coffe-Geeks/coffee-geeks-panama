@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
@@ -21,9 +22,20 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = cfg.seoTitle || "Coffee Geeks Panamá | Descubre, Vota y Recorre las Mejores lugares donde sirven café de Panamá";
   const description = cfg.seoDescription || "Explora los mejores Coffee Shop, Hoteles y Restaurantes de Panamá, participa en el concurso, vota por tu favorito y recorre la ruta de las mejores Coffee Shops con Coffee Geeks Panamá.";
 
+  // El entorno de pruebas no debe indexarse: compite con el sitio real
+  // por el mismo contenido. Va además de la cabecera X-Robots-Tag de
+  // next.config, porque no todos los rastreadores leen ambas señales.
+  const h = await headers();
+  // Detrás del proxy de Vercel el host original llega en x-forwarded-host
+  const host = h.get("x-forwarded-host") || h.get("host") || "";
+  const isPreview = host.endsWith(".vercel.app");
+
   return {
     title,
     description,
+    ...(isPreview
+      ? { robots: { index: false, follow: false, nocache: true } }
+      : {}),
     icons: {
       icon: "/fav.png",
     },
