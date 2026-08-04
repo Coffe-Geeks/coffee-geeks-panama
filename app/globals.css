@@ -29,8 +29,13 @@ body {
    Cursor con la taza del logo.
 
    Solo bajo (pointer: fine): en pantallas táctiles no hay cursor y
-   forzarlo no aporta nada. Las imágenes son PNG de 32px o menos,
-   que es el límite que respetan todos los navegadores.
+   forzarlo no aporta nada.
+
+   Los tamaños (33 y 35px) pasan el umbral de 32px que algunos
+   navegadores aplican a los cursores CSS. Por eso ambas reglas
+   conservan su palabra clave de reserva (auto / pointer): si un
+   navegador descarta la imagen, cae al cursor normal en vez de
+   quedarse sin ninguno.
 
    Los elementos clickeables usan la taza un poco más grande: ese
    cambio de tamaño reemplaza la señal que antes daba el puntero
@@ -42,7 +47,7 @@ body {
    ───────────────────────────────────────────────────────────── */
 @media (pointer: fine) {
   body {
-    cursor: url("/cursor-30.png") 5 5, auto;
+    cursor: url("/cursor-33.png") 5 5, auto;
   }
 
   a,
@@ -59,7 +64,7 @@ body {
   .bc, .bkb, .btn-dark, .btn-tonal, .car-nav, .chip, .dot, .ecb,
   .m3-sel, .mod-x, .rkr-btn, .sc, .scb, .sopt, .stk-vote-btn,
   .tab, .thumb, .ibtn, .btn-vote, .tb-a, .tb-brand, .fc, .ec {
-    cursor: url("/cursor-32.png") 5 5, pointer !important;
+    cursor: url("/cursor-35.png") 5 5, pointer !important;
   }
 
   /* Los campos de escritura conservan su cursor de texto */
