@@ -8,6 +8,7 @@ import VoteModal from "@/app/components/VoteModal";
 const NAV_LINKS = [
   { label: "Descúbrenos", href: "/home" },
   { label: "Participantes", href: "/participantes" },
+  { label: "Fincas", href: "/fincas" },
   { label: "Sobre Nosotros", href: "/sobre-nosotros" },
   { label: "Academia", href: "/academia" },
   { label: "Votaciones", href: "/votaciones" },
