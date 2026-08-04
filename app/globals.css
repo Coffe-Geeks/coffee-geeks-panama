@@ -24,3 +24,61 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Cursor con la taza del logo.
+
+   Solo bajo (pointer: fine): en pantallas táctiles no hay cursor y
+   forzarlo no aporta nada. Las imágenes son PNG de 32px o menos,
+   que es el límite que respetan todos los navegadores.
+
+   Los elementos clickeables usan la taza un poco más grande: ese
+   cambio de tamaño reemplaza la señal que antes daba el puntero
+   del sistema, para no perder la pista de qué se puede pulsar.
+
+   El !important es necesario porque las páginas declaran su propio
+   cursor con selectores de clase dentro de bloques <style>, que
+   ganan por especificidad a los selectores de elemento de aquí.
+   ───────────────────────────────────────────────────────────── */
+@media (pointer: fine) {
+  body {
+    cursor: url("/cursor-28.png") 4 4, auto;
+  }
+
+  a,
+  button,
+  summary,
+  select,
+  label[for],
+  [role="button"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="submit"],
+  input[type="file"],
+  /* clases del proyecto que ya declaraban cursor: pointer */
+  .bc, .bkb, .btn-dark, .btn-tonal, .car-nav, .chip, .dot, .ecb,
+  .m3-sel, .mod-x, .rkr-btn, .sc, .scb, .sopt, .stk-vote-btn,
+  .tab, .thumb, .ibtn, .btn-vote, .tb-a, .tb-brand, .fc, .ec {
+    cursor: url("/cursor-32.png") 5 5, pointer !important;
+  }
+
+  /* Los campos de escritura conservan su cursor de texto */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="url"],
+  input[type="tel"],
+  input[type="date"],
+  textarea,
+  [contenteditable="true"] {
+    cursor: text !important;
+  }
+
+  button:disabled,
+  input:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed !important;
+  }
+}
