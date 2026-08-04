@@ -50,6 +50,38 @@ export async function saveUploadedFile(file: File, subfolder = ""): Promise<stri
   return subfolder ? `/api/uploads/${subfolder}/${filename}` : `/api/uploads/${filename}`;
 }
 
+/**
+ * Guarda un logo recortando primero el margen vacío que traiga el archivo.
+ *
+ * Los logos de marca suelen venir en lienzos con mucho aire alrededor, y en
+ * proporciones distintas entre sí: uno puede ocupar el 7% de su imagen y otro
+ * el 96%. Dentro de una caja de altura fija eso hace que se vean de tamaños
+ * muy dispares aunque la caja sea la misma. Recortar el borde uniforme deja
+ * a todos empezando desde el mismo sitio.
+ */
+export async function saveUploadedLogo(file: File, subfolder = ""): Promise<string> {
+  try {
+    const sharp = (await import("sharp")).default;
+    const input = Buffer.from(await file.arrayBuffer());
+
+    const trimmed = await sharp(input)
+      // threshold tolera bordes con ruido o antialiasing suave
+      .trim({ threshold: 12 })
+      .png()
+      .toBuffer();
+
+    const name = file.name.replace(/\.[^.]+$/, "") + ".png";
+    return await saveUploadedFile(
+      new File([new Uint8Array(trimmed)], name, { type: "image/png" }),
+      subfolder
+    );
+  } catch (error) {
+    // Si el recorte falla (formato raro, imagen de un solo color), se guarda tal cual
+    console.error("No se pudo recortar el logo, se guarda sin procesar:", error);
+    return await saveUploadedFile(file, subfolder);
+  }
+}
+
 export async function deleteUploadedFile(fileUrl: string): Promise<boolean> {
   try {
     if (!fileUrl) return false;

@@ -41,11 +41,11 @@ export default function AlliesSection({ allies }: { allies: Ally[] }) {
         .al-view:hover .al-track{animation-play-state:paused}
 
         /* 4 columnas visibles: cada celda ocupa un cuarto del contenedor */
-        .al-item{flex:0 0 auto;width:calc(1160px / 4);display:flex;align-items:center;justify-content:center;padding:0 18px}
+        .al-item{flex:0 0 auto;width:calc(1160px / 4);display:flex;align-items:center;justify-content:center;padding:0 14px}
 
         /* Caja de altura fija + contain: alinea todos los logos por alto
            y base, y ninguno se estira sea cual sea su proporción */
-        .al-box{width:100%;height:62px;display:flex;align-items:center;justify-content:center}
+        .al-box{width:100%;height:88px;display:flex;align-items:center;justify-content:center}
         .al-box img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;
           /* Escala de grises: unifica logos de colores muy distintos */
           filter:grayscale(1);opacity:.62;transition:filter .3s ease,opacity .3s ease}
@@ -68,7 +68,7 @@ export default function AlliesSection({ allies }: { allies: Ally[] }) {
         }
         @media(max-width:640px){
           .al-item{width:calc(100vw / 2)}
-          .al-box{height:52px}
+          .al-box{height:68px}
         }
 
         /* Quien pidió menos movimiento ve los logos quietos */

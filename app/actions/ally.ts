@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import dbConnect from "@/lib/mongodb";
 import Ally from "@/models/Ally";
-import { saveUploadedFile, deleteUploadedFile } from "@/lib/upload";
+import { saveUploadedLogo, deleteUploadedFile } from "@/lib/upload";
 import { getSession } from "@/lib/session";
 
 async function requireAdmin() {
@@ -41,7 +41,7 @@ export async function createAlly(formData: FormData) {
   const logoFile = formData.get("logo") as File;
   let logo = "";
   if (logoFile && logoFile.size > 0) {
-    logo = await saveUploadedFile(logoFile, "aliados");
+    logo = await saveUploadedLogo(logoFile, "aliados");
   }
 
   const ally = await Ally.create({
@@ -71,7 +71,7 @@ export async function updateAlly(id: string, formData: FormData) {
 
   const logoFile = formData.get("logo") as File;
   if (logoFile && logoFile.size > 0) {
-    updateData.logo = await saveUploadedFile(logoFile, "aliados");
+    updateData.logo = await saveUploadedLogo(logoFile, "aliados");
   }
 
   await Ally.findByIdAndUpdate(id, updateData);
