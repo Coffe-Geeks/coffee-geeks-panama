@@ -84,6 +84,14 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-10 text-center space-y-4">
+          <p className="text-sm">
+            <Link
+              href="/recuperar"
+              className="text-[#cddbf2]/70 hover:text-[#cddbf2] hover:underline transition-colors"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </p>
           <p className="text-sm text-[#cddbf2]/40">
             ¿No tienes cuenta?{" "}
             <Link href="/register" className="text-[#cddbf2] hover:underline font-semibold transition-colors">

@@ -50,6 +50,13 @@ const UserSchema = new Schema(
       required: [true, "La contraseña es obligatoria"],
       minlength: [6, "La contraseña debe tener al menos 6 caracteres"],
     },
+    /**
+     * Recuperación de contraseña. Se guarda el HASH del token, no el
+     * token: si alguien llegara a leer la base, no puede usarlo para
+     * tomar cuentas. El original solo viaja en el correo.
+     */
+    resetTokenHash: { type: String, default: null, select: false },
+    resetTokenExpiry: { type: Date, default: null, select: false },
     role: {
       type: String,
       enum: ["admin", "user", "cafeteria", "juez_local", "juez_internacional"],

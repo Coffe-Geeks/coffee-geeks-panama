@@ -212,3 +212,53 @@ export const getAdminNotificationEmailTemplate = (userData: { name: string; emai
     </html>
   `;
 };
+
+export const getPasswordResetEmailTemplate = (name: string, resetUrl: string) => {
+  const brandColor = "#4c000a";
+  const accentColor = "#bedcf8";
+  const buttonTextColor = "#4c000a";
+
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Restablece tu contraseña</title>
+    </head>
+    <body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background-color:${brandColor};color:${accentColor};">
+      <div style="max-width:600px;margin:0 auto;padding:40px 20px;text-align:center;">
+        <div style="font-size:28px;font-weight:bold;margin-bottom:30px;letter-spacing:2px;text-transform:uppercase;">
+          Coffee Geeks Panamá
+        </div>
+        <div style="background-color:rgba(0,0,0,0.2);padding:40px;border-radius:12px;border:1px solid rgba(190,220,248,0.1);">
+          <h1 style="font-size:24px;margin-bottom:20px;color:${accentColor};">Restablece tu contraseña</h1>
+          <p style="font-size:16px;line-height:1.6;">
+            ${name ? `Hola ${name},` : "Hola,"} recibimos una solicitud para cambiar la contraseña
+            de tu cuenta. Pulsa el botón para elegir una nueva:
+          </p>
+          <p style="margin:32px 0;">
+            <a href="${resetUrl}"
+               style="display:inline-block;background-color:${accentColor};color:${buttonTextColor};
+                      text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:bold;font-size:16px;">
+              Crear nueva contraseña
+            </a>
+          </p>
+          <p style="font-size:14px;opacity:0.75;line-height:1.6;">
+            El enlace vence en una hora y solo puede usarse una vez.
+          </p>
+          <p style="font-size:14px;opacity:0.75;line-height:1.6;">
+            Si no pediste este cambio, ignora este correo: tu contraseña seguirá siendo la misma.
+          </p>
+          <p style="font-size:12px;opacity:0.55;word-break:break-all;margin-top:28px;">
+            ¿El botón no funciona? Copia esta dirección en tu navegador:<br>${resetUrl}
+          </p>
+        </div>
+        <div style="margin-top:24px;font-size:12px;opacity:0.5;">
+          Correo automático del sistema Coffee Geeks Panamá.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
