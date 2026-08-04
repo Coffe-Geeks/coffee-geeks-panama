@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/app/components/layout/Navbar";
 import { getSlugId } from "@/lib/utils";
@@ -8,11 +9,20 @@ import { getSlugId } from "@/lib/utils";
 const REGION_ORDER = ["Boquete", "Volcán", "Renacimiento", "Tierras Altas", "Santa Fe", "Otra"];
 
 export default function FincasClient({ initialFincas }: { initialFincas: any[] }) {
-  // Agrupamos por región, como la referencia agrupa por destino
-  const grouped = REGION_ORDER.map((region) => ({
-    region,
-    fincas: initialFincas.filter((f) => f.region === region),
-  })).filter((g) => g.fincas.length > 0);
+  const [filter, setFilter] = useState("all");
+
+  // Solo mostramos chips de las regiones que tienen fincas
+  const regions = REGION_ORDER.filter((r) => initialFincas.some((f) => f.region === r));
+
+  // Ordenadas por región y luego por nombre, para que las de una misma
+  // zona queden contiguas dentro de la grilla
+  const filtered = initialFincas
+    .filter((f) => filter === "all" || f.region === filter)
+    .sort(
+      (a, b) =>
+        REGION_ORDER.indexOf(a.region) - REGION_ORDER.indexOf(b.region) ||
+        a.name.localeCompare(b.name)
+    );
 
   const totalExperiences = initialFincas.reduce((sum, f) => sum + f.experiences, 0);
 
@@ -53,12 +63,13 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         .stat-n{font-family:'Barlow Condensed',sans-serif;font-size:2.6rem;font-weight:900;color:#38050e;line-height:1}
         .stat-l{font-family:'Barlow',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#38050e;opacity:.55;margin-top:2px}
 
-        /* ── Grupos por ubicación ── */
-        .regions{background:#f4efe4;padding:52px 0 72px}
-        .region{margin-bottom:52px}
-        .region:last-child{margin-bottom:0}
-        .region-h{font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,3.4vw,36px);font-weight:900;text-transform:uppercase;color:#38050e;line-height:1;margin-bottom:4px}
-        .region-s{font-family:'Barlow',sans-serif;font-size:13px;color:#38050e;opacity:.55;margin-bottom:20px}
+        /* ── Listado ── */
+        .regions{background:#f4efe4;padding:40px 0 72px}
+        .shops-ctrl{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+        .shops-badge{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#38050e;background:#cddbf2;padding:5px 13px;border-radius:50px;border:1px solid rgba(56,5,14,.12);flex-shrink:0}
+        .chip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:8px;border:1px solid #cddbf2;background:transparent;color:#38050e;opacity:.7;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+        .chip:hover{background:#cddbf2;opacity:1}
+        .chip.on{background:#38050e;color:#cddbf2;border-color:#38050e;opacity:1}
 
         .fc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
         .fc{background:#fff;border:1px solid #cddbf2;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .25s,transform .25s}
@@ -166,8 +177,8 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
                 <div className="stat-l">Fincas participantes</div>
               </div>
               <div>
-                <div className="stat-n">{grouped.length}</div>
-                <div className="stat-l">{grouped.length === 1 ? "Región" : "Regiones"}</div>
+                <div className="stat-n">{regions.length}</div>
+                <div className="stat-l">{regions.length === 1 ? "Región" : "Regiones"}</div>
               </div>
               <div>
                 <div className="stat-n">{totalExperiences}</div>
@@ -178,61 +189,79 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         </div>
       </section>
 
-      {/* Fincas agrupadas por ubicación */}
+      {/* Fincas — todas en una grilla, filtrables por ubicación */}
       <main className="regions">
         <div className="wrap">
-          {grouped.map((group) => (
-            <section className="region" key={group.region}>
-              <h2 className="region-h">{group.region}</h2>
-              <div className="region-s">
-                {group.fincas.length} {group.fincas.length === 1 ? "finca" : "fincas"}
-              </div>
+          <div className="shops-ctrl">
+            <span className="shops-badge">
+              {filtered.length} {filtered.length === 1 ? "finca" : "fincas"}
+            </span>
+            <button
+              className={`chip${filter === "all" ? " on" : ""}`}
+              onClick={() => setFilter("all")}
+            >
+              Todas
+            </button>
+            {regions.map((r) => (
+              <button
+                key={r}
+                className={`chip${filter === r ? " on" : ""}`}
+                onClick={() => setFilter(r)}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
 
-              <div className="fc-grid">
-                {group.fincas.map((finca) => (
-                  <article className="fc" key={finca.id}>
-                    <div className="fc-img" style={{ backgroundImage: `url('${finca.img}')` }}>
-                      {finca.experiences > 0 && (
-                        <span className="fc-tag">
-                          {finca.experiences === 1
-                            ? "1 experiencia"
-                            : `${finca.experiences} experiencias`}
-                        </span>
-                      )}
+          <div className="fc-grid">
+            {filtered.map((finca) => (
+              <article className="fc" key={finca.id}>
+                <div className="fc-img" style={{ backgroundImage: `url('${finca.img}')` }}>
+                  <span className="fc-tag">{finca.region}</span>
+                </div>
+                <div className="fc-body">
+                  <h3 className="fc-name">{finca.name}</h3>
+                  <div className="fc-loc">
+                    {finca.loc}
+                    {finca.producer ? ` · ${finca.producer}` : ""}
+                  </div>
+                  {finca.altitude > 0 && (
+                    <div className="fc-meta">
+                      <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", fill: "none", strokeWidth: 1.5 }}>
+                        <polygon points="12 2 22 20 2 20 12 2" />
+                      </svg>
+                      {finca.altitude} msnm
+                      {finca.varieties.length > 0 && ` · ${finca.varieties.slice(0, 2).join(", ")}`}
                     </div>
-                    <div className="fc-body">
-                      <h3 className="fc-name">{finca.name}</h3>
-                      <div className="fc-loc">
-                        {finca.loc}
-                        {finca.producer ? ` · ${finca.producer}` : ""}
-                      </div>
-                      {finca.altitude > 0 && (
-                        <div className="fc-meta">
-                          <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", fill: "none", strokeWidth: 1.5 }}>
-                            <polygon points="12 2 22 20 2 20 12 2" />
-                          </svg>
-                          {finca.altitude} msnm
-                          {finca.varieties.length > 0 && ` · ${finca.varieties.slice(0, 2).join(", ")}`}
-                        </div>
-                      )}
-                      {finca.desc && <p className="fc-desc">{finca.desc}</p>}
-                      <div className="fc-disc">
-                        <Link href={`/fincas/${getSlugId(finca.name, finca.id)}`}>
-                          Descubre
-                          <svg viewBox="0 0 24 24" style={{ width: 13, height: 13, stroke: "currentColor", fill: "none", strokeWidth: 2 }}>
-                            <polyline points="9 18 15 12 9 6" />
-                          </svg>
-                        </Link>
-                      </div>
+                  )}
+                  {finca.desc && <p className="fc-desc">{finca.desc}</p>}
+                  {finca.experiences > 0 && (
+                    <div className="fc-meta">
+                      <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", fill: "none", strokeWidth: 1.5 }}>
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                      </svg>
+                      {finca.experiences === 1 ? "1 experiencia" : `${finca.experiences} experiencias`}
                     </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          ))}
+                  )}
+                  <div className="fc-disc">
+                    <Link href={`/fincas/${getSlugId(finca.name, finca.id)}`}>
+                      Descubre
+                      <svg viewBox="0 0 24 24" style={{ width: 13, height: 13, stroke: "currentColor", fill: "none", strokeWidth: 2 }}>
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
 
-          {initialFincas.length === 0 && (
-            <p className="empty">Todavía no hay fincas publicadas.</p>
+          {filtered.length === 0 && (
+            <p className="empty">
+              {initialFincas.length === 0
+                ? "Todavía no hay fincas publicadas."
+                : "No hay fincas en esa región."}
+            </p>
           )}
         </div>
       </main>
