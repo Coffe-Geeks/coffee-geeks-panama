@@ -39,6 +39,9 @@ export default function AdminLayout({
                 <Link href="/admin/fincas" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
                   Fincas
                 </Link>
+                <Link href="/admin/aliados" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
+                  Aliados
+                </Link>
                 <Link href="/admin/blogs" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
                   Blog
                 </Link>

@@ -8,6 +8,8 @@ import RankingSection from "@/app/components/home/RankingSection";
 import AcademiaSection from "@/app/components/home/AcademiaSection";
 import BlogSection from "@/app/components/home/BlogSection";
 import MapSection from "@/app/components/home/MapSection";
+import AlliesSection from "@/app/components/home/AlliesSection";
+import { getAllies } from "@/app/actions/ally";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
@@ -34,6 +36,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const config = await getSiteConfig();
+  const ALLIES = await getAllies();
   const currentRound = config?.currentVotingRound || 0;
 
   const query: any = { role: "cafeteria", isActive: true };
@@ -123,6 +126,9 @@ export default async function HomePage() {
 
         {/* 3.5 Mapa de la ruta */}
         <MapSection shops={SHOPS} />
+
+        {/* 3.6 Aliados */}
+        <AlliesSection allies={ALLIES} />
 
         {/* 4. Ranking en vivo */}
         <RankingSection 
