@@ -42,7 +42,7 @@ body {
    ───────────────────────────────────────────────────────────── */
 @media (pointer: fine) {
   body {
-    cursor: url("/cursor-28.png") 4 4, auto;
+    cursor: url("/cursor-30.png") 5 5, auto;
   }
 
   a,
