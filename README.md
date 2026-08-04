@@ -10,11 +10,33 @@ MongoDB + Mongoose · JWT con `jose` · Leaflet · SMTP2GO · reCAPTCHA v3
 
 ## Entornos
 
-| Entorno | Dónde | Base de datos |
-|---|---|---|
-| Producción | Droplet DigitalOcean (`nginx` + `pm2`, puerto 3001, `/var/www/html`) | MongoDB local en el droplet (`127.0.0.1:27017`) |
-| Testing | Vercel | MongoDB Atlas M0 |
-| Local | Docker | `mongodb://127.0.0.1:27017/coffee_geeks` |
+| Entorno | Rama | Dónde | Base de datos |
+|---|---|---|---|
+| Producción | `main` | Droplet DigitalOcean (`nginx` + `pm2`, puerto 3001, `/var/www/html`) | MongoDB local en el droplet (`127.0.0.1:27017`) |
+| Testing | `test` | Vercel — `coffeegeekspanama.vercel.app` | MongoDB Atlas M0 |
+| Local | `test` | Docker | `mongodb://127.0.0.1:27017/coffee_geeks` |
+
+## Flujo de trabajo
+
+Todo cambio se desarrolla y se despliega **primero** al entorno de pruebas. A
+producción solo se sube cuando está aprobado.
+
+```bash
+# 1. Trabajar siempre sobre test
+git checkout test
+
+# 2. Desplegar al sitio de prueba y verificar ahí
+vercel deploy --prod --yes     # el --prod es la producción del proyecto de
+                               # Vercel, o sea el sitio de PRUEBA
+
+# 3. Ya aprobado, promover a producción
+git checkout main && git merge test && git push origin main
+```
+
+> **`/var/www/html` no es un repositorio git.** Producción se desplegó copiando
+> archivos, así que subir cambios va por `rsync`/`scp`, no por `git pull`. Al
+> sincronizar hay que excluir `uploads/`, que contiene las imágenes subidas por
+> los usuarios y no está en el repositorio.
 
 ---
 
