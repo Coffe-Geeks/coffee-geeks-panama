@@ -118,6 +118,16 @@ export default async function Footer() {
           .ft-mid { grid-template-columns: 1fr; }
           .ft-top { flex-direction: column; align-items: flex-start; }
           .ft-contacts { justify-content: flex-start; }
+
+          /* En pantalla táctil los enlaces medían 28x18: demasiado chicos
+             para el dedo. Se les da alto suficiente sin cambiar el diseño. */
+          .ft-ul { gap: 0; }
+          .ft-ul a {
+            display: flex; align-items: center;
+            min-height: 40px; font-size: 14px;
+          }
+          .fts { width: 40px; height: 40px; }
+          .fts svg { width: 15px; height: 15px; }
         }
       `}</style>
 

@@ -268,7 +268,11 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
         .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(38px);z-index:600;background:#38050e;color:#fff;padding:10px 22px;border-radius:50px;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 4px 8px 3px rgba(0,0,0,.1);opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
         .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-        @media(max-width:520px){.shop-opts{grid-template-columns:1fr}}
+        @media(max-width:520px){
+          .shop-opts{grid-template-columns:1fr}
+          /* 28px es poco para el dedo; se agranda solo en táctil */
+          .mod-x{width:40px;height:40px;top:10px;right:10px;font-size:1rem}
+        }
       `}</style>
 
       {/* Modal overlay */}
