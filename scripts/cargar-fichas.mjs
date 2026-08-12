@@ -10,7 +10,7 @@
  *
  * Sin --aplicar solo muestra lo que haría.
  */
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
 
 const uri = process.argv[2];
@@ -199,7 +199,7 @@ try {
           originStory: f.originStory || "", espresso: f.espresso || "",
           filtrado: f.filtrado || "", signatureDrinkName: f.signatureDrinkName || "",
           signatureDrink: f.signatureDrink || "", mainBaristaName: f.barista || "",
-          baristas: f.barista ? [{ fullName: f.barista, photo: "", isHighlighted: true }] : [],
+          baristas: f.barista ? [{ _id: new ObjectId(), fullName: f.barista, photo: "", isHighlighted: true }] : [],
           gallery: [], competitionCategory: [], createdAt: new Date(), updatedAt: new Date(),
         });
       }
@@ -221,7 +221,7 @@ try {
     };
     if (f.barista) {
       set.mainBaristaName = f.barista;
-      if (!principal.baristas?.length) set.baristas = [{ fullName: f.barista, photo: "", isHighlighted: true }];
+      if (!principal.baristas?.length) set.baristas = [{ _id: new ObjectId(), fullName: f.barista, photo: "", isHighlighted: true }];
     }
 
     console.log(`~ ACTUALIZAR ${f.cafeteriaName}${copias.length ? `  (+${copias.length} duplicado se desactiva)` : ""}`);

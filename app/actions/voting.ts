@@ -203,7 +203,7 @@ export async function getLeaderboard() {
         coverImage: c.coverImage,
         neighborhood: c.neighborhood,
         businessType: c.businessType,
-        baristaId: c.baristas?.find((b: any) => b.isHighlighted)?._id.toString() || "",
+        baristaId: c.baristas?.find((b: any) => b.isHighlighted)?._id?.toString() || "",
         baristaPhoto: c.baristas?.find((b: any) => b.isHighlighted)?.photo || "",
         votesCount: cVotes.length,
         scores: {
@@ -293,7 +293,7 @@ export async function getLeaderboard() {
       coverImage: c.coverImage,
       neighborhood: c.neighborhood,
       businessType: c.businessType,
-      baristaId: c.baristas?.find((b: any) => b.isHighlighted)?._id.toString() || "",
+      baristaId: c.baristas?.find((b: any) => b.isHighlighted)?._id?.toString() || "",
       baristaPhoto: c.baristas?.find((b: any) => b.isHighlighted)?.photo || "",
       votesCount: cVotes.length,
       scores: {
