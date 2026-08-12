@@ -1,18 +1,18 @@
 import Link from "next/link";
 
+// Academia y Votaciones quedan fuera hasta que se activen; sus rutas siguen vivas
 const FOOTER_LINKS = {
   plataforma: [
     { label: "Inicio", href: "/home" },
     { label: "Participantes", href: "/participantes" },
-    { label: "Votaciones", href: "/votaciones" },
-    { label: "Tabla de posiciones", href: "/ranking" },
-    { label: "Mapa interactivo", href: "/mapa" },
+    { label: "Fincas", href: "/fincas" },
+    { label: "Del Origen a la Barra", href: "/fincas/experienciasdelorigenalabarra" },
   ],
   academia: [
-    { label: "Specialty Coffee Academy", href: "/academia" },
     { label: "Guía del participante", href: "/guia-participante" },
     { label: "Guía del consumidor", href: "/guia-consumidor" },
     { label: "Pasaporte digital", href: "/pasaporte" },
+    { label: "Sobre nosotros", href: "/sobre-nosotros" },
   ],
   legal: [
     { label: "Política de privacidad", href: "/privacidad" },
@@ -221,7 +221,7 @@ export default async function Footer() {
               </ul>
             </div>
             <div>
-              <div className="ft-cl">Academia</div>
+              <div className="ft-cl">Recursos</div>
               <ul className="ft-ul">
                 {FOOTER_LINKS.academia.map((l) => (
                   <li key={l.href}><Link href={l.href}>{l.label}</Link></li>

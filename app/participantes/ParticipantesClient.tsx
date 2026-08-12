@@ -21,7 +21,9 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
 
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("votes");
+  // "destacados" respeta el orden que envía el servidor: primero los
+  // participantes con ficha y fotos completas
+  const [sortBy, setSortBy] = useState("destacados");
   const [voteModal, setVoteModal] = useState<{ open: boolean; preselected?: string }>({ open: false });
 
   useEffect(() => {
@@ -36,7 +38,11 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
   const filtered = initialShops
     .filter((s) => filter === "all" || s.type === filter)
     .filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => sortBy === "votes" ? b.votes - a.votes : a.name.localeCompare(b.name));
+    .sort((a, b) => {
+      if (sortBy === "destacados") return 0;
+      if (sortBy === "votes") return b.votes - a.votes;
+      return a.name.localeCompare(b.name);
+    });
 
   return (
     <>
@@ -168,6 +174,7 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
+              <option value="destacados">Destacados</option>
               <option value="votes">Por votos</option>
               <option value="name">Nombre A–Z</option>
             </select>

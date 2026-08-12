@@ -29,6 +29,21 @@ export default async function ParticipantesPage() {
     });
   }
 
+  // Los que tienen su ficha y sus fotos van primero; los que solo tienen
+  // una de las dos, después. La página los recibe ya ordenados.
+  const completitud = (c: any) => {
+    const conFoto = !!c.coverImage;
+    const conFicha = !!(c.tagline || c.espresso || c.filtrado || c.signatureDrink);
+    const galeria = Array.isArray(c.gallery) ? c.gallery.length : 0;
+    return (conFoto && conFicha ? 100 : 0) + (conFoto ? 20 : 0) + (conFicha ? 15 : 0) + Math.min(galeria, 10);
+  };
+
+  cafeterias.sort((a: any, b: any) => {
+    const d = completitud(b) - completitud(a);
+    if (d !== 0) return d;
+    return (a.cafeteriaName || a.name || "").localeCompare(b.cafeteriaName || b.name || "");
+  });
+
   const SHOPS = cafeterias.map((c: any) => ({
     id: c._id.toString(),
     type: c.businessType || "coffee",
