@@ -56,6 +56,17 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
 
         /* Info items */
         .info-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid #cddbf2/20;font-family:'Barlow',sans-serif;font-size:14px;color:#38050e;word-break:break-word}
+
+        /* ── Ficha de competencia ── */
+        .cg-tagline{font-family:'Barlow Condensed',sans-serif;font-size:clamp(19px,2.4vw,25px);font-weight:400;font-style:italic;line-height:1.28;color:#38050e;opacity:.82;margin-bottom:18px;padding-left:14px;border-left:3px solid #cddbf2}
+        .cg-ficha{display:grid;gap:14px;margin-bottom:26px}
+        .cg-blk{background:#f4efe4;border:1px solid #cddbf2;border-radius:14px;padding:15px 17px}
+        .cg-blk-sig{background:#38050e;border-color:#38050e}
+        .cg-blk-t{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#38050e;opacity:.65;margin-bottom:6px}
+        .cg-blk-sig .cg-blk-t{color:#cddbf2;opacity:1}
+        .cg-blk-p{font-family:'Barlow',sans-serif;font-size:14.5px;line-height:1.65;color:#38050e;white-space:pre-wrap}
+        .cg-blk-sig .cg-blk-p{color:rgba(255,255,255,.88)}
+        @media(max-width:640px){.cg-blk{padding:13px 14px}}
         .info-item:last-child{border-bottom:none}
         .info-item a{color:#38050e;text-decoration:underline}
         .info-item a:hover{opacity:.8}
@@ -147,10 +158,48 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
                 </div>
               </div>
 
+              {/* Frase de cabecera del local */}
+              {shop.tagline && (
+                <p className="cg-tagline">“{shop.tagline}”</p>
+              )}
+
               {/* About */}
               <p style={{ fontFamily: "'Barlow',sans-serif", fontSize: 15, lineHeight: 1.7, color: "#38050e", marginBottom: 24, whiteSpace: "pre-wrap" }}>
                 {shop.description || "Esta cafetería aún no ha agregado una descripción."}
               </p>
+
+              {/* Ficha de competencia */}
+              {(shop.originStory || shop.espresso || shop.filtrado || shop.signatureDrink) && (
+                <div className="cg-ficha">
+                  {shop.originStory && (
+                    <div className="cg-blk">
+                      <div className="cg-blk-t">Su origen</div>
+                      <p className="cg-blk-p">{shop.originStory}</p>
+                    </div>
+                  )}
+                  {shop.espresso && (
+                    <div className="cg-blk">
+                      <div className="cg-blk-t">Espresso</div>
+                      <p className="cg-blk-p">{shop.espresso}</p>
+                    </div>
+                  )}
+                  {shop.filtrado && (
+                    <div className="cg-blk">
+                      <div className="cg-blk-t">Filtrado</div>
+                      <p className="cg-blk-p">{shop.filtrado}</p>
+                    </div>
+                  )}
+                  {shop.signatureDrink && (
+                    <div className="cg-blk cg-blk-sig">
+                      <div className="cg-blk-t">
+                        Signature Drink
+                        {shop.signatureDrinkName ? ` · ${shop.signatureDrinkName}` : ""}
+                      </div>
+                      <p className="cg-blk-p">{shop.signatureDrink}</p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Galería (si hay más imágenes) */}
               {shop.gallery && shop.gallery.length > 1 && (

@@ -50,6 +50,10 @@ export async function updateCafeteriaProfile(state: any, formData: FormData) {
     if (formData.has("ruc")) updateData.ruc = formData.get("ruc")?.toString().trim() ?? "";
     if (formData.has("neighborhood")) updateData.neighborhood = formData.get("neighborhood")?.toString().trim() ?? "";
     if (formData.has("description")) updateData.description = formData.get("description")?.toString().trim() ?? "";
+    // Ficha de competencia: lo que se muestra en la página pública del participante
+    for (const campo of ["tagline", "originStory", "espresso", "filtrado", "signatureDrinkName", "signatureDrink"]) {
+      if (formData.has(campo)) updateData[campo] = formData.get(campo)?.toString().trim() ?? "";
+    }
     if (formData.has("hours")) updateData.hours = formData.get("hours")?.toString().trim() ?? "";
     if (formData.has("phone")) updateData.phone = formData.get("phone")?.toString().trim() ?? "";
     if (formData.has("web")) updateData.web = formData.get("web")?.toString().trim() ?? "";

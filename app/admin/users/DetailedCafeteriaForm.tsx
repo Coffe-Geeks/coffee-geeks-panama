@@ -41,6 +41,51 @@ export default function DetailedCafeteriaForm({ user, onClose }: { user: any; on
           <input type="hidden" name="targetUserId" value={user.id || user._id} />
 
           {/* SECCION 1: Identidad Legal y Comercial */}
+          {/* Lo que el público ve en la ficha del participante */}
+          <div className={sectionCls}>
+            <h3 className="text-lg font-bold text-[#cddbf2] border-l-4 border-[#cddbf2] pl-3">
+              Ficha de Competencia
+            </h3>
+            <p className="text-[#cddbf2]/50 text-sm -mt-3">
+              Este es el contenido que se muestra en la página pública del participante.
+            </p>
+
+            <div>
+              <label className={labelCls}>Frase de cabecera</label>
+              <input
+                name="tagline"
+                defaultValue={user.tagline}
+                placeholder="Ej: Lo mejor del café panameño, concentrado en una sola taza."
+                className={inputCls}
+              />
+            </div>
+
+            <div>
+              <label className={labelCls}>Su origen <span className="opacity-50">(historia, desde cuándo, de dónde viene su café)</span></label>
+              <textarea name="originStory" defaultValue={user.originStory} rows={3} className={`${inputCls} resize-none`} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className={labelCls}>Espresso <span className="opacity-50">(origen, variedad, notas)</span></label>
+                <textarea name="espresso" defaultValue={user.espresso} rows={4} className={`${inputCls} resize-none`} />
+              </div>
+              <div>
+                <label className={labelCls}>Filtrado <span className="opacity-50">(método, origen, perfil)</span></label>
+                <textarea name="filtrado" defaultValue={user.filtrado} rows={4} className={`${inputCls} resize-none`} />
+              </div>
+            </div>
+
+            <div>
+              <label className={labelCls}>Nombre del Signature Drink</label>
+              <input name="signatureDrinkName" defaultValue={user.signatureDrinkName} placeholder='Ej: "Geisha Pearl"' className={inputCls} />
+            </div>
+            <div>
+              <label className={labelCls}>Descripción del Signature Drink</label>
+              <textarea name="signatureDrink" defaultValue={user.signatureDrink} rows={3} className={`${inputCls} resize-none`} />
+            </div>
+          </div>
+
           <div className={sectionCls}>
             <h3 className="text-lg font-bold text-[#cddbf2] border-l-4 border-[#cddbf2] pl-3">Identidad Legal y Comercial</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

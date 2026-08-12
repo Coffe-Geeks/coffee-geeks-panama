@@ -87,6 +87,18 @@ const UserSchema = new Schema(
       default: [],
     },
     baristas: { type: [BaristaSchema], default: [] },
+
+    // ── Ficha de competencia: lo que cada participante presenta ──
+    // Frase de cabecera del local
+    tagline: { type: String, default: "", trim: true },
+    // Historia y origen: desde cuándo, quiénes, de dónde viene su café
+    originStory: { type: String, default: "" },
+    // Café que presentan en espresso: origen, variedad, notas de taza
+    espresso: { type: String, default: "" },
+    // Café en método filtrado: método, origen y perfil
+    filtrado: { type: String, default: "" },
+    signatureDrinkName: { type: String, default: "", trim: true },
+    signatureDrink: { type: String, default: "" },
     advancedToRound2: { type: Boolean, default: false },
 
     // ── Campos Detallados (Solo Admin/Participante Detallado) ──
