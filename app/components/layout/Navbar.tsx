@@ -6,11 +6,13 @@ import { useEffect, useState, useRef } from "react";
 import VoteModal from "@/app/components/VoteModal";
 
 // Votaciones sigue fuera del menú hasta que se active; su ruta existe.
+// Nuestro Método pasará a ser un desplegable bajo Sobre Nosotros.
 const NAV_LINKS = [
+  { label: "Sobre Nosotros", href: "/sobre-nosotros" },
+  { label: "Nuestro Método", href: "/nuestro-metodo" },
   { label: "Descúbrenos", href: "/home" },
   { label: "Participantes", href: "/participantes" },
   { label: "Fincas", href: "/fincas" },
-  { label: "Sobre Nosotros", href: "/sobre-nosotros" },
   { label: "Academia", href: "/academia" },
   { label: "Pasaporte", href: "/pasaporte" },
   { label: "Tienda", href: "/tienda" },
