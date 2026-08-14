@@ -106,6 +106,34 @@ export default function SobreNosotrosPage() {
           flex-shrink: 0;
         }
 
+
+        /* ── Puntos principales: número grande + título ── */
+        .pt{margin-bottom:52px}
+        .pt:last-child{margin-bottom:0}
+        .pt-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #cddbf2}
+        .pt-num{font-family:'Barlow Condensed',sans-serif;font-size:clamp(40px,6vw,64px);font-weight:900;line-height:.8;color:#cddbf2;flex-shrink:0}
+        .pt-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,4.4vw,46px);font-weight:900;text-transform:uppercase;color:#38050e;line-height:.95;margin:0}
+        .pt-body{padding-left:clamp(0px,4vw,54px)}
+        .pt-p{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.72;color:#38050e;opacity:.85;margin-bottom:14px}
+        .pt-p:last-child{margin-bottom:0}
+        .pt-p strong{font-weight:600;opacity:1}
+        .pt-claim{font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,3vw,30px);font-weight:900;text-transform:uppercase;color:#38050e;letter-spacing:.01em;margin-top:6px}
+
+        /* ── Subpuntos: deliberadamente menores que los puntos ── */
+        .sub{background:#fff;border:1px solid #cddbf2;border-left:4px solid #38050e;border-radius:12px;padding:16px 18px;margin-bottom:12px}
+        .sub:last-child{margin-bottom:0}
+        .sub-t{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;text-transform:uppercase;color:#38050e;line-height:1.12;margin:0 0 6px}
+        .sub-p{font-family:'Barlow',sans-serif;font-size:15px;line-height:1.65;color:#38050e;opacity:.8;margin:0}
+
+        /* ── Valores de la visión ── */
+        .valores{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 18px;padding:0}
+        .valores li{font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#38050e;background:#fff;border:1px solid #cddbf2;padding:7px 15px;border-radius:50px}
+
+        @media(max-width:640px){
+          .pt-head{gap:12px}
+          .pt-body{padding-left:0}
+        }
+
         @media(max-width:768px){
           .ph-flex{flex-direction:column;align-items:flex-start;gap:25px}
           .ph-logo{width:140px}
@@ -149,77 +177,128 @@ export default function SobreNosotrosPage() {
       {/* Content */}
       <main className="main-page">
         <div className="wrap">
-          
-          <div className="content-section">
-            <h2 className="section-title">Quiénes Somos</h2>
-            <p className="section-text">
-              Somos la <strong>primera marca sectorial de café en Panamá</strong>. A través de nuestras plataformas digitales integramos, internacionalizamos, conectamos y fortalecemos todo el ecosistema del café panameño y su cadena de valor.
-            </p>
-          </div>
 
-          <div className="content-section">
-            <h2 className="section-title">Qué Hacemos</h2>
-            <p className="section-text">
-              Impulsamos a Panamá ante la industria global del café, integrando la hospitalidad, el turismo, gastronomía y sostenibilidad como ejes de desarrollo. Promovemos el consumo del café nacional y dignificamos el oficio del barista a través del reconocimiento y la educación certificada.
-            </p>
-            <p className="section-text">
-              Conectamos a toda la cadena de valor, desde el productor hasta el consumidor para posicionar internacionalmente una industria cafetera panameña diversa, competitiva y alineada con los altos estándares del café de especialidad que hoy tiene el país y que demanda la industria global.
-            </p>
-          </div>
+          {/* 1 */}
+          <section className="pt">
+            <div className="pt-head">
+              <span className="pt-num">01</span>
+              <h2 className="pt-title">Quiénes somos</h2>
+            </div>
+            <div className="pt-body">
+              <p className="pt-p">
+                Somos la <strong>primera marca sectorial especializada en café en Panamá</strong>,
+                creada para internacionalizar y generar valor a todo el ecosistema del café
+                panameño y su cadena de valor.
+              </p>
+              <p className="pt-p">
+                Trabajamos con la industria nacional potenciando la alta calidad de sus productos
+                de origen, impulsando el conocimiento, el talento y las experiencias que hacen
+                única la industria alrededor de sus productos de origen nacional.
+              </p>
+              <p className="pt-claim">De Panamá para el mundo.</p>
+            </div>
+          </section>
 
-          <div className="content-section">
-            <h2 className="section-title">Propósito</h2>
-            <p className="section-text">
-              Consolidar a Panamá como el <strong>hub de experiencias auténticas, sofisticadas y de alta calidad alrededor del café</strong>, a través de una propuesta que conecta la industria, el origen, la cultura y la excelencia con respaldo internacional e internacionalización de la industria de café panameña.
-            </p>
-            <p className="section-text">
-              Coffee Geeks conecta el ecosistema cafetero local con la comunidad global de consumidores, y lo proyecta en los nichos más exclusivos junto a sus aliados estratégicos.
-            </p>
-            <p className="section-text">
-              Contamos con un Pasaporte que cada año impulsa diferentes dinámicas que dan forma a la guía de referencia de las mejores experiencias alrededor del café de Panamá para el mundo.
-            </p>
-            <p className="section-text">
-              El 2026 desarrollamos la primera curaduría de coffee shops, hoteles y restaurantes que ofrecen experiencias auténticas y únicas alrededor del café y que serán referencia para ser evaluadas y estar en la lista nacional <strong>The Best Coffee Shops Panamá (TBCS)</strong>, con la posibilidad de alcanzar <em>The World's 100 Best Coffee Shops</em> y los rankings continentales.
-            </p>
-            <p className="section-text">
-              Acompáñanos en <strong>El Camino a la Gran Taza</strong>, el concurso experiencial y cultural que celebra la creatividad, el conocimiento y las experiencias detrás de cada taza panameña.
-            </p>
-          </div>
+          {/* 2 */}
+          <section className="pt">
+            <div className="pt-head">
+              <span className="pt-num">02</span>
+              <h2 className="pt-title">¿Qué hacemos?</h2>
+            </div>
+            <div className="pt-body">
+              <p className="pt-p">
+                Impulsamos la cadena de valor ante la industria global, integrando
+                <strong> educación, hospitalidad, turismo, gastronomía y sostenibilidad</strong> como
+                ejes estratégicos para la evolución de la industria.
+              </p>
+            </div>
+          </section>
 
-          <div className="content-section">
-            <h2 className="section-title">Nuestra Red de Aliados</h2>
-            <p className="section-text">
-              Estos son los coffee shops, hoteles y restaurantes que ya forman parte del ecosistema Coffee Geeks y que serán referencia para ser elegibles en la lista nacional <strong>The Best Coffee Shops Panamá (TBCS)</strong>.
-            </p>
+          {/* 3 */}
+          <section className="pt">
+            <div className="pt-head">
+              <span className="pt-num">03</span>
+              <h2 className="pt-title">¿Cómo lo hacemos?</h2>
+            </div>
+            <div className="pt-body">
+              <div className="sub">
+                <h3 className="sub-t">Impulsamos el conocimiento, el consumo y la profesionalización</h3>
+                <p className="sub-p">
+                  Fomentamos el consumo de café nacional, reconocemos y ponemos en valor el oficio
+                  del barista y promovemos la educación certificada para productores, baristas y
+                  consumidores, contribuyendo así al crecimiento y profesionalización de la
+                  industria local.
+                </p>
+              </div>
+              <div className="sub">
+                <h3 className="sub-t">Identificamos y reconocemos la excelencia</h3>
+                <p className="sub-p">
+                  Desarrollamos iniciativas que permiten identificar, reconocer y visibilizar la
+                  excelencia de establecimientos, productos y servicios vinculados al café,
+                  generando nuevas oportunidades para quienes forman parte de este ecosistema.
+                </p>
+              </div>
+            </div>
+          </section>
 
-            <h3 className="aliados-category">Coffee Shops exclusivos que sirven café panameño</h3>
-            <ul className="aliados-list">
-              <li>Kotowa Coffee House – Vía Israel</li>
-              <li>Heritage by Kotowa Farms – Boquete</li>
-              <li>Toño's Café Bakery – Costa del Este</li>
-              <li>Toños Factory – Corozal</li>
-              <li>Unido Coffee Roasters – Casco Viejo</li>
-              <li>Momo Coffee House – Obarrio</li>
-              <li>Weekend Coffee Roasters – Transístmica</li>
-              <li>Sisu Coffee Studio – Calle Uruguay</li>
-              <li>Tosto Coffee – Obarrio</li>
-              <li>SIP Studio – Alta Plaza</li>
-              <li>Leto Coffee – Obarrio</li>
-              <li>Siete Granos – Casco Viejo</li>
-              <li>Cabrera Road Coffee – Vía Argentina</li>
-              <li>Foodbarn – Marbella</li>
-              <li>Rebequet – Boquete</li>
-            </ul>
+          {/* 4 */}
+          <section className="pt">
+            <div className="pt-head">
+              <span className="pt-num">04</span>
+              <h2 className="pt-title">Objetivo</h2>
+            </div>
+            <div className="pt-body">
+              <p className="pt-p">
+                Posicionar internacionalmente la industria cafetera panameña: diversa, competitiva
+                y alineada con los altos estándares del mercado global y del café de especialidad,
+                y los productos asociados.
+              </p>
+            </div>
+          </section>
 
-            <h3 className="aliados-category">Hoteles que ofrecen experiencias alrededor del café</h3>
-            <ul className="aliados-list">
-              <li>Café Vera – Sofitel Legend Casco Viejo Panamá</li>
-              <li>Hotel La Compañía (Coffee Shop)</li>
-              <li>La Micaela Coffee Shop by Hotel Miramar Intercontinental</li>
-              <li>Hotel Valle Escondido – Boquete</li>
-              <li>Hotel Finca Lerida</li>
-            </ul>
-          </div>
+          {/* 5 */}
+          <section className="pt">
+            <div className="pt-head">
+              <span className="pt-num">05</span>
+              <h2 className="pt-title">Propósito</h2>
+            </div>
+            <div className="pt-body">
+              <p className="pt-p">
+                Consolidar a Panamá como el <strong>hub de experiencias auténticas, sofisticadas y
+                de alta calidad alrededor del café</strong>, a través de una propuesta única e
+                innovadora, resaltando el origen, la cultura y la excelencia con respaldo
+                internacional.
+              </p>
+            </div>
+          </section>
+
+          {/* 6 */}
+          <section className="pt">
+            <div className="pt-head">
+              <span className="pt-num">06</span>
+              <h2 className="pt-title">Visión</h2>
+            </div>
+            <div className="pt-body">
+              <p className="pt-p">
+                Construir una industria cafetera panameña cada vez más conectada, profesional,
+                competitiva y reconocida internacionalmente. Una industria donde el valor no esté
+                únicamente en el producto, sino también en:
+              </p>
+              <ul className="valores">
+                {[
+                  "El origen", "El conocimiento", "El talento", "La hospitalidad",
+                  "La gastronomía", "El turismo", "La sostenibilidad", "La experiencia",
+                  "La confianza", "La excelencia",
+                ].map((v) => (
+                  <li key={v}>{v}</li>
+                ))}
+              </ul>
+              <p className="pt-p">
+                Coffee Geeks trabaja para conectar todos estos elementos y generar nuevas
+                oportunidades para quienes forman parte del ecosistema del café panameño.
+              </p>
+            </div>
+          </section>
 
         </div>
       </main>
