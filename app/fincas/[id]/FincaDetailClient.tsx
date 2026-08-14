@@ -16,8 +16,8 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700;900&family=Barlow:wght@300;400;500&display=swap');
 
         .ph{position:relative;padding-top:58px}
-        .ph-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.18}
-        .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,#38050e 0%,rgba(56,5,14,.7) 100%)}
+        .ph-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.62}
+        .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.48) 45%,rgba(0,0,0,.72) 100%)}
         .ph-cnt{position:relative;z-index:2;padding:44px 0 44px}
         .ph-flex{display:flex;align-items:center;justify-content:space-between;gap:40px}
         .ph-txt{flex:1}

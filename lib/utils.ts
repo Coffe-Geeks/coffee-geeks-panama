@@ -19,10 +19,16 @@ export function formatFechaCierre(
   const d = new Date(valor);
   if (isNaN(d.getTime())) return valor;
 
+  // "2026-10-25" se interpreta como medianoche UTC; formatearlo en hora de
+  // Panamá (UTC-5) lo retrasaría un día. Una fecha sin hora se formatea en
+  // UTC para que muestre exactamente el día escrito.
+  const soloFecha = /^\d{4}-\d{2}-\d{2}$/.test(valor.trim());
+  const zona = soloFecha ? "UTC" : "America/Panama";
+
   const opciones: Intl.DateTimeFormatOptions =
     formato === "corta"
-      ? { day: "numeric", month: "short", timeZone: "America/Panama" }
-      : { day: "numeric", month: "long", year: "numeric", timeZone: "America/Panama" };
+      ? { day: "numeric", month: "short", timeZone: zona }
+      : { day: "numeric", month: "long", year: "numeric", timeZone: zona };
 
   const texto = d.toLocaleDateString("es-PA", opciones).replace(".", "");
   return formato === "corta" ? texto.toUpperCase() : texto;
