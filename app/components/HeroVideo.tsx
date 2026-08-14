@@ -31,10 +31,11 @@ export default function HeroVideo() {
     <>
       <style>{`
         .hv{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-        .hv-media{width:100%;height:100%;object-fit:cover;display:block;opacity:.5}
-        .hv-poster{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.5}
-        /* Velo: el texto del hero debe leerse por encima de cualquier foto */
-        .hv-velo{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(56,5,14,.82) 0%,rgba(56,5,14,.68) 45%,rgba(56,5,14,.88) 100%)}
+        .hv-media{width:100%;height:100%;object-fit:cover;display:block;opacity:.78}
+        .hv-poster{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.78}
+        /* Oscurecido neutro, sin tinte de color: lo justo para que el
+           texto blanco se lea sobre fotos claras */
+        .hv-velo{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.5) 0%,rgba(0,0,0,.32) 45%,rgba(0,0,0,.62) 100%)}
       `}</style>
 
       <div className="hv" aria-hidden="true">

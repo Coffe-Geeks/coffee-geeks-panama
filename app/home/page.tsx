@@ -10,6 +10,7 @@ import BlogSection from "@/app/components/home/BlogSection";
 import MapSection from "@/app/components/home/MapSection";
 import AlliesSection from "@/app/components/home/AlliesSection";
 import { getAllies } from "@/app/actions/ally";
+import { getFincas } from "@/app/actions/finca";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
@@ -37,6 +38,7 @@ export const dynamic = 'force-dynamic';
 export default async function HomePage() {
   const config = await getSiteConfig();
   const ALLIES = await getAllies();
+  const FINCAS_COUNT = (await getFincas()).length;
   const currentRound = config?.currentVotingRound || 0;
 
   const query: any = { role: "cafeteria", isActive: true };
@@ -45,9 +47,11 @@ export default async function HomePage() {
   }
   const cafeterias = await User.find(query).lean();
   
+  let totalVotos = 0;
   let votesCountMap: Record<string, number> = {};
   if (currentRound > 0) {
     const votes = await Vote.find({ round: currentRound }).lean();
+    totalVotos = votes.length;
     votes.forEach((v: any) => {
       const cid = v.cafeteriaId.toString();
       votesCountMap[cid] = (votesCountMap[cid] || 0) + 1;
@@ -116,7 +120,10 @@ export default async function HomePage() {
       {/* Push content below the fixed navbar */}
       <main style={{ paddingTop: 58 }}>
         {/* 1. Hero animado con granos de café */}
-        <CoffeeBeansHero config={config} />
+        <CoffeeBeansHero
+          config={config}
+          stats={{ cafeterias: SHOPS.length, votos: totalVotos, fincas: FINCAS_COUNT }}
+        />
 
         {/* 2. Pasos — cómo participar */}
         <StepsSection />

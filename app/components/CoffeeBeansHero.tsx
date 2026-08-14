@@ -169,11 +169,26 @@ function AnimCounter({ target, duration = 2000, suffix = "" }: { target: number;
 }
 
 /* ─── Main Hero ─────────────────────────────────────────────────────────── */
-export default function CoffeeBeansHero({ config }: { config?: any }) {
+type HeroStats = { cafeterias: number; votos: number; fincas: number };
+
+export default function CoffeeBeansHero({ config, stats }: { config?: any; stats?: HeroStats }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [voteModal, setVoteModal] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Fecha de cierre desde la configuración del sitio. Se muestra en formato
+  // corto para que quepa junto a las cifras sin desbordar la franja.
+  const cierreRegistro = (() => {
+    const v = config?.votingEndDate;
+    if (!v) return "Próximamente";
+    const d = new Date(v);
+    if (isNaN(d.getTime())) return String(v);
+    return d
+      .toLocaleDateString("es-PA", { day: "numeric", month: "short", timeZone: "America/Panama" })
+      .replace(".", "")
+      .toUpperCase();
+  })();
 
   const heroEyebrow = config?.heroEyebrow ?? "Concurso Nacional · Temporada 2026";
   const heroTitle1 = config?.heroTitle1 ?? "El Camino";
@@ -303,20 +318,22 @@ export default function CoffeeBeansHero({ config }: { config?: any }) {
       border-right: 1px solid rgba(255,255,255,0.08);
     }
     .stat-item:last-child { border-right: none; }
+    /* La fecha es texto, no una cifra: algo menor para que no compita */
+    .stat-fecha { font-size: clamp(21px, 2.7vw, 29px); letter-spacing: .01em; }
     .stat-num {
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: clamp(22px, 3vw, 30px);
+      font-size: clamp(27px, 3.6vw, 38px);
       font-weight: 900;
       color: #cddbf2;
       line-height: 1;
     }
     .stat-label {
       font-family: 'Barlow', sans-serif;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 500;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.11em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.55);
       text-align: center;
       line-height: 1.4;
     }
@@ -360,7 +377,7 @@ export default function CoffeeBeansHero({ config }: { config?: any }) {
 
     @media (max-width: 640px) {
       .stat-item { padding: 0 14px; }
-      .stat-num { font-size: 20px; }
+      .stat-num { font-size: 24px; }
       .hero-ctas { flex-direction: column; align-items: center; }
       .stats-row { flex-wrap: wrap; gap: 16px; }
       .stat-item { border-right: none; }
@@ -385,9 +402,6 @@ export default function CoffeeBeansHero({ config }: { config?: any }) {
         }}
       >
         {/* ── Atmospheric glows ── */}
-        <div className="glow-top" />
-        <div className="glow-bottom-left" />
-        <div className="glow-bottom-right" />
 
         {/* ── Noise texture ── */}
         <div className="noise-overlay" />
@@ -534,14 +548,20 @@ export default function CoffeeBeansHero({ config }: { config?: any }) {
             overflowX: "auto",
           }} className="stats-row">
             {[
-              { num: 24,   suffix: "",  label: "Cafeterías\nRegistradas" },
-              { num: 1840, suffix: "",  label: "Votos\nEmitidos" },
-              { num: 3,    suffix: "",  label: "Categorías en\nCompetencia" },
-              { num: 23,   suffix: "",  label: "Abril · Cierre\nde Registro" },
+              { num: stats?.cafeterias ?? 0, label: "Cafeterías\nParticipantes" },
+              { num: stats?.votos ?? 0,      label: "Votos\nEmitidos" },
+              { num: stats?.fincas ?? 0,     label: "Fincas\nAliadas" },
+              // La fecha va como texto, no como contador: un día suelto
+              // animándose no se lee como fecha
+              { texto: cierreRegistro,       label: "Cierre de\nRegistro" },
             ].map((s, i) => (
               <div key={i} className="stat-item">
-                <span className="stat-num">
-                  {mounted ? <AnimCounter target={s.num} suffix={s.suffix} /> : `${s.num}${s.suffix}`}
+                <span className={`stat-num${s.texto ? " stat-fecha" : ""}`}>
+                  {s.texto
+                    ? s.texto
+                    : mounted
+                      ? <AnimCounter target={s.num!} suffix="" />
+                      : s.num}
                 </span>
                 <span className="stat-label" style={{ whiteSpace: "pre-line" }}>{s.label}</span>
               </div>
