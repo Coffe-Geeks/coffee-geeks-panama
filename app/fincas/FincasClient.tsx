@@ -276,12 +276,20 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
               Cada finca abre sus puertas para mostrarte el camino completo del grano:
               del árbol sembrado en altura hasta la taza servida en la barra.
             </p>
-            <Link href="/fincas/experienciasdelorigenalabarra" className="cta-b">
-              Ver todas las experiencias
-              <svg viewBox="0 0 24 24" style={{ width: 14, height: 14, stroke: "currentColor", fill: "none", strokeWidth: 2.5 }}>
-                <polyline points="9 18 15 12 9 6" />
+            {/* Las experiencias se reservan en Panama Unique */}
+            <a
+              className="cta-b"
+              href="https://panamaunique.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver experiencias
+              <svg viewBox="0 0 24 24" style={{ width: 14, height: 14, stroke: "currentColor", fill: "none", strokeWidth: 2 }}>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
               </svg>
-            </Link>
+            </a>
           </div>
         </div>
       </section>

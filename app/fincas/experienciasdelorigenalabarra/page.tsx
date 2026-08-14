@@ -9,6 +9,10 @@ export const metadata = {
   title: "Del Origen a la Barra | Coffee Geeks Panamá",
   description:
     "Vive el café panameño desde la finca: recorridos, cataciones y experiencias que ofrecen las fincas participantes de Coffee Geeks Panamá.",
+  // Página retirada del sitio mientras las experiencias se gestionan en
+  // Panama Unique: sin enlaces y sin indexar, pero la ruta sigue viva
+  // para poder reactivarla sin rehacer nada.
+  robots: { index: false, follow: false },
 };
 
 export default async function ExperienciasPage() {

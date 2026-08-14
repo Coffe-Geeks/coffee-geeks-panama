@@ -1,19 +1,19 @@
 import Link from "next/link";
 
-// Academia y Votaciones quedan fuera hasta que se activen; sus rutas siguen vivas
+// Votaciones y Del Origen a la Barra quedan fuera hasta que se activen;
+// sus rutas siguen vivas, solo se retiran los enlaces.
 const FOOTER_LINKS = {
   plataforma: [
     { label: "Inicio", href: "/home" },
     { label: "Participantes", href: "/participantes" },
     { label: "Fincas", href: "/fincas" },
-    { label: "Del Origen a la Barra", href: "/fincas/experienciasdelorigenalabarra" },
+    { label: "Sobre nosotros", href: "/sobre-nosotros" },
   ],
   academia: [
     { label: "Specialty Coffee Academy", href: "/academia" },
     { label: "Guía del participante", href: "/guia-participante" },
     { label: "Guía del consumidor", href: "/guia-consumidor" },
     { label: "Pasaporte digital", href: "/pasaporte" },
-    { label: "Sobre nosotros", href: "/sobre-nosotros" },
   ],
   legal: [
     { label: "Política de privacidad", href: "/privacidad" },
