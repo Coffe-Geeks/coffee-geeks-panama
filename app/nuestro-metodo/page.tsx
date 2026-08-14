@@ -142,6 +142,9 @@ export default function NuestroMetodoPage() {
         .herr-ul{list-style:none;padding:0;margin:0 0 auto;display:flex;flex-direction:column;gap:7px}
         .herr-ul li{position:relative;padding-left:18px;font-family:'Barlow',sans-serif;font-size:14px;line-height:1.55;color:#38050e;opacity:.82}
         .herr-ul li::before{content:'';position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50px;background:#cddbf2;border:1px solid rgba(56,5,14,.25)}
+        .herr-ol{list-style:none;counter-reset:r;padding:0;margin:0 0 auto;display:flex;flex-direction:column;gap:7px}
+        .herr-ol li{counter-increment:r;position:relative;padding-left:24px;font-family:'Barlow',sans-serif;font-size:14px;line-height:1.55;color:#38050e;opacity:.82}
+        .herr-ol li::before{content:counter(r) ".";position:absolute;left:0;top:0;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:900;color:#38050e;opacity:.5}
         .herr-nota{margin-top:14px;padding-top:12px;border-top:1px solid #cddbf2;font-family:'Barlow',sans-serif;font-size:12.5px;line-height:1.5;color:#38050e;opacity:.6;font-style:italic}
 
         .lema-tres{font-family:'Barlow Condensed',sans-serif;font-size:clamp(20px,2.8vw,30px);font-weight:900;text-transform:uppercase;color:#38050e;text-align:center;line-height:1.15;margin-top:34px}
@@ -293,9 +296,15 @@ export default function NuestroMetodoPage() {
                 {h.lista && (
                   <>
                     {h.listaTitulo && <div className="herr-lt">{h.listaTitulo}</div>}
-                    <ul className="herr-ul">
-                      {h.lista.map((i) => <li key={i}>{i}</li>)}
-                    </ul>
+                    {h.listaTitulo ? (
+                      <ol className="herr-ol">
+                        {h.lista.map((i) => <li key={i}>{i}</li>)}
+                      </ol>
+                    ) : (
+                      <ul className="herr-ul">
+                        {h.lista.map((i) => <li key={i}>{i}</li>)}
+                      </ul>
+                    )}
                   </>
                 )}
                 {h.nota && <div className="herr-nota">{h.nota}</div>}
