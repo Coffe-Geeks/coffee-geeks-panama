@@ -108,7 +108,7 @@ export default function SobreNosotrosPage() {
 
 
         /* ── Puntos principales: número grande + título ── */
-        .pt{margin-bottom:52px}
+        .pt{margin-bottom:52px;scroll-margin-top:74px}
         .pt:last-child{margin-bottom:0}
         .pt-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #cddbf2}
         .pt-num{font-family:'Barlow Condensed',sans-serif;font-size:clamp(40px,6vw,64px);font-weight:900;line-height:.8;color:#cddbf2;flex-shrink:0}
@@ -179,7 +179,7 @@ export default function SobreNosotrosPage() {
         <div className="wrap">
 
           {/* 1 */}
-          <section className="pt">
+          <section className="pt" id="quienes-somos">
             <div className="pt-head">
               <span className="pt-num">01</span>
               <h2 className="pt-title">Quiénes somos</h2>
@@ -200,7 +200,7 @@ export default function SobreNosotrosPage() {
           </section>
 
           {/* 2 */}
-          <section className="pt">
+          <section className="pt" id="que-hacemos">
             <div className="pt-head">
               <span className="pt-num">02</span>
               <h2 className="pt-title">¿Qué hacemos?</h2>
@@ -215,7 +215,7 @@ export default function SobreNosotrosPage() {
           </section>
 
           {/* 3 */}
-          <section className="pt">
+          <section className="pt" id="como-lo-hacemos">
             <div className="pt-head">
               <span className="pt-num">03</span>
               <h2 className="pt-title">¿Cómo lo hacemos?</h2>
