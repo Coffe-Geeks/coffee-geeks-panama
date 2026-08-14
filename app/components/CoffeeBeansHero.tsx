@@ -507,7 +507,7 @@ export default function CoffeeBeansHero({ config, stats }: { config?: any; stats
         <div className="hero-stats" style={{
           position: "absolute",
           bottom: 0, left: 0, right: 0,
-          background: "rgba(56,5,14,0.55)",
+          background: "rgba(0,0,0,0.46)",
           backdropFilter: "blur(12px)",
           borderTop: "1px solid rgba(255,255,255,0.06)",
           padding: "18px 0",
