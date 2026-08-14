@@ -9,6 +9,7 @@ const FOOTER_LINKS = {
     { label: "Del Origen a la Barra", href: "/fincas/experienciasdelorigenalabarra" },
   ],
   academia: [
+    { label: "Specialty Coffee Academy", href: "/academia" },
     { label: "Guía del participante", href: "/guia-participante" },
     { label: "Guía del consumidor", href: "/guia-consumidor" },
     { label: "Pasaporte digital", href: "/pasaporte" },

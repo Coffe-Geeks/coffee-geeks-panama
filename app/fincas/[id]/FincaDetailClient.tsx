@@ -6,12 +6,9 @@ import Navbar from "@/app/components/layout/Navbar";
 
 export default function FincaDetailClient({ finca }: { finca: any }) {
   const [slide, setSlide] = useState(0);
-  const [booking, setBooking] = useState<any | null>(null);
 
   const total = finca.gallery.length;
   const go = (dir: number) => setSlide((s) => (s + dir + total) % total);
-
-  const fmtPrice = (exp: any) => (exp.price > 0 ? `$${exp.price.toFixed(2)}` : "Consultar");
 
   return (
     <>
@@ -84,51 +81,22 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
         .exp-eye-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px}
         .exp-h{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:900;text-transform:uppercase;color:#38050e;line-height:.94}
         .exp-p{font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;color:#38050e;opacity:.7;max-width:600px;margin:10px auto 0}
-        .ec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-        .ec{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.12),0 1px 3px 1px rgba(0,0,0,.08);transition:box-shadow .25s,transform .25s;border:1px solid #cddbf2;display:flex;flex-direction:column}
-        .ec:hover{box-shadow:0 4px 8px 3px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.12);transform:translateY(-5px)}
-        .ec-img{width:100%;aspect-ratio:4/3;background-size:cover;background-position:center;display:flex;align-items:flex-start;justify-content:flex-end;padding:9px}
-        .ec-price{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:900;background:#cddbf2;color:#38050e;padding:4px 11px;border-radius:50px}
-        .ec-body{padding:13px 14px 11px;display:flex;flex-direction:column;flex:1}
-        .ec-title{font-family:'Barlow Condensed',sans-serif;font-size:1.45rem;font-weight:900;text-transform:uppercase;color:#38050e;line-height:1.05;margin-bottom:5px}
-        .ec-sum{font-family:'Barlow',sans-serif;font-size:13px;line-height:1.5;color:#38050e;opacity:.75;margin-bottom:10px}
-        .ec-meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px}
-        .ec-m{display:flex;align-items:center;gap:5px;font-family:'Barlow',sans-serif;font-size:12px;color:#38050e;opacity:.6}
-        .ec-inc{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px}
-        .ec-i{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;color:#38050e;background:#f4efe4;border:1px solid #cddbf2;padding:3px 9px;border-radius:50px}
-        .ec-acts{display:flex;gap:7px;padding-top:9px;border-top:1px solid #cddbf2;margin-top:auto}
-        .ecb{flex:1;height:33px;border-radius:50px;border:none;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;background:#38050e;color:#fff}
-        .ecb:hover{background:#cddbf2;color:#38050e}
-        .exp-empty{text-align:center;color:#38050e;opacity:.55;font-family:'Barlow',sans-serif;padding:20px 0 0}
-        .exp-all{display:flex;justify-content:center;margin-top:30px}
-        .exp-all a{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 22px;border-radius:50px;border:1px solid #38050e;color:#38050e;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s}
-        .exp-all a:hover{background:#38050e;color:#fff}
-
-        /* ── Modal de reserva ── */
-        .bk-ov{position:fixed;inset:0;z-index:400;background:rgba(56,5,14,.75);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px}
-        .bk{background:#fff;border-radius:20px;max-width:440px;width:100%;overflow:hidden;border:1px solid #cddbf2}
-        .bk-hd{background:#38050e;padding:18px 22px}
-        .bk-hd-t{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.05}
-        .bk-hd-s{font-family:'Barlow',sans-serif;font-size:12px;color:rgba(205,219,242,.75);margin-top:3px}
-        .bk-bd{padding:20px 22px}
-        .bk-row{display:flex;justify-content:space-between;align-items:center;font-family:'Barlow',sans-serif;font-size:14px;color:#38050e;padding:7px 0;border-bottom:1px solid #f4efe4}
-        .bk-row strong{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:900}
-        .bk-note{font-family:'Barlow',sans-serif;font-size:13px;line-height:1.55;color:#38050e;opacity:.75;margin-top:14px;background:#f4efe4;border:1px solid #cddbf2;border-radius:12px;padding:12px 14px}
-        .bk-acts{display:flex;gap:8px;margin-top:16px}
-        .bkb{flex:1;height:38px;border-radius:50px;border:none;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;background:#f4efe4;color:#38050e}
-        .bkb:hover{background:#cddbf2}
+        /* ── Botón hacia Panama Unique ── */
+        .exp-cta{display:flex;flex-direction:column;align-items:center;gap:12px}
+        .exp-cta-btn{display:inline-flex;align-items:center;gap:10px;height:52px;padding:0 34px;border-radius:50px;background:#38050e;color:#cddbf2;font-family:'Barlow',sans-serif;font-size:16px;font-weight:500;text-decoration:none;transition:all .2s;box-shadow:0 2px 6px rgba(56,5,14,.18)}
+        .exp-cta-btn:hover{background:#cddbf2;color:#38050e;transform:translateY(-2px);box-shadow:0 6px 14px rgba(56,5,14,.22)}
+        .exp-cta-nota{font-family:'Barlow',sans-serif;font-size:13px;color:#38050e;opacity:.55}
+        @media(max-width:640px){.exp-cta-btn{height:48px;padding:0 26px;font-size:15px}}
 
         @media(max-width:960px){
           .story-grid{grid-template-columns:1fr;gap:26px}
           .spec{position:static}
-          .ec-grid{grid-template-columns:1fr 1fr}
         }
         @media(max-width:768px){
           .ph-flex{flex-direction:column;align-items:flex-start;gap:25px}
           .ph-logo{width:140px}
           .car-nav{width:36px;height:36px}
         }
-        @media(max-width:640px){.ec-grid{grid-template-columns:1fr}}
       `}</style>
 
       <Navbar />
@@ -353,105 +321,26 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
             </p>
           </div>
 
-          {finca.experiences.length > 0 ? (
-            <div className="ec-grid">
-              {finca.experiences.map((exp: any) => (
-                <article className="ec" key={exp.id}>
-                  <div className="ec-img" style={{ backgroundImage: `url('${exp.img}')` }}>
-                    <span className="ec-price">{fmtPrice(exp)}</span>
-                  </div>
-                  <div className="ec-body">
-                    <h3 className="ec-title">{exp.title}</h3>
-                    {exp.summary && <p className="ec-sum">{exp.summary}</p>}
-                    <div className="ec-meta">
-                      {exp.duration && (
-                        <span className="ec-m">
-                          <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", fill: "none", strokeWidth: 1.5 }}>
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                          </svg>
-                          {exp.duration}
-                        </span>
-                      )}
-                      {exp.capacity > 0 && (
-                        <span className="ec-m">
-                          <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", fill: "none", strokeWidth: 1.5 }}>
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                          </svg>
-                          Hasta {exp.capacity}
-                        </span>
-                      )}
-                    </div>
-                    {exp.includes.length > 0 && (
-                      <div className="ec-inc">
-                        {exp.includes.slice(0, 3).map((i: string) => (
-                          <span className="ec-i" key={i}>{i}</span>
-                        ))}
-                      </div>
-                    )}
-                    <div className="ec-acts">
-                      <button className="ecb" onClick={() => setBooking(exp)}>Reservar</button>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <p className="exp-empty">Esta finca aún no publica experiencias.</p>
-          )}
-
-          <div className="exp-all">
-            <Link href="/fincas/experienciasdelorigenalabarra">
-              Ver todas las experiencias
-              <svg viewBox="0 0 24 24" style={{ width: 13, height: 13, stroke: "currentColor", fill: "none", strokeWidth: 2 }}>
-                <polyline points="9 18 15 12 9 6" />
+          {/* Las experiencias se reservan en Panama Unique */}
+          <div className="exp-cta">
+            <a
+              className="exp-cta-btn"
+              href="https://panamaunique.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver experiencias
+              <svg viewBox="0 0 24 24" style={{ width: 15, height: 15, stroke: "currentColor", fill: "none", strokeWidth: 2 }}>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
               </svg>
-            </Link>
+            </a>
+            <p className="exp-cta-nota">Reservas gestionadas por Panama Unique</p>
           </div>
         </div>
       </section>
 
-      {/* Modal de reserva — punto único donde se conectará la pasarela de pago */}
-      {booking && (
-        <div className="bk-ov" onClick={() => setBooking(null)}>
-          <div className="bk" onClick={(e) => e.stopPropagation()}>
-            <div className="bk-hd">
-              <div className="bk-hd-t">{booking.title}</div>
-              <div className="bk-hd-s">
-                {finca.name} · {finca.location}
-              </div>
-            </div>
-            <div className="bk-bd">
-              {booking.duration && (
-                <div className="bk-row">
-                  <span>Duración</span>
-                  <span>{booking.duration}</span>
-                </div>
-              )}
-              {booking.capacity > 0 && (
-                <div className="bk-row">
-                  <span>Cupo por tanda</span>
-                  <span>{booking.capacity} personas</span>
-                </div>
-              )}
-              <div className="bk-row">
-                <span>Precio por persona</span>
-                <strong>{fmtPrice(booking)}</strong>
-              </div>
-
-              <div className="bk-note">
-                Las reservas en línea abren cuando se active la pasarela de pago.
-                Mientras tanto, escríbenos y coordinamos tu visita a {finca.name}.
-              </div>
-
-              <div className="bk-acts">
-                <button className="bkb" onClick={() => setBooking(null)}>Cerrar</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

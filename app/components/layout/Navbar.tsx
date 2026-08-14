@@ -5,13 +5,13 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import VoteModal from "@/app/components/VoteModal";
 
-// Academia y Votaciones quedan fuera del menú hasta que se activen.
-// Las rutas siguen existiendo: solo se retiran los enlaces.
+// Votaciones sigue fuera del menú hasta que se active; su ruta existe.
 const NAV_LINKS = [
   { label: "Descúbrenos", href: "/home" },
   { label: "Participantes", href: "/participantes" },
   { label: "Fincas", href: "/fincas" },
   { label: "Sobre Nosotros", href: "/sobre-nosotros" },
+  { label: "Academia", href: "/academia" },
   { label: "Pasaporte", href: "/pasaporte" },
   { label: "Tienda", href: "/tienda" },
 ];
