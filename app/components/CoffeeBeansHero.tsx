@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import HeroVideo from "./HeroVideo";
 import VoteModal from "@/app/components/VoteModal";
 
 /* ─── Coffee Bean SVG ──────────────────────────────────────────────────────
@@ -398,10 +399,8 @@ export default function CoffeeBeansHero({ config }: { config?: any }) {
           pointerEvents: "none",
         }} />
 
-        {/* ── Floating coffee beans ── */}
-        {mounted && BEANS.map(bean => (
-          <FloatingBean key={bean.id} config={bean} />
-        ))}
+        {/* ── Montaje de fotos de los coffee shops ── */}
+        {mounted && <HeroVideo />}
 
         {/* ── Horizontal separator line ── */}
         <div style={{
