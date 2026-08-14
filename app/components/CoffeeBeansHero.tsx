@@ -345,35 +345,6 @@ export default function CoffeeBeansHero({ config, stats }: { config?: any; stats
       background-size: 180px 180px;
       pointer-events: none;
     }
-    .glow-top {
-      position: absolute;
-      top: -20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60%;
-      height: 50%;
-      background: radial-gradient(ellipse, rgba(56,5,14,0.35) 0%, transparent 70%);
-      pointer-events: none;
-      animation: breathe 6s ease-in-out infinite;
-    }
-    .glow-bottom-left {
-      position: absolute;
-      bottom: 0;
-      left: -10%;
-      width: 40%;
-      height: 40%;
-      background: radial-gradient(ellipse, rgba(56,5,14,0.2) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .glow-bottom-right {
-      position: absolute;
-      bottom: 5%;
-      right: -5%;
-      width: 35%;
-      height: 35%;
-      background: radial-gradient(ellipse, rgba(56,5,14,0.25) 0%, transparent 70%);
-      pointer-events: none;
-    }
 
     @media (max-width: 640px) {
       .stat-item { padding: 0 14px; }
@@ -414,7 +385,7 @@ export default function CoffeeBeansHero({ config, stats }: { config?: any; stats
         }} />
 
         {/* ── Montaje de fotos de los coffee shops ── */}
-        {mounted && <HeroVideo />}
+        <HeroVideo />
 
         {/* ── Horizontal separator line ── */}
         <div style={{
