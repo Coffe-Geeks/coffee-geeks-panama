@@ -356,12 +356,11 @@ export default function SettingsForm({ config }: { config: any }) {
           <input
             id="votingEndDate"
             name="votingEndDate"
-            type="text"
+            type="date"
             defaultValue={config.votingEndDate}
-            placeholder="Ej: 30 de Octubre, 2024"
             className={inputCls}
           />
-          <p className="text-[#cddbf2]/30 text-xs pl-1">Esta fecha se mostrará en la sección de protagonistas del Home.</p>
+          <p className="text-[#cddbf2]/30 text-xs pl-1">Se muestra en la portada y en la sección de protagonistas, con el formato de cada lugar.</p>
         </div>
       </div>
 

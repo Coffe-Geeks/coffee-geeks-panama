@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatFechaCierre } from "@/lib/utils";
 import VoteModal from "@/app/components/VoteModal";
 
 interface RankingSectionProps {
@@ -71,7 +72,7 @@ export default function RankingSection({ podium, rest, votingEndDate }: RankingS
             </div>
             <div style={{ textAlign: "right" }}>
               <p className="reg-label">Registro cierra</p>
-              <p className="reg-date">{votingEndDate || "PRÓXIMAMENTE"}</p>
+              <p className="reg-date">{formatFechaCierre(votingEndDate) || "PRÓXIMAMENTE"}</p>
             </div>
           </div>
 
@@ -114,7 +115,7 @@ export default function RankingSection({ podium, rest, votingEndDate }: RankingS
           <div className="vote-cta">
             <div>
               <h4>¿Ya visitaste alguna cafetería participante?</h4>
-              <p>Registra tu visita y emite tu voto antes del {votingEndDate || "final del evento"}.</p>
+              <p>Registra tu visita y emite tu voto antes del {formatFechaCierre(votingEndDate) || "final del evento"}.</p>
             </div>
             <button className="btn-dark" onClick={openVote}>Emitir mi voto →</button>
           </div>

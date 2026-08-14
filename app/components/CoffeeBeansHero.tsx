@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { formatFechaCierre } from "@/lib/utils";
 import HeroVideo from "./HeroVideo";
 import VoteModal from "@/app/components/VoteModal";
 
@@ -179,16 +180,7 @@ export default function CoffeeBeansHero({ config, stats }: { config?: any; stats
 
   // Fecha de cierre desde la configuración del sitio. Se muestra en formato
   // corto para que quepa junto a las cifras sin desbordar la franja.
-  const cierreRegistro = (() => {
-    const v = config?.votingEndDate;
-    if (!v) return "Próximamente";
-    const d = new Date(v);
-    if (isNaN(d.getTime())) return String(v);
-    return d
-      .toLocaleDateString("es-PA", { day: "numeric", month: "short", timeZone: "America/Panama" })
-      .replace(".", "")
-      .toUpperCase();
-  })();
+  const cierreRegistro = formatFechaCierre(config?.votingEndDate, "corta") || "Próximamente";
 
   const heroEyebrow = config?.heroEyebrow ?? "Concurso Nacional · Temporada 2026";
   const heroTitle1 = config?.heroTitle1 ?? "El Camino";
