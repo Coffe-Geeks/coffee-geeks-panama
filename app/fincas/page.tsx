@@ -3,6 +3,12 @@ import { getFincas } from "@/app/actions/finca";
 import FincasClient from "./FincasClient";
 import Footer from "@/app/components/layout/Footer";
 
+export const metadata = {
+  title: "The Origin Guide By Panama Unique § Coffee Geeks",
+  description:
+    "Una guía curada de fincas, coffee shops, rutas cafeteras y experiencias auténticas del café de Panamá.",
+};
+
 export const dynamic = "force-dynamic";
 
 export default async function FincasPage() {

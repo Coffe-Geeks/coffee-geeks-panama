@@ -34,14 +34,12 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         .ph{position:relative;padding-top:58px}
         .ph-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.62}
         .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.48) 45%,rgba(0,0,0,.72) 100%)}
-        .ph-cnt{position:relative;z-index:2;padding:44px 0 44px}
+        .ph-cnt{position:relative;z-index:2;padding:64px 0 58px}
         .ph-flex{display:flex;align-items:center;justify-content:space-between;gap:40px}
-        .ph-txt{flex:1}
+        .ph-txt{max-width:920px}
         .ph-eye{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(196,212,232,.7);margin-bottom:10px}
-        .ph-h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(38px,6vw,64px);font-weight:900;text-transform:uppercase;color:#fff;line-height:.92;margin-bottom:4px}
-        .ph-h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:400;text-transform:uppercase;color:rgba(196,212,232,.55)}
-        .ph-logo{width:clamp(120px,18vw,220px);height:auto;filter:drop-shadow(0 10px 30px rgba(0,0,0,0.3));animation:float 6s ease-in-out infinite}
-        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .ph-h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(42px,6.4vw,76px);font-weight:900;text-transform:uppercase;color:#fff;line-height:.88;margin:0;max-width:900px;text-wrap:balance}
+        .ph-by{display:block;font-size:.44em;font-weight:400;line-height:1.15;color:rgba(205,219,242,.82);margin-top:14px;letter-spacing:.02em}
 
         .bread{background:#fff;border-bottom:1px solid #eee}
         .bread-i{display:flex;align-items:center;gap:7px;padding:9px 0;font-family:'Barlow',sans-serif;font-size:12px}
@@ -52,13 +50,16 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         .wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,60px)}
 
         /* ── Intro: los productores ── */
-        .intro{background:#fff;padding:56px 0 44px}
+        .intro{background:#fff;padding:64px 0 54px}
         .eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:12px}
         .eyebrow-line{height:1px;width:40px;background:#cddbf2}
         .eyebrow-text{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#38050e;opacity:.6}
-        .intro-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:44px;align-items:start}
-        .intro-h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:900;text-transform:uppercase;color:#38050e;line-height:.94}
+        .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+        .intro-h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,4.5vw,52px);font-weight:900;text-transform:uppercase;color:#38050e;line-height:.94;margin-bottom:24px;max-width:850px}
         .intro-p{font-family:'Barlow',sans-serif;font-size:15px;line-height:1.65;color:#38050e;opacity:.78;margin-top:14px}
+        .curated{margin-top:24px;padding:22px 24px;border-left:3px solid #38050e;background:#f4efe4}
+        .curated-h{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;text-transform:uppercase;color:#38050e;margin:0 0 6px}
+        .curated .intro-p{margin-top:0}
         .intro-stats{display:flex;gap:34px;margin-top:24px;flex-wrap:wrap}
         .stat-n{font-family:'Barlow Condensed',sans-serif;font-size:2.6rem;font-weight:900;color:#38050e;line-height:1}
         .stat-l{font-family:'Barlow',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#38050e;opacity:.55;margin-top:2px}
@@ -98,8 +99,7 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
 
         @media(max-width:960px){.fc-grid{grid-template-columns:1fr 1fr}.intro-grid{grid-template-columns:1fr;gap:24px}}
         @media(max-width:768px){
-          .ph-flex{flex-direction:column;align-items:flex-start;gap:25px}
-          .ph-logo{width:140px}
+          .ph-cnt{padding:54px 0 46px}
         }
         @media(max-width:640px){.fc-grid{grid-template-columns:1fr}}
       `}</style>
@@ -111,7 +111,7 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         <div
           className="ph-bg"
           style={{
-            backgroundImage: "url('/banner-fincas.webp')",
+            backgroundImage: "url('/origin-guide-coffee-finca.webp')",
           }}
         />
         <div className="ph-sc" />
@@ -119,16 +119,11 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
           <div className="wrap">
             <div className="ph-flex">
               <div className="ph-txt">
-                <div className="ph-eye">Coffee Geeks Panamá · Temporada 2026</div>
-                <h1 className="ph-h1">Fincas</h1>
-                <h2 className="ph-h2">
-                  Donde nace
-                  <br />
-                  el café de Panamá
-                </h2>
-              </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Concurso Logo" className="ph-logo" />
+                <div className="ph-eye">The Origin Guide · Panamá</div>
+                <h1 className="ph-h1">
+                  The Origin Guide
+                  <span className="ph-by">By Panama Unique § Coffee Geeks</span>
+                </h1>
               </div>
             </div>
           </div>
@@ -148,41 +143,58 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         </div>
       </div>
 
-      {/* Los productores */}
+      {/* The Origin Guide */}
       <section className="intro">
         <div className="wrap">
+          <div className="eyebrow-row">
+            <div className="eyebrow-line" />
+            <span className="eyebrow-text">The Origin Guide</span>
+          </div>
+          <h2 className="intro-h2">Bienvenido a The Origin Guide.</h2>
           <div className="intro-grid">
             <div>
-              <div className="eyebrow-row">
-                <div className="eyebrow-line" />
-                <span className="eyebrow-text">Los productores</span>
-              </div>
-              <h2 className="intro-h2">Detrás de cada taza hay una familia</h2>
               <p className="intro-p">
-                El café que llega a la barra empezó mucho antes, en las tierras altas de
-                Panamá, en manos de productores que llevan generaciones leyendo la
-                montaña. Ellos deciden cuándo cosechar, cómo secar y qué variedad
-                sembrar en cada ladera.
+                Panamá no solo produce algunos de los cafés más exclusivos y premiados del
+                mundo. También alberga un ecosistema único de productores, fincas, coffee
+                shops, hoteles y experiencias que convierten cada taza en una historia que
+                merece ser vivida.
               </p>
               <p className="intro-p">
-                Estas son las fincas que abren sus puertas esta temporada. Conócelas por
-                dónde están, porque en el café la ubicación lo es casi todo: la altura,
-                la sombra y el suelo explican por qué dos granos vecinos saben distinto.
+                La Guía nace para conectar al mundo con el verdadero origen. Plataforma de
+                curaduría internacional que reúne únicamente experiencias seleccionadas por
+                su excelencia, autenticidad y capacidad de representar la identidad cafetera
+                del país.
               </p>
             </div>
-            <div className="intro-stats">
-              <div>
-                <div className="stat-n">{initialFincas.length}</div>
-                <div className="stat-l">Fincas participantes</div>
+            <div>
+              <p className="intro-p">
+                Diseñada para viajeros, amantes del café, turismo con propósito y exploradores
+                de experiencias auténticas, te mostramos una cuidada selección de las fincas
+                con sus coffee shops y rutas cafeteras más exclusivas del país. Cada experiencia
+                invita a descubrir el recorrido completo del café: desde el terroir donde nace
+                cada varietal hasta la taza servida por un barista experto.
+              </p>
+              <div className="curated">
+                <h3 className="curated-h">Curated by Coffee Geeks</h3>
+                <p className="intro-p">
+                  Cada finca forma parte de una selección cuidadosa, garantizando estándares de
+                  calidad, hospitalidad, sostenibilidad y una conexión genuina con el origen.
+                </p>
               </div>
-              <div>
-                <div className="stat-n">{regions.length}</div>
-                <div className="stat-l">{regions.length === 1 ? "Región" : "Regiones"}</div>
-              </div>
-              <div>
-                <div className="stat-n">{totalExperiences}</div>
-                <div className="stat-l">Experiencias</div>
-              </div>
+            </div>
+          </div>
+          <div className="intro-stats">
+            <div>
+              <div className="stat-n">{initialFincas.length}</div>
+              <div className="stat-l">Fincas participantes</div>
+            </div>
+            <div>
+              <div className="stat-n">{regions.length}</div>
+              <div className="stat-l">{regions.length === 1 ? "Región" : "Regiones"}</div>
+            </div>
+            <div>
+              <div className="stat-n">{totalExperiences}</div>
+              <div className="stat-l">Experiencias</div>
             </div>
           </div>
         </div>

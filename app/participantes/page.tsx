@@ -29,8 +29,12 @@ export default async function ParticipantesPage() {
     });
   }
 
-  // Los que tienen su ficha y sus fotos van primero; los que solo tienen
-  // una de las dos, después. La página los recibe ya ordenados.
+  // Primero destacamos los coffee shops con portada editorial de su barista.
+  // Dentro de cada grupo se conserva la prioridad por ficha completa.
+  const tienePortadaBarista = (c: any) =>
+    (c.businessType || "coffee") === "coffee" &&
+    /(?:portada-)?barista/i.test(c.coverImage || "");
+
   const completitud = (c: any) => {
     const conFoto = !!c.coverImage;
     const conFicha = !!(c.tagline || c.espresso || c.filtrado || c.signatureDrink);
@@ -39,6 +43,9 @@ export default async function ParticipantesPage() {
   };
 
   cafeterias.sort((a: any, b: any) => {
+    const baristasPrimero = Number(tienePortadaBarista(b)) - Number(tienePortadaBarista(a));
+    if (baristasPrimero !== 0) return baristasPrimero;
+
     const d = completitud(b) - completitud(a);
     if (d !== 0) return d;
     return (a.cafeteriaName || a.name || "").localeCompare(b.cafeteriaName || b.name || "");
