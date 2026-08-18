@@ -81,6 +81,8 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         .fc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;text-transform:uppercase;color:#38050e;line-height:1.05;margin-bottom:3px}
         .fc-loc{font-family:'Barlow',sans-serif;font-size:13px;color:#38050e;opacity:.55}
         .fc-meta{display:flex;align-items:center;gap:6px;font-family:'Barlow',sans-serif;font-size:12px;color:#38050e;opacity:.6;margin-top:8px}
+        .fc-vars{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+        .fc-var{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;color:#38050e;background:#f4efe4;border:1px solid #cddbf2;padding:3px 9px;border-radius:50px}
         .fc-desc{font-family:'Barlow',sans-serif;font-size:13px;line-height:1.5;color:#38050e;opacity:.7;margin-top:9px}
         .fc-disc{margin-top:auto;padding-top:14px}
         .fc-disc a{display:inline-flex;align-items:center;gap:7px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;color:#38050e;text-decoration:none;border-bottom:1px solid #38050e;padding-bottom:2px;transition:opacity .2s}
@@ -160,20 +162,14 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
                 merece ser vivida.
               </p>
               <p className="intro-p">
-                La Guía nace para conectar al mundo con el verdadero origen. Plataforma de
-                curaduría internacional que reúne únicamente experiencias seleccionadas por
-                su excelencia, autenticidad y capacidad de representar la identidad cafetera
-                del país.
-              </p>
-            </div>
-            <div>
-              <p className="intro-p">
                 Diseñada para viajeros, amantes del café, turismo con propósito y exploradores
                 de experiencias auténticas, te mostramos una cuidada selección de las fincas
                 con sus coffee shops y rutas cafeteras más exclusivas del país. Cada experiencia
                 invita a descubrir el recorrido completo del café: desde el terroir donde nace
                 cada varietal hasta la taza servida por un barista experto.
               </p>
+            </div>
+            <div>
               <div className="curated">
                 <h3 className="curated-h">Curated by Coffee Geeks</h3>
                 <p className="intro-p">
@@ -242,7 +238,13 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
                         <polygon points="12 2 22 20 2 20 12 2" />
                       </svg>
                       {finca.altitude} msnm
-                      {finca.varieties.length > 0 && ` · ${finca.varieties.slice(0, 2).join(", ")}`}
+                    </div>
+                  )}
+                  {finca.varieties.length > 0 && (
+                    <div className="fc-vars">
+                      {finca.varieties.map((v: string) => (
+                        <span className="fc-var" key={v}>{v}</span>
+                      ))}
                     </div>
                   )}
                   {finca.desc && <p className="fc-desc">{finca.desc}</p>}
