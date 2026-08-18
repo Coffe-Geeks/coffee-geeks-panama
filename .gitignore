@@ -141,3 +141,16 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# --- Coffe Geeks Panama MERN ---
+.env
+.env.local
+.env.*.local
+node_modules/
+dist/
+build/
+logs/
+*.log
+.DS_Store
+coverage/
+.npm
