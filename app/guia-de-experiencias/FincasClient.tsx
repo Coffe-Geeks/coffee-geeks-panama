@@ -257,7 +257,7 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
                     </div>
                   )}
                   <div className="fc-disc">
-                    <Link href={`/fincas/${getSlugId(finca.name, finca.id)}`}>
+                    <Link href={`/guia-de-experiencias/${getSlugId(finca.name, finca.id)}`}>
                       Descubre
                       <svg viewBox="0 0 24 24" style={{ width: 13, height: 13, stroke: "currentColor", fill: "none", strokeWidth: 2 }}>
                         <polyline points="9 18 15 12 9 6" />

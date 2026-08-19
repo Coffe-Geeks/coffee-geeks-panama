@@ -6,7 +6,7 @@ const FOOTER_LINKS = {
   plataforma: [
     { label: "Inicio", href: "/home" },
     { label: "Participantes", href: "/participantes" },
-    { label: "Guía de Experiencias", href: "/fincas" },
+    { label: "Guía de Experiencias", href: "/guia-de-experiencias" },
     { label: "Sobre nosotros", href: "/sobre-nosotros" },
   ],
   academia: [

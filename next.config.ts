@@ -7,6 +7,23 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
   },
+  async redirects() {
+    return [
+      {
+        // La sección se llamaba /fincas. Redirección permanente para que
+        // los enlaces ya compartidos y lo indexado sigan funcionando.
+        source: "/fincas",
+        destination: "/guia-de-experiencias",
+        permanent: true,
+      },
+      {
+        source: "/fincas/:path*",
+        destination: "/guia-de-experiencias/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {

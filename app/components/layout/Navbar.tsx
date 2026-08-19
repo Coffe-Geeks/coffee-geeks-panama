@@ -22,7 +22,7 @@ const NAV_LINKS: NavLink[] = [
     ],
   },
   { label: "Participantes", href: "/participantes" },
-  { label: "Guía de Experiencias", href: "/fincas" },
+  { label: "Guía de Experiencias", href: "/guia-de-experiencias" },
   { label: "Academia", href: "/academia" },
   { label: "Pasaporte", href: "/pasaporte" },
   { label: "Tienda", href: "/tienda" },

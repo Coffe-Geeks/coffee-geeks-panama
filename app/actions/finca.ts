@@ -117,7 +117,7 @@ export async function createFinca(formData: FormData) {
   });
 
   revalidatePath("/admin/fincas");
-  revalidatePath("/fincas");
+  revalidatePath("/guia-de-experiencias");
   return JSON.parse(JSON.stringify(finca));
 }
 
@@ -154,8 +154,8 @@ export async function updateFinca(id: string, formData: FormData) {
   await Finca.findByIdAndUpdate(id, updateData);
 
   revalidatePath("/admin/fincas");
-  revalidatePath("/fincas");
-  revalidatePath("/fincas/experienciasdelorigenalabarra");
+  revalidatePath("/guia-de-experiencias");
+  revalidatePath("/guia-de-experiencias/experienciasdelorigenalabarra");
 }
 
 export async function deleteFinca(id: string) {
@@ -172,8 +172,8 @@ export async function deleteFinca(id: string) {
   }
 
   revalidatePath("/admin/fincas");
-  revalidatePath("/fincas");
-  revalidatePath("/fincas/experienciasdelorigenalabarra");
+  revalidatePath("/guia-de-experiencias");
+  revalidatePath("/guia-de-experiencias/experienciasdelorigenalabarra");
 }
 
 // ── Experiencias embebidas ──
@@ -221,8 +221,8 @@ export async function addOrUpdateExperience(
   await finca.save();
 
   revalidatePath("/admin/fincas");
-  revalidatePath("/fincas");
-  revalidatePath("/fincas/experienciasdelorigenalabarra");
+  revalidatePath("/guia-de-experiencias");
+  revalidatePath("/guia-de-experiencias/experienciasdelorigenalabarra");
 }
 
 export async function deleteExperience(fincaId: string, experienceId: string) {
@@ -240,6 +240,6 @@ export async function deleteExperience(fincaId: string, experienceId: string) {
   }
 
   revalidatePath("/admin/fincas");
-  revalidatePath("/fincas");
-  revalidatePath("/fincas/experienciasdelorigenalabarra");
+  revalidatePath("/guia-de-experiencias");
+  revalidatePath("/guia-de-experiencias/experienciasdelorigenalabarra");
 }

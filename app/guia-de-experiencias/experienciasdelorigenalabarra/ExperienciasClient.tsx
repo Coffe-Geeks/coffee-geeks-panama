@@ -156,7 +156,7 @@ export default function ExperienciasClient({
             <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", opacity: 0.5, fill: "none", strokeWidth: 2 }}>
               <polyline points="9 18 15 12 9 6" />
             </svg>
-            <Link href="/fincas">Fincas</Link>
+            <Link href="/guia-de-experiencias">Fincas</Link>
             <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", opacity: 0.5, fill: "none", strokeWidth: 2 }}>
               <polyline points="9 18 15 12 9 6" />
             </svg>
