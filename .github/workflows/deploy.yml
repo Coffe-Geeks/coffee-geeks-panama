@@ -1,0 +1,92 @@
+name: Desplegar a producción
+
+# Se dispara al empujar a main y también a mano desde la pestaña Actions.
+# El entorno "production" permite exigir aprobación antes de que corra:
+#   Settings → Environments → production → Required reviewers
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  # Dos despliegues simultáneos dejarían el servidor a medio actualizar
+  group: deploy-produccion
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Traer el código
+        uses: actions/checkout@v4
+
+      - name: Preparar la conexión SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Respaldar el servidor antes de tocar nada
+        run: |
+          ssh -i ~/.ssh/id_deploy -o BatchMode=yes \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" bash -s <<'EOF'
+          set -e
+          TS=$(date +%Y%m%d-%H%M%S)
+          cd /var/www/html
+          tar czf "/root/backup-code-$TS.tar.gz" --exclude=node_modules --exclude=.next . 2>/dev/null
+          URI=$(grep -E '^MONGODB_URI=' .env.local | sed -E 's/^MONGODB_URI=//; s/"//g')
+          mongodump --uri="$URI" --archive="/root/backup-db-$TS.archive.gz" --gzip --quiet
+          echo "Respaldo: backup-code-$TS.tar.gz y backup-db-$TS.archive.gz"
+          # Conservar los últimos 10 de cada tipo; el disco no es infinito
+          ls -1t /root/backup-code-*.tar.gz    2>/dev/null | tail -n +11 | xargs -r rm -f
+          ls -1t /root/backup-db-*.archive.gz  2>/dev/null | tail -n +11 | xargs -r rm -f
+          EOF
+
+      - name: Sincronizar los archivos
+        # SIN --delete a propósito. Con esa bandera, desplegar desde una copia
+        # desactualizada borra del servidor todo lo que no exista en el origen:
+        # así se perdió el trabajo de producción el 5 de agosto de 2026.
+        #
+        # uploads/ y public/uploads/ guardan las imágenes que suben los
+        # usuarios y no están versionadas. .env* tiene los secretos de
+        # producción, que no viven en el repositorio.
+        run: |
+          rsync -az --human-readable --stats \
+            -e "ssh -i ~/.ssh/id_deploy -o BatchMode=yes" \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            --exclude='.next/' \
+            --exclude='.env*' \
+            --exclude='uploads/' \
+            --exclude='public/uploads/' \
+            --exclude='*.tsbuildinfo' \
+            ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/html/"
+
+      - name: Instalar, compilar y reiniciar
+        run: |
+          ssh -i ~/.ssh/id_deploy -o BatchMode=yes \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" bash -s <<'EOF'
+          set -e
+          cd /var/www/html
+          npm install --no-audit --no-fund
+          npm run build
+          pm2 restart coffee-geeks --update-env
+          sleep 6
+          pm2 list | grep coffee-geeks
+          EOF
+
+      - name: Comprobar que el sitio responde
+        run: |
+          for RUTA in / /home /participantes /guia-de-experiencias; do
+            CODIGO=$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 "https://coffeegeekspanama.com$RUTA")
+            echo "$CODIGO $RUTA"
+            if [ "$CODIGO" != "200" ]; then
+              echo "::error::$RUTA respondió $CODIGO. Revisar el servidor; hay respaldo en /root."
+              exit 1
+            fi
+          done
+          echo "Despliegue verificado."
