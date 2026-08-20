@@ -1,46 +1,172 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import "./intro.css";
+import Navbar from "@/app/components/layout/Navbar";
+import Footer from "@/app/components/layout/Footer";
+import HeroIntro from "@/app/components/home/HeroIntro";
+import StatsStrip from "@/app/components/home/StatsStrip";
+import StepsSection from "@/app/components/home/StepsSection";
+import ShopsSection from "@/app/components/home/ShopsSection";
+import RankingSection from "@/app/components/home/RankingSection";
+import AcademiaSection from "@/app/components/home/AcademiaSection";
+import BlogSection from "@/app/components/home/BlogSection";
+import MapSection from "@/app/components/home/MapSection";
+import AlliesSection from "@/app/components/home/AlliesSection";
+import { getAllies } from "@/app/actions/ally";
+import { getFincas } from "@/app/actions/finca";
+import { formatFechaCierre } from "@/lib/utils";
 
-export default function Home() {
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getSiteConfig();
+  const title = config.seoTitle || "Coffee Geeks Panamá | El Camino a la Gran Taza";
+  const description = config.seoDescription || "Primer concurso que premia la mejor taza de café de Panamá.";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: config.ogImage ? [{ url: config.ogImage }] : [],
+    },
+  };
+}
+
+import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
+import Vote from "@/models/Vote";
+import { getSiteConfig } from "@/lib/siteConfig";
+
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+  const config = await getSiteConfig();
+  const ALLIES = await getAllies();
+  const FINCAS_COUNT = (await getFincas()).length;
+  const currentRound = config?.currentVotingRound || 0;
+
+  const query: any = { role: "cafeteria", isActive: true };
+  if (currentRound === 2) {
+    query.advancedToRound2 = true;
+  }
+  const cafeterias = await User.find(query).lean();
+
+  let totalVotos = 0;
+  let votesCountMap: Record<string, number> = {};
+  if (currentRound > 0) {
+    const votes = await Vote.find({ round: currentRound }).lean();
+    totalVotos = votes.length;
+    votes.forEach((v: any) => {
+      const cid = v.cafeteriaId.toString();
+      votesCountMap[cid] = (votesCountMap[cid] || 0) + 1;
+    });
+  }
+
+  const SHOPS = cafeterias.map((c: any) => ({
+    id: c._id.toString(),
+    type: c.businessType || "coffee",
+    name: c.cafeteriaName || `${c.name} ${c.lastName}`.trim(),
+    cat: Array.isArray(c.competitionCategory) && c.competitionCategory.length > 0
+      ? c.competitionCategory.join(" - ")
+      : (typeof c.competitionCategory === 'string' && c.competitionCategory ? c.competitionCategory : "Cafetería"),
+    loc: c.neighborhood || "Panamá",
+    votes: votesCountMap[c._id.toString()] || 0,
+    img: c.coverImage || "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=75",
+    lat: c.locationLat,
+    lng: c.locationLng
+  }));
+
+  // Coordenadas de las cafeterías con ubicación verificada, para el mini-mapa
+  // de la tarjeta del pasaporte en el hero.
+  const MAP_PTS = SHOPS
+    .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
+    .map((s) => [s.lat, s.lng] as [number, number]);
+
+  const cierreRegistro = formatFechaCierre(config?.votingEndDate, "corta") || "Próximamente";
+
+  const sortedByVotes = [...SHOPS].sort((a, b) => b.votes - a.votes);
+
+  const podiumRaw = [
+    sortedByVotes[1], // 2nd
+    sortedByVotes[0], // 1st
+    sortedByVotes[2], // 3rd
+  ].filter(Boolean);
+
+  const PODIUM_DATA = podiumRaw.map((c, idx) => {
+    // Determine visual position based on the index in podiumRaw [2nd, 1st, 3rd]
+    let pos = 2;
+    let rankCls = "rs";
+    let posLabel = "2";
+    let isGold = false;
+
+    if (c.id === sortedByVotes[0]?.id) {
+       pos = 1; rankCls = "rg"; posLabel = "1"; isGold = true;
+    } else if (c.id === sortedByVotes[2]?.id) {
+       pos = 3; rankCls = "rb2"; posLabel = "3";
+    }
+
+    return {
+      pos,
+      rankCls,
+      posLabel,
+      name: c.name,
+      cat: c.cat,
+      votes: `${c.votes} votos`,
+      isGold,
+      img: c.img
+    };
+  });
+
+  const REST_DATA = sortedByVotes.slice(3, 7).map((c, idx) => ({
+    pos: idx + 4,
+    name: c.name,
+    cat: c.cat,
+    votes: c.votes
+  }));
+
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/background.webp"
-          alt="Background"
-          fill
-          priority
-          className="object-cover object-center"
+    <>
+      {/* Sticky top navigation */}
+      <Navbar />
+
+      {/* Push content below the fixed navbar */}
+      <main className="pg-propuesta" style={{ paddingTop: 58 }}>
+        {/* 1. Intro a pantalla completa: b-rolls de fondo + carrusel */}
+        <HeroIntro mapPts={MAP_PTS} />
+
+        {/* 1.5 Cifras del concurso */}
+        <StatsStrip
+          stats={{ cafeterias: SHOPS.length, votos: totalVotos, fincas: FINCAS_COUNT }}
+          cierre={cierreRegistro}
         />
-        {/* Subtle dark overlay for contrast */}
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-      </div>
 
-      {/* Content wrapper with glass effect */}
-      <div className="z-10 flex flex-col items-center justify-center p-8 md:p-14 lg:p-20 rounded-3xl bg-white/10 backdrop-blur-md shadow-2xl border border-white/20 mx-6 transition-all hover:scale-[1.02] duration-700 hover:bg-white/15 hover:shadow-white/10">
-        
-        {/* Main Logo */}
-        <div className="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[450px] md:h-[450px] drop-shadow-[0_0_25px_rgba(255,255,255,0.4)]">
-          <Image
-            src="/logo.webp"
-            alt="Coffee Geeks Panamá Logo"
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
+        {/* 2. Pasos — cómo participar */}
+        <StepsSection />
 
-        {/* Construction indicator below */}
-        <div className="mt-8 sm:mt-10 md:mt-12 relative w-[200px] h-[60px] sm:w-[250px] sm:h-[75px] md:w-[350px] md:h-[105px] drop-shadow-xl opacity-90 transition-opacity hover:opacity-100 duration-300">
-          <Image
-            src="/construccion.webp"
-            alt="En Construcción"
-            fill
-            className="object-contain"
-          />
-        </div>
+        {/* 3. Cafeterías participantes */}
+        <ShopsSection initialShops={SHOPS} />
 
-      </div>
-    </main>
+        {/* 3.5 Mapa de la ruta */}
+        <MapSection shops={SHOPS} />
+
+        {/* 3.6 Aliados */}
+        <AlliesSection allies={ALLIES} />
+
+        {/* 4. Ranking en vivo */}
+        <RankingSection
+          podium={PODIUM_DATA}
+          rest={REST_DATA}
+          votingEndDate={config?.votingEndDate}
+        />
+
+        {/* 5. Academia CGP */}
+        <AcademiaSection />
+
+        {/* 6. Blog — historias */}
+        <BlogSection />
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </>
   );
 }

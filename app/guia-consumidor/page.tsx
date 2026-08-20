@@ -16,7 +16,7 @@ export default async function GuiaConsumidorPage() {
       </div>
 
       <div className="z-10 max-w-3xl mx-auto">
-        <Link href="/home" className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm mb-8 transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-white/50 hover:text-white text-sm mb-8 transition-colors">
           ← Volver al inicio
         </Link>
 

@@ -70,7 +70,7 @@ export default async function AcademiaPage() {
       <div className="bread">
         <div className="wrap">
           <div className="bread-i">
-            <Link href="/home">Inicio</Link>
+            <Link href="/">Inicio</Link>
             <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#857375", fill: "none", strokeWidth: 2 }}><polyline points="9 18 15 12 9 6" /></svg>
             <span>Academia</span>
           </div>

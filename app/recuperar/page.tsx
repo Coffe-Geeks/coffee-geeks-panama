@@ -17,7 +17,7 @@ export default function RecuperarPage() {
 
       <div className="z-10 w-full max-w-md p-8 md:p-12 rounded-3xl bg-[#38050e] backdrop-blur-lg shadow-2xl border border-[#cddbf2]/20 mx-4">
         <div className="flex justify-center mb-0">
-          <Link href="/home">
+          <Link href="/">
             <div className="relative w-40 h-40 drop-shadow-[0_0_15px_rgba(205,219,242,0.3)]">
               <Image src="/logo.webp" alt="Coffee Geeks Panamá" fill className="object-contain" />
             </div>

@@ -1,0 +1,323 @@
+/* Propuesta: intro con video de fondo + carrusel. Scopeado bajo .pg-propuesta. */
+
+@keyframes introZoom {
+  0% { transform: scale(1.08); }
+  100% { transform: scale(1.2); }
+}
+@keyframes introUp {
+  0% { opacity: 0; transform: translateY(28px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes introLine {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+/* Flotación sutil de la tarjeta activa para llamar la atención. Incluye scale(1)
+   porque comparte la propiedad transform con el estado .active. */
+@keyframes introFloat {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1) translateY(-6px); }
+}
+
+.pg-propuesta {
+  .intro {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(28px, 5vh, 56px);
+    padding: 120px 16px 72px;
+    overflow: hidden;
+    background: #060606;
+  }
+
+  /* ---- Fondo ---- */
+  .intro-bg { position: absolute; inset: 0; z-index: 0; background: #0b0b0b; }
+  .intro-video,
+  .intro-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Capas de b-roll que se alternan con fundido cruzado. */
+  .intro-vid-layer { opacity: 0; transition: opacity 0.9s ease-in-out; }
+  .intro-vid-layer.on { opacity: 1; }
+  .intro-poster {
+    background-size: cover;
+    background-position: center;
+    animation: introZoom 22s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .intro-scrim {
+    position: absolute;
+    inset: 0;
+    /* Viñeteado suavizado (12-ago): menos oscuro para que se ENTIENDA el b-roll
+       de fondo. El titular conserva su text-shadow para seguir legible. */
+    background:
+      radial-gradient(120% 90% at 50% 12%, rgba(6, 6, 6, 0.1), rgba(6, 6, 6, 0.48) 58%, rgba(6, 6, 6, 0.76) 100%),
+      linear-gradient(180deg, rgba(56, 5, 14, 0.22), rgba(6, 6, 6, 0.08) 45%);
+  }
+  .intro-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
+
+  /* ---- Encabezado ---- */
+  .intro-head {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    animation: introUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .intro-eye {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.42em;
+    font-size: 12px;
+    color: #cddbf2;
+    text-transform: uppercase;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7);
+  }
+  .intro-eye-line {
+    width: clamp(26px, 6vw, 60px);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #cddbf2);
+    transform-origin: center;
+    animation: introLine 1s ease 0.3s both;
+  }
+  .intro-eye-line:last-child { background: linear-gradient(270deg, transparent, #cddbf2); }
+  .intro-logo {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+  }
+  .intro-logo img {
+    width: clamp(84px, 12vw, 130px);
+    height: auto;
+    filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.5));
+  }
+  .intro-h1 {
+    margin-top: 16px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.94;
+    letter-spacing: 0.01em;
+    font-size: clamp(34px, 6.4vw, 76px);
+    color: #f4efe4;
+    text-shadow: 0 4px 28px rgba(0, 0, 0, 0.72), 0 1px 3px rgba(0, 0, 0, 0.55);
+  }
+
+  /* ---- Carrusel ---- */
+  .intro-carousel {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1180px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: introUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+  }
+  /* padding vertical: deja aire para que la tarjeta activa flote sin recortarse */
+  .intro-viewport { flex: 1; overflow: hidden; padding: 16px 0; }
+  .intro-track {
+    display: flex;
+    gap: 26px;
+    transition: transform 1.15s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+  }
+
+  .intro-card {
+    flex: 0 0 clamp(240px, 78vw, 380px);
+    background: rgba(18, 12, 13, 0.55);
+    border: 1px solid rgba(205, 219, 242, 0.14);
+    border-radius: 22px;
+    overflow: hidden;
+    backdrop-filter: blur(14px);
+    cursor: pointer;
+    opacity: 0.42;
+    transform: scale(0.9);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.4s ease, box-shadow 0.5s ease;
+  }
+  .intro-card.active {
+    opacity: 1;
+    transform: scale(1);
+    cursor: default;
+    border-color: rgba(205, 219, 242, 0.4);
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.85),
+      0 0 0 1px rgba(205, 219, 242, 0.05) inset;
+    /* Flotación sutil tras la entrada (delay 0.6s = duración del scale-in). */
+    animation: introFloat 4.2s ease-in-out 0.6s infinite;
+  }
+
+  .intro-card-media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: #201417;
+  }
+  .intro-card-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+  }
+  .intro-card-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6, 6, 6, 0) 40%, rgba(18, 12, 13, 0.85));
+  }
+
+  /* Tarjeta cuya imagen es un logo: se muestra contenido (no recortado),
+     centrado sobre un fondo cálido, y sin el degradado que ensucia el logo. */
+  .intro-card-media--logo {
+    background: radial-gradient(120% 120% at 50% 30%, #3a2016, #1c0f0a 80%);
+  }
+  .intro-card-img--logo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    inset: 12%;
+  }
+  .intro-card-media--logo .intro-card-shade { display: none; }
+
+  /* Tarjeta del pasaporte: mapa real de todas las cafeterías. */
+  .intro-card-media--map { background: #14100d; }
+  .intro-card-media--map .leaflet-container { background: #14100d; }
+  .hero-map-pin span {
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #db1919;
+    border: 2px solid #f4efe4;
+    box-shadow: 0 0 0 4px rgba(219, 25, 25, 0.25);
+  }
+
+  .intro-card-body { padding: 22px 24px 26px; }
+  .intro-card-eye {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    font-size: 11px;
+    color: #cddbf2;
+    text-transform: uppercase;
+  }
+  .intro-card-title {
+    margin: 8px 0 12px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    line-height: 0.96;
+    font-size: clamp(24px, 3.4vw, 34px);
+    color: #f4efe4;
+  }
+  .intro-card-desc {
+    font-family: "Barlow", sans-serif;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: rgba(237, 237, 237, 0.72);
+    margin-bottom: 20px;
+  }
+  .intro-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #060606;
+    background: #cddbf2;
+    padding: 11px 20px;
+    border-radius: 999px;
+    transition: background 0.3s ease, transform 0.3s ease, gap 0.3s ease;
+  }
+  .intro-card-cta:hover {
+    background: #8aafd4;
+    gap: 12px;
+    transform: translateY(-1px);
+  }
+
+  .intro-arrow {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    color: #f4efe4;
+    background: rgba(18, 12, 13, 0.5);
+    border: 1px solid rgba(205, 219, 242, 0.2);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  }
+  .intro-arrow:hover {
+    background: rgba(56, 5, 14, 0.7);
+    border-color: rgba(205, 219, 242, 0.45);
+    transform: scale(1.06);
+  }
+  .intro-arrow.left svg { transform: rotate(180deg); }
+
+  /* ---- Puntos ---- */
+  .intro-dots {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 10px;
+  }
+  .intro-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(205, 219, 242, 0.28);
+    border: none;
+    cursor: pointer;
+    transition: width 0.4s ease, background 0.4s ease;
+  }
+  .intro-dot.on {
+    width: 30px;
+    background: #cddbf2;
+  }
+
+  @media (max-width: 640px) {
+    .intro-arrow { display: none; }
+    .intro-track { gap: 16px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .intro-poster { animation: none; }
+    .intro-track { transition: none; }
+    .intro-card.active { animation: none; }
+  }
+
+  /* Desktop: el hero se mide por su contenido (no fuerza 100vh) para que los
+     "5 pasos" asomen, con tarjetas más grandes pero de media más baja. */
+  @media (min-width: 1000px) {
+    .intro {
+      min-height: 600px;
+      padding-top: 76px;
+      padding-bottom: 34px;
+      gap: 28px;
+    }
+    .intro-carousel { max-width: 1340px; }
+    .intro-card { flex-basis: 468px; }
+    .intro-card-media { aspect-ratio: 16 / 8; }
+    .intro-card-body { padding: 18px 26px 22px; }
+    .intro-h1 { font-size: clamp(48px, 5.4vw, 78px); }
+  }
+}

@@ -67,7 +67,7 @@ export default async function PerfilPage() {
         <div className="flex justify-between items-start mb-6">
           <div>
             <Link 
-              href="/home" 
+              href="/" 
               className="flex items-center gap-1.5 text-xs font-semibold text-[#cddbf2]/50 hover:text-[#cddbf2] transition-colors mb-1 uppercase tracking-widest"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3 h-3">

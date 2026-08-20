@@ -4,7 +4,7 @@ import Link from "next/link";
 // sus rutas siguen vivas, solo se retiran los enlaces.
 const FOOTER_LINKS = {
   plataforma: [
-    { label: "Inicio", href: "/home" },
+    { label: "Inicio", href: "/" },
     { label: "Participantes", href: "/participantes" },
     { label: "Guía de Experiencias", href: "/guia-de-experiencias" },
     { label: "Sobre nosotros", href: "/sobre-nosotros" },

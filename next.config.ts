@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        // El home dejó de vivir en /home: ahora ES la portada. Redirección
+        // permanente para los enlaces ya compartidos y lo indexado.
+        source: "/home",
+        destination: "/",
+        permanent: true,
+      },
+      {
         // La sección se llamaba /fincas. Redirección permanente para que
         // los enlaces ya compartidos y lo indexado sigan funcionando.
         source: "/fincas",

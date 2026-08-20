@@ -10,7 +10,7 @@ import VoteModal from "@/app/components/VoteModal";
 type NavLink = { label: string; href: string; children?: { label: string; href: string }[] };
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Descúbrenos", href: "/home" },
+  { label: "Descúbrenos", href: "/" },
   {
     label: "Sobre Nosotros",
     href: "/sobre-nosotros",
@@ -261,7 +261,7 @@ export default function Navbar() {
       <nav className={`tbar${scrolled ? " up" : ""}`}>
         <div className="tbar-i">
           {/* Brand */}
-          <Link href="/home" className="tb-brand">
+          <Link href="/" className="tb-brand">
             <img src="/fav.webp" alt="CGP" style={{ height: 30 , borderRight: "1px solid rgba(255, 255, 255, 0.7)" }} />
             <div className="tb-bname">
               Coffee Geeks
