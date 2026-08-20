@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import "./intro.css";
+import CoffeeBeansHero from "@/app/components/CoffeeBeansHero";
 import Navbar from "@/app/components/layout/Navbar";
 import Footer from "@/app/components/layout/Footer";
-import HeroIntro from "@/app/components/home/HeroIntro";
-import StatsStrip from "@/app/components/home/StatsStrip";
 import StepsSection from "@/app/components/home/StepsSection";
 import ShopsSection from "@/app/components/home/ShopsSection";
 import RankingSection from "@/app/components/home/RankingSection";
@@ -13,13 +11,12 @@ import MapSection from "@/app/components/home/MapSection";
 import AlliesSection from "@/app/components/home/AlliesSection";
 import { getAllies } from "@/app/actions/ally";
 import { getFincas } from "@/app/actions/finca";
-import { formatFechaCierre } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
   const title = config.seoTitle || "Coffee Geeks Panamá | El Camino a la Gran Taza";
   const description = config.seoDescription || "Primer concurso que premia la mejor taza de café de Panamá.";
-
+  
   return {
     title,
     description,
@@ -49,7 +46,7 @@ export default async function HomePage() {
     query.advancedToRound2 = true;
   }
   const cafeterias = await User.find(query).lean();
-
+  
   let totalVotos = 0;
   let votesCountMap: Record<string, number> = {};
   if (currentRound > 0) {
@@ -74,14 +71,6 @@ export default async function HomePage() {
     lat: c.locationLat,
     lng: c.locationLng
   }));
-
-  // Coordenadas de las cafeterías con ubicación verificada, para el mini-mapa
-  // de la tarjeta del pasaporte en el hero.
-  const MAP_PTS = SHOPS
-    .filter((s) => typeof s.lat === "number" && typeof s.lng === "number")
-    .map((s) => [s.lat, s.lng] as [number, number]);
-
-  const cierreRegistro = formatFechaCierre(config?.votingEndDate, "corta") || "Próximamente";
 
   const sortedByVotes = [...SHOPS].sort((a, b) => b.votes - a.votes);
 
@@ -129,14 +118,11 @@ export default async function HomePage() {
       <Navbar />
 
       {/* Push content below the fixed navbar */}
-      <main className="pg-propuesta" style={{ paddingTop: 58 }}>
-        {/* 1. Intro a pantalla completa: b-rolls de fondo + carrusel */}
-        <HeroIntro mapPts={MAP_PTS} />
-
-        {/* 1.5 Cifras del concurso */}
-        <StatsStrip
+      <main style={{ paddingTop: 58 }}>
+        {/* 1. Hero animado con granos de café */}
+        <CoffeeBeansHero
+          config={config}
           stats={{ cafeterias: SHOPS.length, votos: totalVotos, fincas: FINCAS_COUNT }}
-          cierre={cierreRegistro}
         />
 
         {/* 2. Pasos — cómo participar */}
@@ -152,10 +138,10 @@ export default async function HomePage() {
         <AlliesSection allies={ALLIES} />
 
         {/* 4. Ranking en vivo */}
-        <RankingSection
-          podium={PODIUM_DATA}
-          rest={REST_DATA}
-          votingEndDate={config?.votingEndDate}
+        <RankingSection 
+          podium={PODIUM_DATA} 
+          rest={REST_DATA} 
+          votingEndDate={config?.votingEndDate} 
         />
 
         {/* 5. Academia CGP */}
