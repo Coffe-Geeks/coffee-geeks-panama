@@ -182,7 +182,7 @@ export default function SobreNosotrosPage() {
             </div>
             <div className="pt-body">
               <p className="pt-p">
-                Somos la <strong>primera marca sectorial especializada en café en Panamá</strong>,
+                Somos la <strong>primera plataforma sectorial especializada en café en Panamá</strong>,
                 creada para internacionalizar y generar valor a todo el ecosistema del café
                 panameño y su cadena de valor.
               </p>
