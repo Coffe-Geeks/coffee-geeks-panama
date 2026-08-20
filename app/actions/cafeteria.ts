@@ -4,21 +4,10 @@ import { getSession } from "@/lib/session";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { revalidatePath } from "next/cache";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-
-// ─── Utilidad: guardar imagen en <project_root>/uploads/ ──────────────────────
-async function saveUploadedFile(file: File, subfolder = ""): Promise<string> {
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const uploadDir = path.join(process.cwd(), "uploads", subfolder);
-  await mkdir(uploadDir, { recursive: true });
-  const ext = file.name.split(".").pop() ?? "webp";
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const filepath = path.join(uploadDir, filename);
-  await writeFile(filepath, buffer);
-  return subfolder ? `/api/uploads/${subfolder}/${filename}` : `/api/uploads/${filename}`;
-}
+// Sube a Vercel Blob cuando hay BLOB_READ_WRITE_TOKEN (producción) y a disco en
+// local/droplet. Mismo helper que usan ally/finca/blog: en Vercel el disco es
+// de solo lectura, así que escribir en ./uploads fallaba (EROFS).
+import { saveUploadedFile } from "@/lib/upload";
 
 async function getTargetUser(session: any, formData?: FormData, explicitTargetId?: string) {
   if (session?.role === "admin") {
