@@ -8,9 +8,9 @@ export default async function TiendaPage() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700;900&family=Barlow:wght@300;400;500&display=swap');
 
-        .ph{position:relative;padding-top:58px}
+        .ph{position:relative;padding-top:58px;background:linear-gradient(135deg,#4a0a15 0%,#38050e 55%,#24060c 100%)}
         .ph-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.62}
-        .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.48) 45%,rgba(0,0,0,.72) 100%)}
+        .ph-sc{position:absolute;inset:0;background:radial-gradient(120% 100% at 80% 0%,rgba(120,20,40,.35) 0%,transparent 55%)}
         .ph-sello{position:absolute;right:clamp(20px,5vw,60px);top:72px;width:84px;height:84px;opacity:.55;animation:spin3 28s linear infinite}
         @keyframes spin3{to{transform:rotate(360deg)}}
         .ph-cnt{position:relative;z-index:2;padding:44px 0 44px}
@@ -43,7 +43,6 @@ export default async function TiendaPage() {
 
       {/* Page Hero */}
       <div className="ph">
-        <div className="ph-bg" style={{ backgroundImage: "url('/banner-tienda.webp')" }} />
         <div className="ph-sc" />
         <div className="ph-cnt">
           <div className="wrap">
