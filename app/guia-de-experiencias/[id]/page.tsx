@@ -46,9 +46,9 @@ export default async function FincaDetailPage({ params }: { params: Promise<{ id
     website: finca.website || "",
     instagram: finca.instagram || "",
     whatsapp: finca.whatsapp || "",
-    gallery: gallery.length
-      ? gallery
-      : ["https://images.unsplash.com/photo-1500051638674-ff996a0ec29e?w=1600&q=75"],
+    // Puede quedar vacío (finca aún sin foto): la ficha muestra el hero en
+    // fondo vino y oculta el carrusel. No usar stock genérico.
+    gallery,
     experiences: (finca.experiences || [])
       .filter((e: any) => e.isActive)
       .sort((a: any, b: any) => a.order - b.order)

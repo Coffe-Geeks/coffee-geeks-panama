@@ -15,7 +15,7 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700;900&family=Barlow:wght@300;400;500&display=swap');
 
-        .ph{position:relative;padding-top:58px}
+        .ph{position:relative;padding-top:58px;background:linear-gradient(135deg,#4a0a15 0%,#38050e 55%,#24060c 100%)}
         .ph-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.62}
         .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.48) 45%,rgba(0,0,0,.72) 100%)}
         .ph-cnt{position:relative;z-index:2;padding:44px 0 44px}
@@ -101,10 +101,14 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
 
       <Navbar />
 
-      {/* Hero */}
+      {/* Hero — con foto si la finca tiene; si no, queda el fondo vino */}
       <div className="ph">
-        <div className="ph-bg" style={{ backgroundImage: `url('${finca.gallery[0]}')` }} />
-        <div className="ph-sc" />
+        {total > 0 && (
+          <>
+            <div className="ph-bg" style={{ backgroundImage: `url('${finca.gallery[0]}')` }} />
+            <div className="ph-sc" />
+          </>
+        )}
         <div className="ph-cnt">
           <div className="wrap">
             <div className="ph-flex">
@@ -141,7 +145,8 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
         </div>
       </div>
 
-      {/* Carrusel */}
+      {/* Carrusel — solo si la finca tiene fotos */}
+      {total > 0 && (
       <section className="car-sec">
         <div className="wrap">
           <div className="car">
@@ -191,6 +196,7 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
           )}
         </div>
       </section>
+      )}
 
       {/* Relato + ficha técnica */}
       <section className="story-sec">

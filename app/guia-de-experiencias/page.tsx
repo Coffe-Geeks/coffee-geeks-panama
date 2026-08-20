@@ -24,9 +24,10 @@ export default async function FincasPage() {
     varieties: Array.isArray(f.varieties) ? f.varieties : [],
     processes: Array.isArray(f.processes) ? f.processes : [],
     desc: f.shortDescription || "",
-    img:
-      f.coverImage ||
-      "https://images.unsplash.com/photo-1500051638674-ff996a0ec29e?w=800&q=75",
+    // Sin foto propia = cadena vacía a propósito: la tarjeta pinta una lámina
+    // tipográfica. No usar stock genérico. Las fincas sin foto se resuelven
+    // con la clienta.
+    img: f.coverImage || "",
     experiences: (f.experiences || []).filter((e: any) => e.isActive).length,
   }));
 

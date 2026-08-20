@@ -77,6 +77,14 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
         .fc:hover{box-shadow:0 4px 8px 3px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.12);transform:translateY(-5px)}
         .fc-img{width:100%;aspect-ratio:4/3;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;padding:10px}
         .fc-tag{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;background:rgba(255,255,255,.94);color:#38050e;padding:5px 11px;border-radius:50px;border:1px solid rgba(56,5,14,.08)}
+        /* Lámina de origen: para fincas aún sin foto, un panel tipográfico
+           en lugar de la imagen (mismo 4/3), con el nombre y un grano de marca. */
+        .fc-lamina{background:linear-gradient(140deg,#4a0a15 0%,#38050e 55%,#24060c 100%);align-items:stretch;flex-direction:column;justify-content:space-between}
+        .fc-lamina .fc-tag{align-self:flex-start}
+        .fc-lamina-bean{position:absolute;right:-16px;bottom:-22px;width:150px;height:150px;color:rgba(205,219,242,.09);pointer-events:none}
+        .fc-lamina-txt{position:relative;z-index:1}
+        .fc-lamina-eye{display:block;font-family:'Barlow',sans-serif;font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(205,219,242,.7);margin-bottom:5px}
+        .fc-lamina-name{display:block;font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,2.6vw,30px);font-weight:900;text-transform:uppercase;line-height:.95;color:#fff}
         .fc-body{padding:15px 16px 14px;display:flex;flex-direction:column;flex:1}
         .fc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:900;text-transform:uppercase;color:#38050e;line-height:1.05;margin-bottom:3px}
         .fc-loc{font-family:'Barlow',sans-serif;font-size:13px;color:#38050e;opacity:.55}
@@ -217,9 +225,25 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
           <div className="fc-grid">
             {filtered.map((finca) => (
               <article className="fc" key={finca.id}>
-                <div className="fc-img" style={{ backgroundImage: `url('${finca.img}')` }}>
-                  <span className="fc-tag">{finca.region}</span>
-                </div>
+                {finca.img ? (
+                  <div className="fc-img" style={{ backgroundImage: `url('${finca.img}')` }}>
+                    <span className="fc-tag">{finca.region}</span>
+                  </div>
+                ) : (
+                  <div className="fc-img fc-lamina">
+                    <span className="fc-tag">{finca.region}</span>
+                    <svg className="fc-lamina-bean" viewBox="0 0 24 24" aria-hidden="true">
+                      <g transform="rotate(-28 12 12)">
+                        <ellipse cx="12" cy="12" rx="6.4" ry="9.2" fill="currentColor" />
+                        <path d="M12 3.4 C 8.6 8, 15.4 16, 12 20.6" fill="none" stroke="#38050e" strokeWidth="1.2" strokeLinecap="round" />
+                      </g>
+                    </svg>
+                    <span className="fc-lamina-txt">
+                      <span className="fc-lamina-eye">The Origin Guide</span>
+                      <span className="fc-lamina-name">{finca.name}</span>
+                    </span>
+                  </div>
+                )}
                 <div className="fc-body">
                   <h3 className="fc-name">{finca.name}</h3>
                   <div className="fc-loc">
