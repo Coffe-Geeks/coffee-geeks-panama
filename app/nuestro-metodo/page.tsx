@@ -198,9 +198,6 @@ export default function NuestroMetodoPage() {
                 <h1 className="ph-h1">Nuestro Método</h1>
                 <h2 className="ph-h2">Cómo reconocemos la excelencia</h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Coffee Geeks Panamá" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>

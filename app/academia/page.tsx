@@ -57,9 +57,6 @@ export default async function AcademiaPage() {
                 <h1 className="ph-h1">Academia</h1>
                 <h2 className="ph-h2">Aprende con los expertos</h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Concurso Logo" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>

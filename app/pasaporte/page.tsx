@@ -52,9 +52,6 @@ export default async function PasaportePage() {
                 <h1 className="ph-h1">Pasaporte Digital</h1>
                 <h2 className="ph-h2">Colecciona tus visitas</h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Concurso Logo" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>

@@ -85,9 +85,6 @@ export default function VotacionesClient({ initialRound, initialCafeterias }: Vo
                   {initialRound === 0 ? "Concurso Cerrado" : initialRound === 1 ? "Ronda 1: Evaluación Local" : "Ronda 2: Gran Final"}
                 </h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Coffee Geeks Logo" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>

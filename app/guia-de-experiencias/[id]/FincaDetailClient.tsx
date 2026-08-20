@@ -120,9 +120,6 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
                 <h1 className="ph-h1">{finca.name}</h1>
                 <h2 className="ph-h2">{finca.location}</h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Concurso Logo" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>

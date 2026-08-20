@@ -122,9 +122,6 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
                 <h1 className="ph-h1">Participantes</h1>
                 <h2 className="ph-h2">Los protagonistas<br />de la ruta del café</h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Concurso Logo" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>

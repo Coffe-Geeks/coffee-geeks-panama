@@ -154,9 +154,6 @@ export default function SobreNosotrosPage() {
                 <h1 className="ph-h1">Sobre Nosotros</h1>
                 <h2 className="ph-h2">La esencia del café de Panamá</h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Concurso Logo" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>

@@ -134,9 +134,6 @@ export default function ExperienciasClient({
                 <h1 className="ph-h1">Del Origen<br />a la Barra</h1>
                 <h2 className="ph-h2">El recorrido completo del grano</h2>
               </div>
-              <div className="ph-side">
-                <img src="/concurso.webp" alt="Concurso Logo" className="ph-logo" />
-              </div>
             </div>
           </div>
         </div>
