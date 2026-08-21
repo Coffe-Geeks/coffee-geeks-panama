@@ -127,7 +127,7 @@ export default function FincasClient({ initialFincas }: { initialFincas: any[] }
                 <div className="ph-eye">The Origin Guide · Panamá</div>
                 <h1 className="ph-h1">
                   The Origin Guide
-                  <span className="ph-by">By Panama Unique § Coffee Geeks</span>
+                  <span className="ph-by">By Panamá Unique</span>
                 </h1>
               </div>
             </div>

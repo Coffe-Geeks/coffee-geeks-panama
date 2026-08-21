@@ -4,7 +4,7 @@ import FincasClient from "./FincasClient";
 import Footer from "@/app/components/layout/Footer";
 
 export const metadata = {
-  title: "The Origin Guide By Panama Unique § Coffee Geeks",
+  title: "The Origin Guide By Panamá Unique",
   description:
     "Una guía curada de fincas, coffee shops, rutas cafeteras y experiencias auténticas del café de Panamá.",
 };
