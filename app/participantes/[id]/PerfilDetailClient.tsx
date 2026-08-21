@@ -151,8 +151,10 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
 
               {/* Barista */}
               <div className="barista-card">
-                {barista.photo ? (
-                  <div className="barista-av" style={{ backgroundImage: `url('${barista.photo}')`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' }}>B</div>
+                {/* Su foto propia, o la portada cuando la portada ES su
+                    retrato (convención portada-barista-*) */}
+                {(barista.photo || (/(?:portada-)?barista/i.test(shop.coverImage || "") ? shop.coverImage : "")) ? (
+                  <div className="barista-av" style={{ backgroundImage: `url('${barista.photo || shop.coverImage}')`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' }}>B</div>
                 ) : (
                   <div className="barista-av">{barista.fullName.charAt(0).toUpperCase()}</div>
                 )}

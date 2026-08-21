@@ -380,11 +380,17 @@ export async function getLeaderboard() {
       neighborhood: c.neighborhood,
       businessType: c.businessType,
       baristaId: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?._id?.toString() || "",
-      baristaPhoto: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.photo || "",
+      // Foto del barista: la suya propia, o la portada cuando la portada
+      // ES su retrato (convención portada-barista-*)
+      baristaPhoto:
+        (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.photo ||
+        (/(?:portada-)?barista/i.test(c.coverImage || "") ? c.coverImage : ""),
       // Para el voto popular: si nadie está destacado, vale el primer barista
       baristaAnyId: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?._id?.toString() || "",
       baristaAnyName: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.fullName || "",
-      baristaAnyPhoto: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.photo || "",
+      baristaAnyPhoto:
+        (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.photo ||
+        (/(?:portada-)?barista/i.test(c.coverImage || "") ? c.coverImage : ""),
       // Qué bebidas presenta (el público elige su favorita entre estas)
       drinks: {
         espresso: !!(c.espresso && String(c.espresso).trim()),
