@@ -5,7 +5,21 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/app/components/layout/Navbar";
 import VoteModal from "@/app/components/VoteModal";
+import BannerBrolls from "@/app/components/BannerBrolls";
 import { getSlugId } from "@/lib/utils";
+
+// B-rolls de los baristas trabajando con las manos (los del hero del
+// home): el banner muestra a los protagonistas haciendo las bebidas.
+const BLOB_BROLLS = "https://67nfjlu2uec5rb7z.public.blob.vercel-storage.com/brolls";
+const BANNER_BROLLS = [
+  `${BLOB_BROLLS}/cg_broll_01_foodbarn_espresso.mp4`,
+  `${BLOB_BROLLS}/cg_broll_04_tosto_filtrado.mp4`,
+  `${BLOB_BROLLS}/cg_broll_05_sip_espresso.mp4`,
+  `${BLOB_BROLLS}/cg_broll_08_leto_filtrado.mp4`,
+  `${BLOB_BROLLS}/cg_broll_02_sisu_filtrado.mp4`,
+  `${BLOB_BROLLS}/cg_broll_07_momo_espresso.mp4`,
+];
+const BANNER_POSTER = "https://67nfjlu2uec5rb7z.public.blob.vercel-storage.com/banners/banner-participantes-espresso.jpg";
 
 const CHIPS = [
   { label: "Todos", value: "all" },
@@ -51,7 +65,6 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
 
         /* ── Page hero ── */
         .ph{position:relative;padding-top:58px;background:linear-gradient(135deg,#4a0a15 0%,#38050e 55%,#24060c 100%)}
-        .ph-bg{position:absolute;inset:0;background-size:cover;background-position:center 62%;opacity:.75}
         .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.48) 45%,rgba(0,0,0,.72) 100%)}
         .ph-sello{position:absolute;right:clamp(20px,5vw,60px);top:72px;width:84px;height:84px;opacity:.55;animation:spin2 28s linear infinite}
         @keyframes spin2{to{transform:rotate(360deg)}}
@@ -114,7 +127,7 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
 
       {/* Page Hero */}
       <div className="ph">
-        <div className="ph-bg" style={{ backgroundImage: "url('https://67nfjlu2uec5rb7z.public.blob.vercel-storage.com/banners/banner-participantes-espresso.jpg')" }} />
+        <BannerBrolls videos={BANNER_BROLLS} poster={BANNER_POSTER} />
         <div className="ph-sc" />
         <div className="ph-cnt">
           <div className="wrap">

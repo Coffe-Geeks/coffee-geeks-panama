@@ -99,6 +99,11 @@ const UserSchema = new Schema(
     filtrado: { type: String, default: "" },
     signatureDrinkName: { type: String, default: "", trim: true },
     signatureDrink: { type: String, default: "" },
+    // Foto de cada bebida de competencia: el perfil público muestra la
+    // bebida con su foto al lado (la gente vota por la bebida que ve)
+    espressoPhoto: { type: String, default: "" },
+    filtradoPhoto: { type: String, default: "" },
+    signatureDrinkPhoto: { type: String, default: "" },
     advancedToRound2: { type: Boolean, default: false },
 
     // ── Campos Detallados (Solo Admin/Participante Detallado) ──

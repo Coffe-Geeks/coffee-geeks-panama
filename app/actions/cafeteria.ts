@@ -74,6 +74,22 @@ export async function updateCafeteriaProfile(state: any, formData: FormData) {
       updateData.coverImage = await saveUploadedFile(coverFile, "covers");
     }
 
+    // Fotos de las bebidas de competencia (una por bebida, mismas reglas
+    // que la portada). El perfil público muestra cada bebida con su foto.
+    for (const campoFoto of ["espressoPhoto", "filtradoPhoto", "signatureDrinkPhoto"]) {
+      const foto = formData.get(campoFoto) as File | null;
+      if (foto && foto.size > 0) {
+        if (foto.size > 2 * 1024 * 1024) {
+          return { error: "Cada foto de bebida no debe exceder los 2MB." };
+        }
+        const formatos = ["image/jpeg", "image/png", "image/webp"];
+        if (!formatos.includes(foto.type)) {
+          return { error: "Formato de imagen no permitido. Usa .jpg, .png o .webp." };
+        }
+        updateData[campoFoto] = await saveUploadedFile(foto, "bebidas");
+      }
+    }
+
     await User.findByIdAndUpdate(targetUserId, updateData);
     doRevalidate(isAdmin);
 

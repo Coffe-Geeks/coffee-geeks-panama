@@ -11,7 +11,9 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
 
   // Mapeos de fallback si el usuario no ha subido data completa
   const coverImg = shop.coverImage || "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1200&q=80";
-  const mainImg = (shop.gallery && shop.gallery.length > 0) ? shop.gallery[0] : coverImg;
+  // La foto principal es SIEMPRE la misma de la tarjeta: el barista.
+  // Él es la cara del proyecto; las fotos del local no van en el perfil.
+  const mainImg = coverImg;
   const barista = (shop.baristas && shop.baristas.length > 0) 
     ? (shop.baristas.find((b: any) => b.isHighlighted) || shop.baristas[0])
     : { fullName: "Aún no registrado", photo: "", role: "Barista" };
@@ -66,7 +68,11 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
         .cg-blk-sig .cg-blk-t{color:#cddbf2;opacity:1}
         .cg-blk-p{font-family:'Barlow',sans-serif;font-size:14.5px;line-height:1.65;color:#38050e;white-space:pre-wrap}
         .cg-blk-sig .cg-blk-p{color:rgba(255,255,255,.88)}
-        @media(max-width:640px){.cg-blk{padding:13px 14px}}
+        /* Bebida con foto: la imagen al lado del texto */
+        .cg-blk-foto{display:grid;grid-template-columns:190px 1fr;gap:16px;align-items:start}
+        .cg-blk-img{width:100%;aspect-ratio:1;border-radius:12px;background-size:cover;background-position:center;border:1px solid rgba(56,5,14,.08)}
+        .cg-blk-sig .cg-blk-img{border-color:rgba(205,219,242,.25)}
+        @media(max-width:640px){.cg-blk{padding:13px 14px}.cg-blk-foto{grid-template-columns:1fr}.cg-blk-img{max-width:260px}}
         .info-item:last-child{border-bottom:none}
         .info-item a{color:#38050e;text-decoration:underline}
         .info-item a:hover{opacity:.8}
@@ -95,8 +101,6 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
         .barista-name{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;color:#38050e}
         .barista-role{font-family:'Barlow',sans-serif;font-size:12px;color:#38050e;opacity:.6}
         
-        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
-        .gallery-item { aspect-ratio: 1; border-radius: 12px; background-size: cover; background-position: center; border: 1px solid rgba(0,0,0,0.05); }
 
         @media(max-width:960px){.perf-wrap{grid-template-columns:1fr;gap:0}.perf-main{padding:0}.perf-sidebar{position:static;max-height:none;padding-bottom:0}}
       `}</style>
@@ -178,37 +182,46 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
                     </div>
                   )}
                   {shop.espresso && (
-                    <div className="cg-blk">
-                      <div className="cg-blk-t">Espresso</div>
-                      <p className="cg-blk-p">{shop.espresso}</p>
+                    <div className={`cg-blk${shop.espressoPhoto ? " cg-blk-foto" : ""}`}>
+                      {shop.espressoPhoto && (
+                        <div className="cg-blk-img" style={{ backgroundImage: `url('${shop.espressoPhoto}')` }} />
+                      )}
+                      <div>
+                        <div className="cg-blk-t">Espresso</div>
+                        <p className="cg-blk-p">{shop.espresso}</p>
+                      </div>
                     </div>
                   )}
                   {shop.filtrado && (
-                    <div className="cg-blk">
-                      <div className="cg-blk-t">Filtrado</div>
-                      <p className="cg-blk-p">{shop.filtrado}</p>
+                    <div className={`cg-blk${shop.filtradoPhoto ? " cg-blk-foto" : ""}`}>
+                      {shop.filtradoPhoto && (
+                        <div className="cg-blk-img" style={{ backgroundImage: `url('${shop.filtradoPhoto}')` }} />
+                      )}
+                      <div>
+                        <div className="cg-blk-t">Filtrado</div>
+                        <p className="cg-blk-p">{shop.filtrado}</p>
+                      </div>
                     </div>
                   )}
                   {shop.signatureDrink && (
-                    <div className="cg-blk cg-blk-sig">
-                      <div className="cg-blk-t">
-                        Signature Drink
-                        {shop.signatureDrinkName ? ` · ${shop.signatureDrinkName}` : ""}
+                    <div className={`cg-blk cg-blk-sig${shop.signatureDrinkPhoto ? " cg-blk-foto" : ""}`}>
+                      {shop.signatureDrinkPhoto && (
+                        <div className="cg-blk-img" style={{ backgroundImage: `url('${shop.signatureDrinkPhoto}')` }} />
+                      )}
+                      <div>
+                        <div className="cg-blk-t">
+                          Signature Drink
+                          {shop.signatureDrinkName ? ` · ${shop.signatureDrinkName}` : ""}
+                        </div>
+                        <p className="cg-blk-p">{shop.signatureDrink}</p>
                       </div>
-                      <p className="cg-blk-p">{shop.signatureDrink}</p>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Galería (si hay más imágenes) */}
-              {shop.gallery && shop.gallery.length > 1 && (
-                <div className="gallery-grid">
-                  {shop.gallery.slice(1).map((imgUrl: string, idx: number) => (
-                    <div key={idx} className="gallery-item" style={{ backgroundImage: `url('${imgUrl}')` }} />
-                  ))}
-                </div>
-              )}
+              {/* El perfil muestra solo café: la foto del barista y sus
+                  bebidas. Las fotos del establecimiento no van aquí. */}
 
               {/* Info */}
               <div style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "1.1rem", fontWeight: 900, textTransform: "uppercase", color: "#38050e", marginBottom: 8 }}>Información</div>

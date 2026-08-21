@@ -609,9 +609,44 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
                   <p className="text-[10px] text-[#cddbf2]/40 pl-1 italic">Máximo 2MB. Formatos: .jpg, .png, .webp</p>
                 </div>
 
+                {/* Fotos de las bebidas de competencia: el perfil público
+                    muestra cada bebida con su foto al lado */}
+                <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
+                  <p className="text-[#cddbf2]/70 text-xs font-semibold uppercase tracking-wider">Fotos de tus bebidas</p>
+                  {([
+                    { name: "espressoPhoto", label: "Espresso", current: user.espressoPhoto },
+                    { name: "filtradoPhoto", label: "Filtrado", current: user.filtradoPhoto },
+                    { name: "signatureDrinkPhoto", label: "Signature Drink", current: user.signatureDrinkPhoto },
+                  ] as const).map((b) => (
+                    <div key={b.name} className="flex items-center gap-3">
+                      {b.current ? (
+                        <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
+                          <Image src={b.current} alt={b.label} fill className="object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-14 h-14 rounded-lg border border-dashed border-white/15 flex items-center justify-center text-[#cddbf2]/30 text-[10px] flex-shrink-0">Sin foto</div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] text-[#cddbf2]/60 uppercase tracking-wider mb-1">{b.label}</p>
+                        <input
+                          name={b.name} type="file" accept="image/jpeg,image/png,image/webp"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file && file.size > 2 * 1024 * 1024) {
+                              alert("La imagen no debe exceder los 2MB");
+                              e.target.value = "";
+                            }
+                          }}
+                          className="w-full text-xs text-[#cddbf2]/60 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#cddbf2]/20 file:text-[#cddbf2] file:text-xs file:font-medium file:cursor-pointer hover:file:bg-[#cddbf2]/30 transition-all cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 <button type="submit" disabled={cafPending}
                   className="w-full py-3 rounded-xl bg-[#cddbf2]/10 hover:bg-[#cddbf2]/20 text-[#cddbf2] font-semibold text-sm transition-all disabled:opacity-70 disabled:cursor-not-allowed border border-[#cddbf2]/10">
-                  {cafPending ? "Guardando..." : "Actualizar Foto de Portada"}
+                  {cafPending ? "Guardando..." : "Actualizar Fotos"}
                 </button>
               </form>
             </div>
