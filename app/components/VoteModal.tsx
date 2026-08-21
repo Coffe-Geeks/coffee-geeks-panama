@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { submitVote, getActiveCafeteriasForVoting } from "@/app/actions/voting";
+import { submitVote, submitPublicVote, getActiveCafeteriasForVoting } from "@/app/actions/voting";
 import { login, register } from "@/app/actions/auth";
 import PrivacyCheckbox from "@/app/components/PrivacyCheckbox";
 
@@ -34,10 +34,15 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Calificaciones
+  // Calificaciones (jueces)
   const [exp, setExp] = useState<number>(0);
   const [pres, setPres] = useState<number>(0);
   const [cup, setCup] = useState<number>(0);
+
+  // Voto popular simplificado: barista favorito (1–5) + bebida favorita
+  const [publicVotingEnabled, setPublicVotingEnabled] = useState(false);
+  const [scoreBarista, setScoreBarista] = useState<number>(0);
+  const [favoriteDrink, setFavoriteDrink] = useState<"" | "espresso" | "filtrado" | "signature">("");
 
   const router = useRouter();
 
@@ -48,6 +53,8 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
       setExp(0);
       setPres(0);
       setCup(0);
+      setScoreBarista(0);
+      setFavoriteDrink("");
       setErrorMsg("");
       setSelectedId(preselected || null);
 
@@ -59,6 +66,7 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
             setRound(res.round);
             setUserRole(res.userRole);
             setIsAuthenticated(res.isAuthenticated || false);
+            setPublicVotingEnabled((res as any).publicVotingEnabled || false);
             
             // Si hay preselected, saltamos directo al paso 2 si existe la cafetería
             if (preselected && res.cafeterias.some((c: any) => c.id === preselected)) {
@@ -94,7 +102,10 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
       return;
     }
     const shop = shops.find(s => s.id === selectedId);
-    if (!shop || !shop.baristaId) {
+    // El público puede votar por cualquier barista de la casa; los jueces
+    // evalúan al destacado.
+    const baristaRequerido = isPublicVoter ? shop?.baristaAnyId : shop?.baristaId;
+    if (!shop || !baristaRequerido) {
       setErrorMsg("Esta cafetería no tiene un barista asignado para votar.");
       return;
     }
@@ -103,11 +114,17 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
   };
 
   const handleVote = async () => {
-    if (!selectedId || exp === 0 || pres === 0 || cup === 0) {
+    const esPublico = isPublicVoter;
+    if (esPublico) {
+      if (!selectedId || scoreBarista === 0 || !favoriteDrink) {
+        setErrorMsg("Califica al barista y elige tu bebida favorita antes de votar.");
+        return;
+      }
+    } else if (!selectedId || exp === 0 || pres === 0 || cup === 0) {
       setErrorMsg("Debes calificar todos los criterios antes de enviar tu voto.");
       return;
     }
-    
+
     const shop = shops.find(s => s.id === selectedId);
     if (!shop) return;
 
@@ -118,12 +135,17 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
 
     setLoadingSubmit(true);
     setErrorMsg("");
-    
-    const res = await submitVote(shop.id, shop.baristaId, {
-      scoreExperience: exp,
-      scorePresence: pres,
-      scoreCup: cup
-    });
+
+    const res = esPublico
+      ? await submitPublicVote(shop.id, shop.baristaAnyId || shop.baristaId, {
+          scoreBarista,
+          favoriteDrink: favoriteDrink as "espresso" | "filtrado" | "signature",
+        })
+      : await submitVote(shop.id, shop.baristaId, {
+          scoreExperience: exp,
+          scorePresence: pres,
+          scoreCup: cup
+        });
 
     setLoadingSubmit(false);
 
@@ -230,7 +252,13 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
   };
 
   const selectedShop = shops.find(s => s.id === selectedId);
-  const isVotingBlockedForRole = (round === 1 && (userRole === "user" || userRole === "juez_internacional")) || userRole === "cafeteria";
+  // El público vota con el flujo simplificado (barista + bebida favorita);
+  // hasta que se encienda el interruptor, su votación permanece cerrada.
+  const isPublicVoter = userRole === "user";
+  const isVotingBlockedForRole =
+    userRole === "cafeteria" ||
+    (isPublicVoter && !publicVotingEnabled) ||
+    (round === 1 && userRole === "juez_internacional");
 
   return (
     <>
@@ -318,8 +346,10 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
             {isVotingBlockedForRole && !loadingData && (
               <div className="text-center py-10 text-[#38050e] font-bold text-lg uppercase tracking-wide flex flex-col gap-3">
                 <span className="text-4xl">🔒</span>
-                {userRole === "cafeteria" 
-                  ? "Tu usuario no está habilitado para emitir votos." 
+                {userRole === "cafeteria"
+                  ? "Tu usuario no está habilitado para emitir votos."
+                  : isPublicVoter
+                  ? "La votación del público estará disponible muy pronto. ¡Vuelve para votar por tu barista favorito!"
                   : "Las votaciones están temporalmente desactivadas para tu perfil en esta ronda."
                 }
               </div>
@@ -370,13 +400,15 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
                 <div className="bg-[#cddbf2]/30 p-4 rounded-xl flex items-center justify-between border border-[#cddbf2]">
                   <div>
                     <h3 className="font-bold text-[#38050e]/60 uppercase text-xs tracking-wider mb-1">Barista Destacado</h3>
-                    <p className="text-[#38050e] font-semibold text-lg leading-none">{selectedShop.baristaName || "No asignado"}</p>
+                    <p className="text-[#38050e] font-semibold text-lg leading-none">
+                      {(isPublicVoter ? selectedShop.baristaAnyName : selectedShop.baristaName) || "No asignado"}
+                    </p>
                     <p className="text-[#38050e]/70 text-xs uppercase tracking-wider mt-1.5 border border-[#38050e]/20 inline-block px-2 py-0.5 rounded-md">
                       Cat: {selectedShop.competitionCategory || "General"}
                     </p>
                   </div>
-                  {selectedShop.baristaPhoto && (
-                    <div className="w-16 h-16 rounded-full bg-cover bg-center border-2 border-[#38050e]/20" style={{ backgroundImage: `url('${selectedShop.baristaPhoto}')` }}></div>
+                  {(isPublicVoter ? selectedShop.baristaAnyPhoto : selectedShop.baristaPhoto) && (
+                    <div className="w-16 h-16 rounded-full bg-cover bg-center border-2 border-[#38050e]/20" style={{ backgroundImage: `url('${isPublicVoter ? selectedShop.baristaAnyPhoto : selectedShop.baristaPhoto}')` }}></div>
                   )}
                 </div>
 
@@ -386,22 +418,67 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
                   </div>
                 )}
 
-                <div className="flex flex-col gap-4">
-                  <div>
-                    <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">1. Experiencia General</p>
-                    {round === 1 ? renderStars(exp, setExp) : renderR2Scale(exp, setExp)}
+                {isPublicVoter ? (
+                  /* Voto popular: dos preguntas, directo al grano */
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">1. Califica a tu barista favorito</p>
+                      {renderStars(scoreBarista, setScoreBarista)}
+                    </div>
+                    <hr className="border-[#cddbf2]" />
+                    <div>
+                      <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">2. Elige tu bebida favorita</p>
+                      <div className="flex flex-col gap-2 w-full">
+                        {([
+                          { key: "espresso", label: "Espresso", available: selectedShop.drinks?.espresso },
+                          { key: "filtrado", label: "Filtrado", available: selectedShop.drinks?.filtrado },
+                          {
+                            key: "signature",
+                            label: selectedShop.drinks?.signatureName
+                              ? `Bebida de autor · "${selectedShop.drinks.signatureName}"`
+                              : "Bebida de autor",
+                            available: selectedShop.drinks?.signature,
+                          },
+                        ] as const)
+                          .filter((d) => d.available)
+                          .map((d) => (
+                            <button
+                              key={d.key}
+                              type="button"
+                              onClick={() => setFavoriteDrink(d.key)}
+                              className={`w-full text-left px-4 py-2.5 rounded-lg border text-sm font-semibold transition-colors ${
+                                favoriteDrink === d.key
+                                  ? "bg-[#38050e] text-white border-[#38050e]"
+                                  : "bg-white text-[#38050e]/70 border-[#cddbf2] hover:bg-[#cddbf2]/20"
+                              }`}
+                            >
+                              {d.label}
+                            </button>
+                          ))}
+                        {!selectedShop.drinks?.espresso && !selectedShop.drinks?.filtrado && !selectedShop.drinks?.signature && (
+                          <p className="text-sm text-[#38050e]/50">Esta cafetería aún no publica sus bebidas de competencia.</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <hr className="border-[#cddbf2]" />
-                  <div>
-                    <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">2. Presencia del Barista</p>
-                    {round === 1 ? renderStars(pres, setPres) : renderR2Scale(pres, setPres)}
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">1. Experiencia General</p>
+                      {round === 1 ? renderStars(exp, setExp) : renderR2Scale(exp, setExp)}
+                    </div>
+                    <hr className="border-[#cddbf2]" />
+                    <div>
+                      <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">2. Presencia del Barista</p>
+                      {round === 1 ? renderStars(pres, setPres) : renderR2Scale(pres, setPres)}
+                    </div>
+                    <hr className="border-[#cddbf2]" />
+                    <div>
+                      <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">3. Calidad de la Taza</p>
+                      {round === 1 ? renderStars(cup, setCup) : renderR2Scale(cup, setCup)}
+                    </div>
                   </div>
-                  <hr className="border-[#cddbf2]" />
-                  <div>
-                    <p className="text-sm font-bold text-[#38050e]/70 mb-2 uppercase tracking-wide">3. Calidad de la Taza</p>
-                    {round === 1 ? renderStars(cup, setCup) : renderR2Scale(cup, setCup)}
-                  </div>
-                </div>
+                )}
 
                 <div className="flex gap-2 mt-2">
                   <button 

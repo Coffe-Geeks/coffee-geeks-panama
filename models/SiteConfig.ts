@@ -40,6 +40,9 @@ const SiteConfigSchema = new Schema(
     // Votaciones
     currentVotingRound: { type: Number, default: 0 }, // 0: Cerrado, 1: Ronda 1, 2: Ronda 2
     votingEndDate: { type: String, default: "" },
+    // Interruptor del voto popular simplificado (barista 1–5 + bebida
+    // favorita). Se enciende desde la base de datos, sin desplegar.
+    publicVotingEnabled: { type: Boolean, default: false },
   },
   { timestamps: true, strict: false } // Usamos strict: false para permitir campos nuevos si el modelo ya estaba cacheado
 );

@@ -26,17 +26,30 @@ const VoteSchema = new Schema(
       required: true,
       enum: [1, 2],
     },
+    // Criterios técnicos (jueces): quedan en null en los votos del público
     scoreExperience: {
       type: Number,
-      required: true,
+      default: null,
     },
     scorePresence: {
       type: Number,
-      required: true,
+      default: null,
     },
     scoreCup: {
       type: Number,
-      required: true,
+      default: null,
+    },
+    // Voto simplificado del público: barista favorito (1–5) y su bebida
+    // favorita entre las que presenta la cafetería. Los votos de jueces
+    // dejan estos campos vacíos.
+    scoreBarista: {
+      type: Number,
+      default: null,
+    },
+    favoriteDrink: {
+      type: String,
+      enum: ["", "espresso", "filtrado", "signature"],
+      default: "",
     },
   },
   { timestamps: true }

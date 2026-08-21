@@ -90,6 +90,85 @@ export async function submitVote(
   }
 }
 
+// ==========================================
+// VOTO POPULAR SIMPLIFICADO
+// ==========================================
+// El público no evalúa criterios técnicos (eso es de los jueces): elige
+// a su barista favorito (1–5) y su bebida favorita entre las que la
+// cafetería presenta. Vive detrás del interruptor publicVotingEnabled.
+export async function submitPublicVote(
+  cafeteriaId: string,
+  baristaId: string,
+  data: { scoreBarista: number; favoriteDrink: "espresso" | "filtrado" | "signature" }
+) {
+  if (!cafeteriaId) {
+    return { error: "El ID de la cafetería no fue recibido correctamente por el servidor." };
+  }
+
+  const scoreBarista = Number(data?.scoreBarista);
+  const favoriteDrink = data?.favoriteDrink;
+  if (!Number.isInteger(scoreBarista) || scoreBarista < 1 || scoreBarista > 5) {
+    return { error: "Califica al barista del 1 al 5." };
+  }
+  if (!["espresso", "filtrado", "signature"].includes(favoriteDrink)) {
+    return { error: "Elige tu bebida favorita." };
+  }
+
+  try {
+    const session = await getSession();
+    if (!session) return { error: "Debes iniciar sesión para votar." };
+
+    await dbConnect();
+
+    const config = await SiteConfig.findOne();
+    const currentRound = config?.currentVotingRound || 0;
+
+    if (currentRound === 0) {
+      return { error: "Las votaciones están cerradas en este momento." };
+    }
+    if (!config?.publicVotingEnabled) {
+      return { error: "La votación del público estará disponible muy pronto." };
+    }
+
+    const role = session.role;
+    if (role === "cafeteria") {
+      return { error: "Tu usuario no está habilitado para emitir votos." };
+    }
+
+    const cafeteria = await User.findById(cafeteriaId).lean();
+    if (!cafeteria || cafeteria.role !== "cafeteria") {
+      return { error: "Cafetería no encontrada." };
+    }
+    if (currentRound === 2 && !cafeteria.advancedToRound2) {
+      return { error: "Esta cafetería no avanzó a la Ronda 2, no se admiten votos." };
+    }
+
+    const existingVote = await Vote.findOne({
+      voterId: session.userId,
+      cafeteriaId,
+      round: currentRound,
+    });
+    if (existingVote) {
+      return { error: "Ya emitiste un voto por esta cafetería en esta ronda." };
+    }
+
+    await Vote.create({
+      voterId: session.userId,
+      voterRole: role,
+      cafeteriaId,
+      baristaId: baristaId || "",
+      round: currentRound,
+      scoreBarista,
+      favoriteDrink,
+    });
+
+    return { success: "Voto registrado exitosamente." };
+  } catch (err: any) {
+    console.error("submitPublicVote error:", err);
+    return { error: `Ocurrió un error al registrar el voto: ${err.message}` };
+  }
+}
+
 export async function getActiveCafeteriasForVoting() {
   await dbConnect();
   const session = await getSession();
@@ -98,12 +177,14 @@ export async function getActiveCafeteriasForVoting() {
 
   const config = await SiteConfig.findOne();
   const currentRound = config?.currentVotingRound || 0;
+  const publicVotingEnabled = !!config?.publicVotingEnabled;
 
-  if (currentRound === 0) return { round: 0, userRole, isAuthenticated, cafeterias: [] };
+  if (currentRound === 0)
+    return { round: 0, userRole, isAuthenticated, publicVotingEnabled, cafeterias: [] };
 
   const leaderboard = await getLeaderboard();
-  
-  return { round: currentRound, userRole, isAuthenticated, cafeterias: leaderboard };
+
+  return { round: currentRound, userRole, isAuthenticated, publicVotingEnabled, cafeterias: leaderboard };
 }
 
 // ==========================================
@@ -186,12 +267,15 @@ export async function getLeaderboard() {
     const results = cafeterias.map((c: any) => {
       const cid = c._id.toString();
       const cVotes = votes.filter((v: any) => v.cafeteriaId.toString() === cid);
-      
+
+      // Solo los votos con criterios técnicos (jueces) entran al promedio;
+      // los votos simplificados del público no traen estos campos.
+      const techVotes = cVotes.filter((v: any) => v.scoreExperience != null);
       let totalPoints = 0;
-      cVotes.forEach((v: any) => {
+      techVotes.forEach((v: any) => {
         totalPoints += (v.scoreExperience + v.scorePresence + v.scoreCup) / 3;
       });
-      const avg = cVotes.length > 0 ? totalPoints / cVotes.length : 0;
+      const avg = techVotes.length > 0 ? totalPoints / techVotes.length : 0;
 
       return {
         id: cid,
@@ -295,6 +379,17 @@ export async function getLeaderboard() {
       businessType: c.businessType,
       baristaId: c.baristas?.find((b: any) => b.isHighlighted)?._id?.toString() || "",
       baristaPhoto: c.baristas?.find((b: any) => b.isHighlighted)?.photo || "",
+      // Para el voto popular: si nadie está destacado, vale el primer barista
+      baristaAnyId: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?._id?.toString() || "",
+      baristaAnyName: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.fullName || "",
+      baristaAnyPhoto: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.photo || "",
+      // Qué bebidas presenta (el público elige su favorita entre estas)
+      drinks: {
+        espresso: !!(c.espresso && String(c.espresso).trim()),
+        filtrado: !!(c.filtrado && String(c.filtrado).trim()),
+        signature: !!((c.signatureDrink && String(c.signatureDrink).trim()) || (c.signatureDrinkName && String(c.signatureDrinkName).trim())),
+        signatureName: c.signatureDrinkName || "",
+      },
       votesCount: cVotes.length,
       scores: {
         public: finalPublic,
