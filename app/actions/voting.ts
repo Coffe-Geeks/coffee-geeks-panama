@@ -305,6 +305,9 @@ export async function getLeaderboard() {
           filtrado: !!(c.filtrado && String(c.filtrado).trim()),
           signature: !!((c.signatureDrink && String(c.signatureDrink).trim()) || (c.signatureDrinkName && String(c.signatureDrinkName).trim())),
           signatureName: c.signatureDrinkName || "",
+          espressoPhoto: c.espressoPhoto || "",
+          filtradoPhoto: c.filtradoPhoto || "",
+          signaturePhoto: c.signatureDrinkPhoto || "",
         },
         votesCount: cVotes.length,
         scores: {
@@ -414,6 +417,9 @@ export async function getLeaderboard() {
         filtrado: !!(c.filtrado && String(c.filtrado).trim()),
         signature: !!((c.signatureDrink && String(c.signatureDrink).trim()) || (c.signatureDrinkName && String(c.signatureDrinkName).trim())),
         signatureName: c.signatureDrinkName || "",
+        espressoPhoto: c.espressoPhoto || "",
+        filtradoPhoto: c.filtradoPhoto || "",
+        signaturePhoto: c.signatureDrinkPhoto || "",
       },
       votesCount: cVotes.length,
       scores: {

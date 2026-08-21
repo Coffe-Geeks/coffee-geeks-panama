@@ -82,18 +82,18 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
         .perf-sidebar::-webkit-scrollbar{display:none}
         .stk-card{background:#38050e;border-radius:28px;overflow:hidden;box-shadow:0 4px 8px 3px rgba(0,0,0,.1)}
         .stk-img{width:100%;aspect-ratio:16/9;background-size:cover;background-position:center top}
-        .stk-body{padding:16px 16px 20px}
-        .stk-name{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:900;text-transform:uppercase;color:#fff;margin-bottom:1px}
-        .stk-sub{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;color:#cddbf2;margin-bottom:7px}
-        .stk-loc{display:flex;align-items:center;gap:5px;font-size:13px;color:rgba(255,255,255,.42);font-family:'Barlow',sans-serif;margin-bottom:14px}
-        .stk-vote-btn{width:100%;height:38px;border-radius:50px;border:none;background:#cddbf2;color:#38050e;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s}
-        .stk-vote-btn:hover{background:#fff;color:#38050e}
-        .stk-div{height:1px;background:rgba(255,255,255,.1);margin:12px 0}
-        .stk-stat{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-        .stk-sl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.38);font-family:'Barlow',sans-serif}
-        .stk-sv{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;color:rgba(255,255,255,.8)}
-        .stk-score{font-family:'Barlow Condensed',sans-serif;font-size:2.8rem;font-weight:900;color:#cddbf2;line-height:1;text-align:center;padding:12px 0 6px}
-        .stk-score small{display:block;font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.08em;font-family:'Barlow',sans-serif;text-transform:uppercase;font-weight:400}
+        .stk-body{padding:22px 22px 24px}
+        .stk-name{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;color:#fff;line-height:1.05;margin-bottom:2px}
+        .stk-sub{font-family:'Barlow Condensed',sans-serif;font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#cddbf2;margin-bottom:8px}
+        .stk-loc{display:flex;align-items:center;gap:5px;font-size:13px;color:rgba(255,255,255,.45);font-family:'Barlow',sans-serif}
+        .stk-score{font-family:'Barlow Condensed',sans-serif;font-size:3.4rem;font-weight:900;color:#cddbf2;line-height:1;text-align:center;padding:22px 0 18px}
+        .stk-score small{display:block;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.12em;font-family:'Barlow',sans-serif;text-transform:uppercase;font-weight:600;margin-top:6px}
+        .stk-vote-btn{width:100%;height:50px;border-radius:50px;border:none;background:#cddbf2;color:#38050e;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .2s,box-shadow .25s}
+        .stk-vote-btn:hover{background:#fff;transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.3)}
+        .stk-vote-btn:active{transform:translateY(0) scale(.98);box-shadow:none}
+        .stk-div{height:1px;background:rgba(255,255,255,.12);margin:18px 0 14px}
+        .stk-note{font-family:'Barlow',sans-serif;font-size:12px;line-height:1.5;color:rgba(255,255,255,.45);text-align:center}
+        @media(prefers-reduced-motion:reduce){.stk-vote-btn{transition:none}}
 
         /* Barista card */
         .barista-card{background:#cddbf2/20;border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:16px;border:1px solid #cddbf2}
@@ -275,20 +275,13 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
                   </div>
                   <div className="stk-score">
                     {shop.votesCount || 0}
-                    <small>Votos Totales</small>
+                    <small>Votos totales</small>
                   </div>
                   <button className="stk-vote-btn" onClick={() => setVoteModal(true)}>
-                    ⭐ Votar por {shop.cafeteriaName || shop.name}
+                    Votar
                   </button>
                   <div className="stk-div" />
-                  <div className="stk-stat">
-                    <span className="stk-sl">Puntaje global</span>
-                    <span className="stk-sv">Procesando...</span>
-                  </div>
-                  <div className="stk-stat">
-                    <span className="stk-sl">Posición actual</span>
-                    <span className="stk-sv">Pendiente</span>
-                  </div>
+                  <p className="stk-note">Los resultados se publican al cierre de la competencia.</p>
                 </div>
               </div>
 
