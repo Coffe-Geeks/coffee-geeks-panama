@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/app/components/layout/Navbar";
 import VoteModal from "@/app/components/VoteModal";
@@ -30,6 +30,7 @@ const CHIPS = [
 
 
 export default function ParticipantesClient({ initialShops }: { initialShops: any[] }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const querySearch = searchParams.get("search");
 
@@ -193,7 +194,11 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
           {/* Cards */}
           <div className="sc-grid">
             {filtered.map((shop) => (
-              <div className="sc" key={shop.id}>
+              <div
+                className="sc"
+                key={shop.id}
+                onClick={() => router.push(`/participantes/${getSlugId(shop.name, shop.id)}`)}
+              >
                 <div className="sc-img" style={{ backgroundImage: `url('${shop.img}')` }}>
                   <span className="sc-badge">{shop.votes} votos</span>
                 </div>
@@ -208,9 +213,6 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
                   </div>
                   <div className="sc-acts">
                     <button className="scb scb-v" onClick={(e) => { e.stopPropagation(); openVote(shop.id); }}>Votar</button>
-                    <Link href={`/participantes/${getSlugId(shop.name, shop.id)}`} className="scb scb-p" style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}>
-                      Ver perfil
-                    </Link>
                   </div>
                 </div>
               </div>
