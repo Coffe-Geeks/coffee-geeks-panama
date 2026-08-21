@@ -372,13 +372,15 @@ export async function getLeaderboard() {
       name: c.cafeteriaName || `${c.name} ${c.lastName}`,
       category: Array.isArray(c.competitionCategory) && c.competitionCategory.length > 0 ? c.competitionCategory.join(" - ") : (typeof c.competitionCategory === 'string' && c.competitionCategory ? c.competitionCategory : "Sin Categoría"),
       competitionCategory: Array.isArray(c.competitionCategory) && c.competitionCategory.length > 0 ? c.competitionCategory.join(" - ") : (typeof c.competitionCategory === 'string' ? c.competitionCategory : ""),
-      barista: c.baristas?.find((b: any) => b.isHighlighted)?.fullName || "-",
-      baristaName: c.baristas?.find((b: any) => b.isHighlighted)?.fullName || "",
+      // Barista destacado, o el primero de la casa si nadie está marcado:
+      // que un flag sin poner no bloquee la votación de esa cafetería.
+      barista: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.fullName || "-",
+      baristaName: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.fullName || "",
       coverImage: c.coverImage,
       neighborhood: c.neighborhood,
       businessType: c.businessType,
-      baristaId: c.baristas?.find((b: any) => b.isHighlighted)?._id?.toString() || "",
-      baristaPhoto: c.baristas?.find((b: any) => b.isHighlighted)?.photo || "",
+      baristaId: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?._id?.toString() || "",
+      baristaPhoto: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.photo || "",
       // Para el voto popular: si nadie está destacado, vale el primer barista
       baristaAnyId: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?._id?.toString() || "",
       baristaAnyName: (c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0])?.fullName || "",

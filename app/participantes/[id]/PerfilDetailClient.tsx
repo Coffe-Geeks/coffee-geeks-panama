@@ -314,7 +314,7 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
 
       <VoteModal
         open={voteModal}
-        preselected={shop._id}
+        preselected={shop.id}
         onClose={() => setVoteModal(false)}
       />
     </>
