@@ -23,7 +23,7 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700;900&family=Barlow:wght@300;400;500&display=swap');
 
-        .perf-hero{position:relative;height:340px;background-size:cover;background-position:center}
+        .perf-hero{position:relative;height:340px;background-size:cover;background-position:center 20%}
         .perf-hero-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(56,5,14,.5) 0%,rgba(56,5,14,.88) 100%)}
         .perf-hero-cnt{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:0 0 32px}
         .perf-cat{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,212,232,.6);margin-bottom:4px}
