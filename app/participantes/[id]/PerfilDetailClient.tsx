@@ -37,7 +37,7 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
         .wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,60px)}
         .perf-wrap{display:grid;grid-template-columns:1fr 320px;gap:0;align-items:start;padding:40px 0 80px;background:#f4efe4}
         .perf-main{padding:0 32px 0 0}
-        .perf-photo{aspect-ratio:4/3;background-size:cover;background-position:center;border-radius:16px;margin-bottom:24px}
+        .perf-photo{aspect-ratio:4/3;background-size:cover;background-position:center top;border-radius:16px;margin-bottom:24px}
         .perf-loc-h{font-family:'Barlow Condensed',sans-serif;font-size:clamp(18px,2.5vw,26px);font-weight:900;text-transform:uppercase;color:#38050e;margin-bottom:1px}
         .perf-loc-s{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;color:#38050e;opacity:.7;margin-bottom:12px}
 
@@ -81,7 +81,7 @@ export default function PerfilDetailClient({ shop }: { shop: any }) {
         .perf-sidebar{padding:0 0 40px;position:sticky;top:76px;align-self:flex-start;max-height:calc(100vh - 90px);overflow:auto;scrollbar-width:none}
         .perf-sidebar::-webkit-scrollbar{display:none}
         .stk-card{background:#38050e;border-radius:28px;overflow:hidden;box-shadow:0 4px 8px 3px rgba(0,0,0,.1)}
-        .stk-img{width:100%;aspect-ratio:16/9;background-size:cover;background-position:center}
+        .stk-img{width:100%;aspect-ratio:16/9;background-size:cover;background-position:center top}
         .stk-body{padding:16px 16px 20px}
         .stk-name{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:900;text-transform:uppercase;color:#fff;margin-bottom:1px}
         .stk-sub{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;text-transform:uppercase;color:#cddbf2;margin-bottom:7px}

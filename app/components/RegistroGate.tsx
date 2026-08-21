@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import PrivacyCheckbox from "@/app/components/PrivacyCheckbox";
 
 /**
  * Puerta de entrada del sitio: pide nombre, correo y teléfono (opcional)
@@ -15,7 +14,6 @@ export default function RegistroGate() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -33,10 +31,6 @@ export default function RegistroGate() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!privacyAccepted) {
-      setErrorMsg("Debes aceptar las políticas de privacidad.");
-      return;
-    }
     setLoading(true);
     setErrorMsg("");
     try {
@@ -140,13 +134,6 @@ export default function RegistroGate() {
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
               />
             </div>
-
-            <PrivacyCheckbox
-              checked={privacyAccepted}
-              onChange={setPrivacyAccepted}
-              accentColor="#38050e"
-              textColor="rgba(56,5,14,.6)"
-            />
 
             {errorMsg && <div className="rg-err">{errorMsg}</div>}
 
