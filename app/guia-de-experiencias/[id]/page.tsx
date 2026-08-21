@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
 import { getFincaBySlugId } from "@/app/actions/finca";
+import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
+import { getSlugId } from "@/lib/utils";
 import FincaDetailClient from "./FincaDetailClient";
 import Footer from "@/app/components/layout/Footer";
 
@@ -23,6 +26,27 @@ export default async function FincaDetailPage({ params }: { params: Promise<{ id
   const finca = await getFincaBySlugId(id);
 
   if (!finca || !finca.isActive) return notFound();
+
+  // Cafeterías participantes que sirven el café de esta finca. Igual que en
+  // participantes: al cliente viaja solo lo público, nunca el doc completo.
+  let shops: any[] = [];
+  if (Array.isArray(finca.partnerShops) && finca.partnerShops.length > 0) {
+    await dbConnect();
+    const docs = await User.find({
+      _id: { $in: finca.partnerShops },
+      role: "cafeteria",
+    }).lean();
+    shops = docs.map((s: any) => {
+      const destacado = s.baristas?.find((b: any) => b.isHighlighted) || s.baristas?.[0];
+      return {
+        slugId: getSlugId(s.cafeteriaName || "cafeteria", String(s._id)),
+        name: s.cafeteriaName || "",
+        neighborhood: s.neighborhood || "",
+        img: s.coverImage || "",
+        barista: destacado?.fullName || "",
+      };
+    });
+  }
 
   const gallery: string[] = [
     ...(finca.coverImage ? [finca.coverImage] : []),
@@ -49,6 +73,7 @@ export default async function FincaDetailPage({ params }: { params: Promise<{ id
     // Puede quedar vacío (finca aún sin foto): la ficha muestra el hero en
     // fondo vino y oculta el carrusel. No usar stock genérico.
     gallery,
+    shops,
     experiences: (finca.experiences || [])
       .filter((e: any) => e.isActive)
       .sort((a: any, b: any) => a.order - b.order)

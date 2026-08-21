@@ -75,6 +75,15 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
         .spec-lnk{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:50px;background:#38050e;color:#fff;font-family:'Barlow',sans-serif;font-size:13px;text-decoration:none;transition:all .15s}
         .spec-lnk:hover{background:#cddbf2;color:#38050e}
 
+        /* ── Del origen a la barra: dónde probar su café ── */
+        .bar-sec{background:#fff;padding:0 0 56px}
+        .bar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;max-width:760px}
+        .bar-card{display:flex;align-items:center;gap:14px;background:#f4efe4;border:1px solid #cddbf2;border-radius:16px;padding:12px 16px 12px 12px;text-decoration:none;transition:box-shadow .2s,transform .2s}
+        .bar-card:hover{transform:translateY(-3px);box-shadow:0 4px 10px rgba(56,5,14,.14)}
+        .bar-img{width:62px;height:62px;flex-shrink:0;border-radius:12px;background-size:cover;background-position:center top;background-color:#cddbf2}
+        .bar-name{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:900;text-transform:uppercase;color:#38050e;line-height:1}
+        .bar-sub{font-family:'Barlow',sans-serif;font-size:12px;color:#38050e;opacity:.6;margin-top:3px}
+
         /* ── Experiencias de esta finca ── */
         .exp-sec{background:#f4efe4;padding:52px 0 72px}
         .exp-head{text-align:center;margin-bottom:30px}
@@ -307,6 +316,39 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
           </div>
         </div>
       </section>
+
+      {/* Del origen a la barra: cafeterías participantes que sirven este café */}
+      {finca.shops?.length > 0 && (
+        <section className="bar-sec">
+          <div className="wrap">
+            <div className="blk">
+              <div className="eyebrow-row">
+                <div className="eyebrow-line" />
+                <span className="eyebrow-text">Del origen a la barra</span>
+              </div>
+              <h2 className="blk-h">Prueba su café en la ruta</h2>
+              <p className="blk-p" style={{ marginBottom: 18 }}>
+                {finca.shops.length === 1
+                  ? "Esta cafetería participante prepara el café de esta finca:"
+                  : "Estas cafeterías participantes preparan el café de esta finca:"}
+              </p>
+              <div className="bar-grid">
+                {finca.shops.map((s: any) => (
+                  <Link key={s.slugId} href={`/participantes/${s.slugId}`} className="bar-card">
+                    <div className="bar-img" style={s.img ? { backgroundImage: `url('${s.img}')` } : undefined} />
+                    <div>
+                      <div className="bar-name">{s.name}</div>
+                      <div className="bar-sub">
+                        {s.barista ? `Barista: ${s.barista}` : s.neighborhood}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Experiencias de esta finca */}
       <section className="exp-sec">

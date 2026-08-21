@@ -55,6 +55,8 @@ const FincaSchema = new Schema(
     lng: { type: Number, default: null },
     isActive: { type: Boolean, default: true },
     order: { type: Number, default: 0 },
+    // Cafeterías participantes que sirven café de esta finca (del origen a la barra)
+    partnerShops: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
     experiences: { type: [ExperienceSchema], default: [] },
   },
   { timestamps: true }
