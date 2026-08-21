@@ -65,10 +65,10 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
 
         /* ── Page hero ── */
         .ph{position:relative;padding-top:58px;background:linear-gradient(135deg,#4a0a15 0%,#38050e 55%,#24060c 100%)}
-        .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.48) 45%,rgba(0,0,0,.72) 100%)}
+        .ph-sc{position:absolute;inset:0;background:linear-gradient(100deg,rgba(22,4,9,.82) 0%,rgba(22,4,9,.55) 38%,rgba(0,0,0,.18) 68%,rgba(0,0,0,.3) 100%)}
         .ph-sello{position:absolute;right:clamp(20px,5vw,60px);top:72px;width:84px;height:84px;opacity:.55;animation:spin2 28s linear infinite}
         @keyframes spin2{to{transform:rotate(360deg)}}
-        .ph-cnt{position:relative;z-index:2;padding:44px 0 44px}
+        .ph-cnt{position:relative;z-index:2;padding:64px 0 64px}
         .ph-flex{display:flex;align-items:center;justify-content:space-between;gap:40px}
         .ph-txt{flex:1}
         .ph-eye{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(196,212,232,.7);margin-bottom:10px}

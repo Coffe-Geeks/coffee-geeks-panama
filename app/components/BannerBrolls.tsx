@@ -79,9 +79,9 @@ export default function BannerBrolls({ videos, poster }: { videos: string[]; pos
     <div className="bb-wrap" aria-hidden>
       <style>{`
         .bb-wrap{position:absolute;inset:0;overflow:hidden}
-        .bb-poster{position:absolute;inset:0;background-size:cover;background-position:center 62%;opacity:.75}
+        .bb-poster{position:absolute;inset:0;background-size:cover;background-position:center 62%}
         .bb-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity ${FADE_MS}ms ease}
-        .bb-video.bb-on{opacity:.75}
+        .bb-video.bb-on{opacity:1}
       `}</style>
       <div className="bb-poster" style={{ backgroundImage: `url('${poster}')` }} />
       {conVideo && <CrossfadeVideos videos={videos} poster={poster} />}
