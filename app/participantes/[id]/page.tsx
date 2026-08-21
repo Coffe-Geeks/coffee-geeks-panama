@@ -34,13 +34,40 @@ export default async function PerfilPage({ params }: { params: { id: string } })
       votesCount = await Vote.countDocuments({ cafeteriaId: shop._id, round: currentRound });
     }
 
-    // Serializar profundamente para asegurar que no pasen objetos Mongoose (como ObjectId) al cliente
+    // Al cliente viaja SOLO lo público. El documento completo trae hash de
+    // contraseña, correo del dueño, RUC y datos legales: nada de eso puede
+    // terminar serializado en el HTML de una página pública.
     const plainShop = JSON.parse(JSON.stringify(shop));
-
     const shopData = {
-      ...plainShop,
       id: plainShop._id,
       votesCount,
+      cafeteriaName: plainShop.cafeteriaName || "",
+      name: plainShop.name || "",
+      lastName: plainShop.lastName || "",
+      neighborhood: plainShop.neighborhood || "",
+      businessType: plainShop.businessType || "coffee",
+      competitionCategory: plainShop.competitionCategory ?? [],
+      coverImage: plainShop.coverImage || "",
+      description: plainShop.description || "",
+      tagline: plainShop.tagline || "",
+      originStory: plainShop.originStory || "",
+      espresso: plainShop.espresso || "",
+      espressoPhoto: plainShop.espressoPhoto || "",
+      filtrado: plainShop.filtrado || "",
+      filtradoPhoto: plainShop.filtradoPhoto || "",
+      signatureDrink: plainShop.signatureDrink || "",
+      signatureDrinkName: plainShop.signatureDrinkName || "",
+      signatureDrinkPhoto: plainShop.signatureDrinkPhoto || "",
+      hours: plainShop.hours || "",
+      phone: plainShop.phone || "",
+      web: plainShop.web || "",
+      locationLat: plainShop.locationLat ?? null,
+      locationLng: plainShop.locationLng ?? null,
+      baristas: (plainShop.baristas || []).map((b: any) => ({
+        fullName: b.fullName || "",
+        photo: b.photo || "",
+        isHighlighted: !!b.isHighlighted,
+      })),
     };
 
     return (
