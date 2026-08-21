@@ -62,6 +62,16 @@ export default function MapSection({ shops }: { shops: any[] }) {
 
   const center: [number, number] = [8.9824, -79.5199]; // Panama City center
 
+  // Encuadre automático: el mapa se ajusta para mostrar TODOS los pines de una
+  // vez. Se excluyen del cálculo los locales muy lejanos (p. ej. fincas en
+  // Chiriquí, a ~-82° de longitud) para que la ciudad no quede diminuta; su
+  // pin sigue en el mapa, solo no manda sobre el encuadre.
+  const paraEncuadre = displayShops.filter((s: any) => Math.abs(s.lng + 79.52) < 0.6);
+  const bounds: [number, number][] | null =
+    paraEncuadre.length > 1
+      ? paraEncuadre.map((s: any) => [s.lat, s.lng] as [number, number])
+      : null;
+
   const customIcon = L.divIcon({
     className: "custom-marker-wrap",
     html: `
@@ -193,12 +203,35 @@ export default function MapSection({ shops }: { shops: any[] }) {
 
       <section className="map-sec">
         <div className="map-container-inner">
-          <MapContainer 
-            center={center} 
-            zoom={15} 
-            scrollWheelZoom={false} 
+          <MapContainer
+            center={center}
+            zoom={13}
+            scrollWheelZoom={false}
             style={{ height: "100%", width: "100%" }}
             attributionControl={false}
+            ref={(map: any) => {
+              // Al crearse el mapa, encuadra todos los pines de una vez. En
+              // pantallas anchas la tarjeta de la derecha ocupa ~500px, así que
+              // se reserva ese espacio para que ningún pin quede debajo.
+              if (!map || !bounds) return;
+              const anchoCard =
+                typeof window !== "undefined" && window.innerWidth > 850 ? 520 : 55;
+              const encuadrar = () => {
+                try {
+                  // Recalcula el tamaño por si el mapa nació oculto/con ancho 0
+                  // (está más abajo en la home) y luego ajusta a todos los pines.
+                  map.invalidateSize();
+                  map.fitBounds(bounds, {
+                    paddingTopLeft: [55, 55],
+                    paddingBottomRight: [anchoCard, 55],
+                    maxZoom: 15,
+                  });
+                } catch {
+                  /* si algo falla, queda el center/zoom por defecto */
+                }
+              };
+              map.whenReady(() => setTimeout(encuadrar, 250));
+            }}
           >
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
