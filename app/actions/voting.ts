@@ -277,18 +277,35 @@ export async function getLeaderboard() {
       });
       const avg = techVotes.length > 0 ? totalPoints / techVotes.length : 0;
 
+      // Barista destacado, o el primero de la casa si nadie está marcado
+      const baristaR1 = c.baristas?.find((b: any) => b.isHighlighted) || c.baristas?.[0];
+      // Foto del barista: la suya, o la portada cuando la portada ES su retrato
+      const fotoBaristaR1 =
+        baristaR1?.photo ||
+        (/(?:portada-)?barista/i.test(c.coverImage || "") ? c.coverImage : "");
+
       return {
         id: cid,
         name: c.cafeteriaName || `${c.name} ${c.lastName}`,
         category: Array.isArray(c.competitionCategory) && c.competitionCategory.length > 0 ? c.competitionCategory.join(" - ") : (typeof c.competitionCategory === 'string' && c.competitionCategory ? c.competitionCategory : "Sin Categoría"),
         competitionCategory: Array.isArray(c.competitionCategory) && c.competitionCategory.length > 0 ? c.competitionCategory.join(" - ") : (typeof c.competitionCategory === 'string' ? c.competitionCategory : ""),
-        barista: c.baristas?.find((b: any) => b.isHighlighted)?.fullName || "-",
-        baristaName: c.baristas?.find((b: any) => b.isHighlighted)?.fullName || "",
-        coverImage: c.coverImage,
-        neighborhood: c.neighborhood,
+        barista: baristaR1?.fullName || "-",
+        baristaName: baristaR1?.fullName || "",
+        coverImage: c.coverImage || "",
+        neighborhood: c.neighborhood || "",
         businessType: c.businessType,
-        baristaId: c.baristas?.find((b: any) => b.isHighlighted)?._id?.toString() || "",
-        baristaPhoto: c.baristas?.find((b: any) => b.isHighlighted)?.photo || "",
+        baristaId: baristaR1?._id?.toString() || "",
+        baristaPhoto: fotoBaristaR1,
+        baristaAnyId: baristaR1?._id?.toString() || "",
+        baristaAnyName: baristaR1?.fullName || "",
+        baristaAnyPhoto: fotoBaristaR1,
+        // Qué bebidas presenta (el público elige su favorita entre estas)
+        drinks: {
+          espresso: !!(c.espresso && String(c.espresso).trim()),
+          filtrado: !!(c.filtrado && String(c.filtrado).trim()),
+          signature: !!((c.signatureDrink && String(c.signatureDrink).trim()) || (c.signatureDrinkName && String(c.signatureDrinkName).trim())),
+          signatureName: c.signatureDrinkName || "",
+        },
         votesCount: cVotes.length,
         scores: {
           public: 0,
