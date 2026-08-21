@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { getSiteConfig } from "@/lib/siteConfig";
+import RegistroGate from "@/app/components/RegistroGate";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,11 +57,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Puerta de registro: el sitio solo se ve tras dejar nombre y correo.
+  // Quien ya se registró (cookie) o tiene sesión iniciada pasa directo.
+  const cookieStore = await cookies();
+  const yaRegistrado =
+    cookieStore.has("cg_registro") || cookieStore.has("session");
   return (
     <html lang="es" suppressHydrationWarning>
       <body
@@ -68,6 +74,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        {!yaRegistrado && <RegistroGate />}
         <Script id="matomo-tracker" strategy="afterInteractive">
           {`
             var _paq = window._paq = window._paq || [];
