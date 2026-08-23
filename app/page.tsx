@@ -32,6 +32,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import Vote from "@/models/Vote";
 import { getSiteConfig } from "@/lib/siteConfig";
+import { ordenarCafeterias } from "@/lib/ordenCafeterias";
 
 export const dynamic = 'force-dynamic';
 
@@ -46,7 +47,9 @@ export default async function HomePage() {
     query.advancedToRound2 = true;
   }
   const cafeterias = await User.find(query).lean();
-  
+  // Mismo orden que /participantes: primero los cofis con foto de barista.
+  ordenarCafeterias(cafeterias);
+
   let totalVotos = 0;
   let votesCountMap: Record<string, number> = {};
   if (currentRound > 0) {
