@@ -64,9 +64,11 @@ export default async function RootLayout({
 }>) {
   // Puerta de registro: el sitio solo se ve tras dejar nombre y correo.
   // Quien ya se registró (cookie) o tiene sesión iniciada pasa directo.
+  // DESHABILITADA por ahora (pedido 21-ago): poner en true para reactivarla.
+  const GATE_ACTIVO = false;
   const cookieStore = await cookies();
   const yaRegistrado =
-    cookieStore.has("cg_registro") || cookieStore.has("session");
+    !GATE_ACTIVO || cookieStore.has("cg_registro") || cookieStore.has("session");
   return (
     <html lang="es" suppressHydrationWarning>
       <body
