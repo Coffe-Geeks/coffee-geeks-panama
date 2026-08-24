@@ -52,10 +52,12 @@ function Slideshow({ fotos, animado }: { fotos: string[]; animado: boolean }) {
 
   return (
     <>
+      {/* La saliente queda quieta y opaca debajo; la entrante la tapa al
+          fundir. Así nunca se ven dos fotos superpuestas ni asoma el fondo. */}
       {prev !== null && (
         <div
           key={`p-${prev}`}
-          className="hf-foto hf-out"
+          className="hf-foto"
           style={{ backgroundImage: `url('${lista[prev]}')` }}
         />
       )}
@@ -88,15 +90,16 @@ export default function HeroFotos({ fotos = [] }: { fotos?: string[] }) {
     <>
       <style>{`
         .hf{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-        .hf-foto{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.78}
-        @keyframes hfFadeIn{from{opacity:0}to{opacity:.78}}
-        @keyframes hfFadeOut{from{opacity:.78}to{opacity:0}}
+        /* Fotos OPACAS: el oscurecido lo pone solo el velo. Si las capas
+           llevan transparencia se ve una foto "fantasma" bajo la otra
+           durante el fundido. */
+        .hf-foto{position:absolute;inset:0;background-size:cover;background-position:center}
+        @keyframes hfFadeIn{from{opacity:0}to{opacity:1}}
         /* El zoom dura más que la foto en pantalla: nunca se le ve el final */
         @keyframes hfZoom{from{transform:scale(1)}to{transform:scale(1.09)}}
         .hf-in{animation:hfFadeIn ${FADE_MS}ms ease both}
-        .hf-out{animation:hfFadeOut ${FADE_MS}ms ease both}
         .hf-zoom{animation:hfFadeIn ${FADE_MS}ms ease both,hfZoom ${HOLD_MS + FADE_MS * 2}ms linear both}
-        .hf-velo{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.5) 0%,rgba(0,0,0,.32) 45%,rgba(0,0,0,.62) 100%)}
+        .hf-velo{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.47) 45%,rgba(0,0,0,.72) 100%)}
       `}</style>
 
       <div className="hf" aria-hidden="true">
