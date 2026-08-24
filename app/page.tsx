@@ -32,7 +32,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import Vote from "@/models/Vote";
 import { getSiteConfig } from "@/lib/siteConfig";
-import { ordenarCafeterias, fotoBarista } from "@/lib/ordenCafeterias";
+import { ordenarCafeterias } from "@/lib/ordenCafeterias";
 
 export const dynamic = 'force-dynamic';
 
@@ -74,6 +74,17 @@ export default async function HomePage() {
     lat: c.locationLat,
     lng: c.locationLng
   }));
+
+  // Fotos para el fondo del hero: portada + galería de cada cafetería, para
+  // que se mezclen baristas, locales y bebidas (solo fotos reales del Blob,
+  // fuera el placeholder de Unsplash). El barajado lo hace el propio hero.
+  const FOTOS_HERO = [
+    ...new Set(
+      cafeterias
+        .flatMap((c: any) => [c.coverImage, ...(Array.isArray(c.gallery) ? c.gallery : [])])
+        .filter((u: any) => typeof u === "string" && u.includes("blob.vercel-storage.com"))
+    ),
+  ] as string[];
 
   const sortedByVotes = [...SHOPS].sort((a, b) => b.votes - a.votes);
 
@@ -126,7 +137,7 @@ export default async function HomePage() {
         <CoffeeBeansHero
           config={config}
           stats={{ cafeterias: SHOPS.length, votos: totalVotos, fincas: FINCAS_COUNT }}
-          fotos={cafeterias.map(fotoBarista).filter(Boolean) as string[]}
+          fotos={FOTOS_HERO}
         />
 
         {/* 2. Pasos — cómo participar */}

@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Fondo del hero: las portadas de TODAS las cafeterías participantes
- * rotando con fundido cruzado y un zoom lento (Ken Burns) — así ningún
- * participante acapara la entrada. Las fotos llegan por props desde la
- * página (las mismas portadas de la sección Descúbrenos, que viven en
- * el Blob). El pase arranca en una foto distinta en cada visita.
+ * Fondo del hero: fotos de TODAS las cafeterías participantes (portadas
+ * y galerías: baristas, locales y bebidas) rotando con fundido cruzado y
+ * un zoom lento (Ken Burns) — así ningún participante acapara la entrada.
+ * Las fotos llegan por props desde la página y viven en el Blob; se
+ * barajan en cada visita.
  *
  * Con movimiento reducido activado se queda una sola foto fija.
  */
@@ -19,8 +19,18 @@ const HOLD_MS = 4600;
 const FADE_MS = 1400;
 
 function Slideshow({ fotos, animado }: { fotos: string[]; animado: boolean }) {
-  const n = fotos.length;
-  const [idx, setIdx] = useState(() => Math.floor(Math.random() * n));
+  // Barajado por visita (solo corre en cliente): así se intercalan baristas,
+  // locales y bebidas en vez de salir juntas las fotos de un mismo café.
+  const [lista] = useState(() => {
+    const l = [...fotos];
+    for (let i = l.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [l[i], l[j]] = [l[j], l[i]];
+    }
+    return l;
+  });
+  const n = lista.length;
+  const [idx, setIdx] = useState(0);
   const [prev, setPrev] = useState<number | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -30,12 +40,12 @@ function Slideshow({ fotos, animado }: { fotos: string[]; animado: boolean }) {
       // Precargar la que sigue a la entrante para que el fundido nunca
       // muestre una imagen a medio bajar.
       const img = new Image();
-      img.src = fotos[(idx + 2) % n];
+      img.src = lista[(idx + 2) % n];
       setPrev(idx);
       setIdx((idx + 1) % n);
     }, HOLD_MS);
     return () => clearTimeout(timer.current);
-  }, [idx, animado, n, fotos]);
+  }, [idx, animado, n, lista]);
 
   return (
     <>
@@ -43,13 +53,13 @@ function Slideshow({ fotos, animado }: { fotos: string[]; animado: boolean }) {
         <div
           key={`p-${prev}`}
           className="hf-foto hf-out"
-          style={{ backgroundImage: `url('${fotos[prev]}')` }}
+          style={{ backgroundImage: `url('${lista[prev]}')` }}
         />
       )}
       <div
         key={`f-${idx}`}
         className={`hf-foto hf-in${animado ? " hf-zoom" : ""}`}
-        style={{ backgroundImage: `url('${fotos[idx]}')` }}
+        style={{ backgroundImage: `url('${lista[idx]}')` }}
       />
     </>
   );
