@@ -126,6 +126,7 @@ export default async function HomePage() {
         <CoffeeBeansHero
           config={config}
           stats={{ cafeterias: SHOPS.length, votos: totalVotos, fincas: FINCAS_COUNT }}
+          fotos={SHOPS.map((s) => s.img).filter((u) => !u.includes("images.unsplash.com"))}
         />
 
         {/* 2. Pasos — cómo participar */}

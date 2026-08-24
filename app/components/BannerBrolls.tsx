@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /**
  * Fondo de banner con b-rolls en fundido cruzado: los baristas haciendo
  * las bebidas con las manos (mismos clips del hero del home). En móvil o
- * con reduced-motion se queda el póster fijo, igual que HeroBrolls.
+ * con reduced-motion se queda el póster fijo, igual que el hero.
  * Va posicionado absolute para llenar el contenedor del banner.
  */
 const FADE_MS = 1000;

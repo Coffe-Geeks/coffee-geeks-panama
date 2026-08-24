@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { formatFechaCierre } from "@/lib/utils";
-import HeroBrolls from "./HeroBrolls";
+import HeroFotos from "./HeroFotos";
 import VoteModal from "@/app/components/VoteModal";
 
 /* ─── Coffee Bean SVG ──────────────────────────────────────────────────────
@@ -172,7 +172,7 @@ function AnimCounter({ target, duration = 2000, suffix = "" }: { target: number;
 /* ─── Main Hero ─────────────────────────────────────────────────────────── */
 type HeroStats = { cafeterias: number; votos: number; fincas: number };
 
-export default function CoffeeBeansHero({ config, stats }: { config?: any; stats?: HeroStats }) {
+export default function CoffeeBeansHero({ config, stats, fotos }: { config?: any; stats?: HeroStats; fotos?: string[] }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [voteModal, setVoteModal] = useState(false);
@@ -376,8 +376,8 @@ export default function CoffeeBeansHero({ config, stats }: { config?: any; stats
           pointerEvents: "none",
         }} />
 
-        {/* ── B-rolls propios de fondo ── */}
-        <HeroBrolls />
+        {/* ── Portadas de todas las cafeterías de fondo ── */}
+        <HeroFotos fotos={fotos} />
 
         {/* ── Horizontal separator line ── */}
         <div style={{
