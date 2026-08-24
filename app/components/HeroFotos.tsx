@@ -97,11 +97,9 @@ export default function HeroFotos({ fotos = [] }: { fotos?: string[] }) {
       `}</style>
 
       <div className="hf" aria-hidden="true">
-        {listo && fotos.length > 0 ? (
-          <Slideshow fotos={fotos} animado={animado} />
-        ) : (
-          <div className="hf-foto" style={{ backgroundImage: `url('${POSTER}')` }} />
-        )}
+        {/* Póster siempre de base: tapa el hueco mientras baja la 1ª foto */}
+        <div className="hf-foto" style={{ backgroundImage: `url('${POSTER}')` }} />
+        {listo && fotos.length > 0 && <Slideshow fotos={fotos} animado={animado} />}
         <div className="hf-velo" />
       </div>
     </>
