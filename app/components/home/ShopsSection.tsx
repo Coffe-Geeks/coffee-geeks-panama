@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { getSlugId } from "@/lib/utils";
 import VoteModal from "@/app/components/VoteModal";
 
 export default function ShopsSection({ initialShops }: { initialShops: any[] }) {
+  const router = useRouter();
   const [voteModal, setVoteModal] = useState<{ open: boolean; preselected?: string }>({ open: false });
 
   const openVote = (id: string) => setVoteModal({ open: true, preselected: id });
@@ -31,19 +33,20 @@ export default function ShopsSection({ initialShops }: { initialShops: any[] }) 
         .shops-ctrl { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
         .shops-badge { font-family: 'Barlow Condensed', sans-serif; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #38050e; background: #f4efe4; padding: 5px 13px; border-radius: 50px; border: 1px solid rgba(56,5,14,.12); flex-shrink: 0; }
         .shops-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-        .sc { background: #f4efe4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.12), 0 1px 3px 1px rgba(0,0,0,.08); transition: box-shadow .25s, transform .25s; cursor: pointer; border: 1px solid rgba(56,5,14,.05); }
+        .sc { background: #f4efe4; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.12), 0 1px 3px 1px rgba(0,0,0,.08); transition: box-shadow .25s, transform .25s; cursor: pointer; border: 1px solid rgba(56,5,14,.05); display: flex; flex-direction: column; height: 100%; }
         .sc:hover { box-shadow: 0 4px 8px 3px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.12); transform: translateY(-5px); }
-        .sc-img { width: 100%; aspect-ratio: 1/1; background-size: cover; background-position: center; display: flex; align-items: flex-start; justify-content: flex-end; padding: 9px; }
+        .sc-img { width: 100%; aspect-ratio: 1/1; background-size: cover; background-position: center; display: flex; align-items: flex-start; justify-content: flex-end; padding: 9px; flex-shrink: 0; }
         .sc-badge { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .04em; background: #38050e; color: #fff; padding: 4px 9px; border-radius: 50px; }
-        .sc-body { padding: 13px 14px 11px; }
-        .sc-cat { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #38050e; margin-bottom: 1px; }
-        .sc-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.45rem; font-weight: 900; text-transform: uppercase; color: #38050e; line-height: 1.05; margin-bottom: 4px; }
-        .sc-loc { display: flex; align-items: center; gap: 5px; font-family: 'Barlow', sans-serif; font-size: 13px; color: #38050e; opacity: .7; margin-bottom: 11px; }
-        .sc-acts { display: flex; gap: 7px; padding-top: 9px; border-top: 1px solid #cddbf2; }
+        .sc-body { padding: 13px 14px 11px; display: flex; flex-direction: column; flex: 1; }
+        .sc-cat { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #38050e; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Nombre siempre ocupa el alto de 2 líneas (los largos se cortan con …)
+           para que todas las tarjetas midan exactamente lo mismo. */
+        .sc-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.45rem; font-weight: 900; text-transform: uppercase; color: #38050e; line-height: 1.05; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.1em; }
+        .sc-loc { display: flex; align-items: center; gap: 5px; font-family: 'Barlow', sans-serif; font-size: 13px; color: #38050e; opacity: .7; margin-bottom: 11px; white-space: nowrap; overflow: hidden; }
+        .sc-acts { display: flex; gap: 7px; padding-top: 9px; border-top: 1px solid #cddbf2; margin-top: auto; }
         .scb { flex: 1; height: 33px; border-radius: 50px; border: none; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: box-shadow .15s; }
         .scb-v { background: #38050e; color: #fff; }
         .scb-v:hover { box-shadow: 0 1px 2px rgba(0,0,0,.12), 0 2px 6px 2px rgba(0,0,0,.08); }
-        .scb-p { background: #f4efe4; color: #38050e; border: 1px solid #cddbf2; }
         .spons-row { margin-top: 36px; padding-top: 28px; border-top: 1px solid #cddbf2; display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
         .chip-static { display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #cddbf2; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 500; color: #38050e; opacity: .7; }
         @media (max-width: 960px) { .shops-grid { grid-template-columns: 1fr 1fr; } }
@@ -70,7 +73,12 @@ export default function ShopsSection({ initialShops }: { initialShops: any[] }) 
 
           <div className="shops-grid">
             {initialShops.map((shop: any) => (
-              <div className="sc" key={shop.id}>
+              <div
+                className="sc"
+                key={shop.id}
+                title={shop.name}
+                onClick={() => router.push(`/participantes/${getSlugId(shop.name, shop.id)}`)}
+              >
                 <div className="sc-img" style={{ backgroundImage: `url('${shop.img}')` }}>
                   <span className="sc-badge">{shop.votes} votos</span>
                 </div>
@@ -84,14 +92,7 @@ export default function ShopsSection({ initialShops }: { initialShops: any[] }) 
                     {shop.loc}
                   </div>
                   <div className="sc-acts">
-                    <button className="scb scb-v" onClick={() => openVote(shop.id)}>Votar</button>
-                    <Link 
-                      href={`/participantes/${getSlugId(shop.name, shop.id)}`} 
-                      className="scb scb-p"
-                      style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none" }}
-                    >
-                      Ver perfil
-                    </Link>
+                    <button className="scb scb-v" onClick={(e) => { e.stopPropagation(); openVote(shop.id); }}>Votar</button>
                   </div>
                 </div>
               </div>

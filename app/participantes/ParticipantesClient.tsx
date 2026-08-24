@@ -101,15 +101,17 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
 
         /* Grid */
         .sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-        .sc{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.12),0 1px 3px 1px rgba(0,0,0,.08);transition:box-shadow .25s,transform .25s;cursor:pointer;border:1px solid #cddbf2}
+        .sc{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.12),0 1px 3px 1px rgba(0,0,0,.08);transition:box-shadow .25s,transform .25s;cursor:pointer;border:1px solid #cddbf2;display:flex;flex-direction:column;height:100%}
         .sc:hover{box-shadow:0 4px 8px 3px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.12);transform:translateY(-5px)}
-        .sc-img{width:100%;aspect-ratio:1/1;background-size:cover;background-position:center;display:flex;align-items:flex-start;justify-content:flex-end;padding:9px}
+        .sc-img{width:100%;aspect-ratio:1/1;background-size:cover;background-position:center;display:flex;align-items:flex-start;justify-content:flex-end;padding:9px;flex-shrink:0}
         .sc-badge{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.04em;background:#38050e;color:#fff;padding:4px 9px;border-radius:50px}
-        .sc-body{padding:13px 14px 11px}
-        .sc-cat{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#38050e;opacity:.6;margin-bottom:1px}
-        .sc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.45rem;font-weight:900;text-transform:uppercase;color:#38050e;line-height:1.05;margin-bottom:4px}
-        .sc-loc{display:flex;align-items:center;gap:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#38050e;opacity:.5;margin-bottom:11px}
-        .sc-acts{display:flex;gap:7px;padding-top:9px;border-top:1px solid #cddbf2}
+        .sc-body{padding:13px 14px 11px;display:flex;flex-direction:column;flex:1}
+        .sc-cat{font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#38050e;opacity:.6;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        /* Nombre siempre a 2 líneas de alto (los largos se cortan con …) para
+           que todas las tarjetas midan exactamente lo mismo. */
+        .sc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.45rem;font-weight:900;text-transform:uppercase;color:#38050e;line-height:1.05;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.1em}
+        .sc-loc{display:flex;align-items:center;gap:5px;font-family:'Barlow',sans-serif;font-size:13px;color:#38050e;opacity:.5;margin-bottom:11px;white-space:nowrap;overflow:hidden}
+        .sc-acts{display:flex;gap:7px;padding-top:9px;border-top:1px solid #cddbf2;margin-top:auto}
         .scb{flex:1;height:33px;border-radius:50px;border:none;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
         .scb-v{background:#38050e;color:#fff}
         .scb-v:hover{background:#cddbf2;color:#38050e}
@@ -197,6 +199,7 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
               <div
                 className="sc"
                 key={shop.id}
+                title={shop.name}
                 onClick={() => router.push(`/participantes/${getSlugId(shop.name, shop.id)}`)}
               >
                 <div className="sc-img" style={{ backgroundImage: `url('${shop.img}')` }}>
