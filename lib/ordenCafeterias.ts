@@ -4,14 +4,17 @@
 // La foto puede venir de la portada editorial (convención portada-barista-*)
 // o de la foto propia que el barista destacado subió en su ficha.
 
-export const tieneFotoBarista = (c: any) => {
+// Foto del barista de una cafetería: la portada editorial si es de barista,
+// o la foto que subió el barista destacado en su ficha. Null si no hay.
+export const fotoBarista = (c: any): string | null => {
+  if (/(?:portada-)?barista/i.test(c.coverImage || "")) return c.coverImage;
   const destacado = Array.isArray(c.baristas)
     ? (c.baristas.find((b: any) => b.isHighlighted) || c.baristas[0])
     : null;
-  const fotoPropia = !!(destacado && destacado.photo);
-  const portada = /(?:portada-)?barista/i.test(c.coverImage || "");
-  return fotoPropia || portada;
+  return (destacado && destacado.photo) || null;
 };
+
+export const tieneFotoBarista = (c: any) => !!fotoBarista(c);
 
 const completitud = (c: any) => {
   const conFoto = !!c.coverImage;

@@ -32,7 +32,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import Vote from "@/models/Vote";
 import { getSiteConfig } from "@/lib/siteConfig";
-import { ordenarCafeterias } from "@/lib/ordenCafeterias";
+import { ordenarCafeterias, fotoBarista } from "@/lib/ordenCafeterias";
 
 export const dynamic = 'force-dynamic';
 
@@ -126,7 +126,7 @@ export default async function HomePage() {
         <CoffeeBeansHero
           config={config}
           stats={{ cafeterias: SHOPS.length, votos: totalVotos, fincas: FINCAS_COUNT }}
-          fotos={SHOPS.map((s) => s.img).filter((u) => !u.includes("images.unsplash.com"))}
+          fotos={cafeterias.map(fotoBarista).filter(Boolean) as string[]}
         />
 
         {/* 2. Pasos — cómo participar */}
