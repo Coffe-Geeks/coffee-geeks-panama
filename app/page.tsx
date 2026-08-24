@@ -33,6 +33,7 @@ import User from "@/models/User";
 import Vote from "@/models/Vote";
 import { getSiteConfig } from "@/lib/siteConfig";
 import { ordenarCafeterias } from "@/lib/ordenCafeterias";
+import { esFotoHeroPermitida } from "@/lib/fotosHero";
 
 export const dynamic = 'force-dynamic';
 
@@ -83,6 +84,7 @@ export default async function HomePage() {
       cafeterias
         .flatMap((c: any) => [c.coverImage, ...(Array.isArray(c.gallery) ? c.gallery : [])])
         .filter((u: any) => typeof u === "string" && u.includes("blob.vercel-storage.com"))
+        .filter(esFotoHeroPermitida)
     ),
   ] as string[];
 

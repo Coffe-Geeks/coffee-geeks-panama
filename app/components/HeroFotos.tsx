@@ -11,8 +11,11 @@ import { useEffect, useRef, useState } from "react";
  *
  * Con movimiento reducido activado se queda una sola foto fija.
  */
+// Imagen de base mientras carga la primera foto del pase: una foto real
+// aprobada por curaduría (interior sin gente ni rótulos), NO el cuadro
+// del video viejo.
 const POSTER =
-  "https://67nfjlu2uec5rb7z.public.blob.vercel-storage.com/brolls/poster.jpg";
+  "https://67nfjlu2uec5rb7z.public.blob.vercel-storage.com/participantes/sisu-coffee-studio/foto-01.webp";
 
 // Cada foto se sostiene este tiempo antes de fundir a la siguiente.
 const HOLD_MS = 4600;
