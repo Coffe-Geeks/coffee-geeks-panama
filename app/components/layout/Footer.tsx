@@ -16,8 +16,6 @@ const FOOTER_LINKS = {
     { label: "Pasaporte digital", href: "/pasaporte" },
   ],
   legal: [
-    { label: "Términos y Condiciones de Compra", href: "/terminos-de-compra" },
-    { label: "Cancelaciones y Reembolsos", href: "/cancelaciones" },
     { label: "Política de privacidad", href: "/privacidad" },
     { label: "Términos del concurso", href: "/terminos" },
     { label: "Ley 81 · Datos personales", href: "/datos-personales" },
@@ -114,12 +112,6 @@ export default async function Footer() {
         .ft-bot p { font-family: 'Barlow', sans-serif; font-size: 12px; color: rgba(255,255,255,.18); }
         .ft-bot a { color: rgba(255,255,255,.26); transition: color .2s; text-decoration: none; }
         .ft-bot a:hover { color: rgba(255,255,255,.6); }
-        .ft-merchant {
-          font-family: 'Barlow', sans-serif; font-size: 12px; line-height: 1.6;
-          color: rgba(255,255,255,.32); border-top: 1px solid rgba(255,255,255,.08);
-          padding: 14px 0 0; margin-top: 6px;
-        }
-        .ft-merchant strong { color: rgba(255,255,255,.5); font-weight: 600; }
         @media (max-width: 960px) {
           .ft-mid { grid-template-columns: 1fr 1fr; }
         }
@@ -253,24 +245,13 @@ export default async function Footer() {
             </div>
           </div>
 
-          {/* Aviso del comercio: razón social + cómo aparece el cargo, exigido
-              por la entidad procesadora (BAC) para minimizar contracargos. */}
-          <div className="ft-merchant">
-            Coffee Geeks Panamá y Panama Unique son marcas operadas por{" "}
-            <strong>Panamá International Firm by YelCaballero, S.EP. (PIF)</strong>, Ciudad de Panamá,
-            República de Panamá. Los pagos se procesan de forma segura a través de BAC Credomatic; los
-            cargos aparecerán en tu estado de cuenta a nombre de <strong>PANAMÁ INTERNATIONAL FIRM</strong>.
-          </div>
-
           {/* Bottom bar */}
           <div className="ft-bot">
             <p>© 2026 Coffee Geeks Panamá · Todos los derechos reservados</p>
             <p>
-              <Link href="/terminos-de-compra">Términos de compra</Link>
-              {" · "}
-              <Link href="/cancelaciones">Cancelaciones y reembolsos</Link>
-              {" · "}
               <Link href="/privacidad">Privacidad</Link>
+              {" · "}
+              <Link href="/terminos">Términos</Link>
             </p>
           </div>
         </div>
