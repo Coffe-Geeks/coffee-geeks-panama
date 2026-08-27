@@ -83,7 +83,7 @@ export default function BlogForm({ initialData }: BlogFormProps) {
             <label className="text-sm font-bold uppercase tracking-wider text-[#cddbf2]/60">Imagen Principal</label>
             <div className="relative aspect-video rounded-2xl overflow-hidden border-2 border-dashed border-[#cddbf2]/20 hover:border-[#cddbf2]/40 transition-colors group cursor-pointer bg-black/20">
               {previewImage ? (
-                <Image src={previewImage} alt="Preview" fill className="object-cover" />
+                <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
               ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 opacity-50">
                   <span className="text-2xl">🖼️</span>

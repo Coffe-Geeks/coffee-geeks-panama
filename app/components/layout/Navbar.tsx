@@ -25,6 +25,7 @@ const NAV_LINKS: NavLink[] = [
   { label: "Guía de Experiencias", href: "/guia-de-experiencias" },
   { label: "Academia", href: "/academia" },
   { label: "Pasaporte", href: "/pasaporte" },
+  { label: "Blog", href: "/blogs" },
   { label: "Tienda", href: "/tienda" },
 ];
 

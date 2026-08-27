@@ -33,6 +33,7 @@ const SiteConfigSchema = new Schema(
     guiaConsumidor: { type: String, default: "" },
     termsAndConditions: { type: String, default: "" },
     dataProtection: { type: String, default: "" },
+    purchasePolicy: { type: String, default: "" },
 
     // Cafeterías
     maxGalleryImages: { type: Number, default: 3 },

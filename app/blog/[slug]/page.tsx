@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/app/components/layout/Navbar";
 import Footer from "@/app/components/layout/Footer";
 import Image from "next/image";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -16,53 +17,118 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
   return (
     <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;700;900&family=Barlow:wght@300;400;500&display=swap');
+
+        .ph{position:relative;padding-top:58px;background:linear-gradient(135deg,#4a0a15 0%,#38050e 55%,#24060c 100%)}
+        .ph-sc{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.62) 0%,rgba(0,0,0,.48) 45%,rgba(0,0,0,.72) 100%)}
+        .ph-cnt{position:relative;z-index:2;padding:44px 0 44px}
+        .ph-flex{display:flex;align-items:center;justify-content:space-between;gap:40px}
+        .ph-txt{flex:1}
+        .ph-eye{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(196,212,232,.7);margin-bottom:10px}
+        .ph-h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(38px,6vw,64px);font-weight:900;text-transform:uppercase;color:#fff;line-height:.92;margin-bottom:4px}
+
+        .bread{background:#fff;border-bottom:1px solid #eee}
+        .bread-i{display:flex;align-items:center;gap:7px;padding:9px 0;font-family:'Barlow',sans-serif;font-size:12px}
+        .bread-i a{color:#38050e;opacity:.7;transition:opacity .2s;text-decoration:none}
+        .bread-i a:hover{opacity:1}
+        .bread-i span{color:#38050e;opacity:.6}
+
+        .wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,60px)}
+
+        /* ── Detail Page Layout ── */
+        .main-sec{background:#fff;padding:56px 0 72px}
+        .post-layout{max-width:800px;margin:0 auto}
+        
+        .img-container{width:100%;aspect-ratio:16/9;border-radius:24px;overflow:hidden;border:1px solid #cddbf2;background:#f4efe4;box-shadow:0 8px 30px rgba(56,5,14,0.06);margin-bottom:40px;position:relative}
+        
+        /* Rich Text Content */
+        .rich-content{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.75;color:#38050e;opacity:.9}
+        .rich-content img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 16px;
+          margin: 28px 0;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+        .rich-content h2{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:900;text-transform:uppercase;margin:36px 0 18px;color:#38050e;line-height:1.1}
+        .rich-content h3{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;margin:28px 0 14px;color:#38050e;line-height:1.1}
+        .rich-content p{margin-bottom:20px}
+        .rich-content ul{list-style-type:disc;padding-left:20px;margin-bottom:20px}
+        .rich-content ol{list-style-type:decimal;padding-left:20px;margin-bottom:20px}
+        .rich-content blockquote { border-left: 4px solid #38050e; padding-left: 24px; font-style: italic; font-size: 1.25rem; margin: 32px 0; color: rgba(56,5,14,0.85); font-family: 'Barlow', sans-serif; }
+
+        .back-box{margin-top:56px;padding-top:32px;border-top:1px solid #eef3f9}
+        .back-btn{display:inline-flex;align-items:center;gap:7px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:#38050e;text-decoration:none;text-transform:uppercase;transition:opacity .2s}
+        .back-btn:hover{opacity:.6}
+      `}</style>
+
       <Navbar />
-      <main className="min-h-screen bg-[#fcfbf9]">
-        <style>{`
-          .post-header { background: #38050e; padding: 140px 0 100px; color: #fff; position: relative; overflow: hidden; }
-          .post-header-wrap { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 2; }
-          .post-meta { font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; margin-bottom: 20px; display: block; }
-          .post-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(32px, 6vw, 64px); font-weight: 900; text-transform: uppercase; line-height: 0.9; margin-bottom: 30px; }
-          
-          .post-content-sec { padding: 80px 0; }
-          .post-content-wrap { width: 100%; max-width: 800px; margin: 0 auto; padding: 0 25px; }
-          
-          .post-main-img { width: 100%; aspect-ratio: 16/9; position: relative; border-radius: 30px; overflow: hidden; margin-top: -120px; box-shadow: 0 30px 60px rgba(0,0,0,0.2); z-index: 10; margin-bottom: 60px; }
-          
-          .post-body { font-family: 'Barlow', sans-serif; font-size: 1.15rem; line-height: 1.8; color: #333; }
-          .post-body h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 2.5rem; font-weight: 900; text-transform: uppercase; margin: 1.5em 0 0.8em; color: #38050e; }
-          .post-body h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; margin: 1.2em 0 0.6em; color: #38050e; }
-          .post-body p { margin-bottom: 1.5em; opacity: 0.9; }
-          .post-body img { max-width: 100%; height: auto; border-radius: 20px; margin: 40px 0; display: block; }
-          .post-body blockquote { border-left: 5px solid #38050e; padding-left: 30px; font-style: italic; font-size: 1.4rem; margin: 40px 0; color: #555; }
-          
-          .share-sec { margin-top: 80px; padding-top: 40px; border-top: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; }
-          .back-btn { font-family: 'Barlow', sans-serif; font-weight: 800; text-transform: uppercase; color: #38050e; text-decoration: none; display: flex; align-items: center; gap: 10px; font-size: 14px; }
-        `}</style>
 
-        <section className="post-header">
-          <div className="post-header-wrap">
-            <span className="post-meta">Publicado el {new Date(post.createdAt).toLocaleDateString('es-PA', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
-            <h1 className="post-title">{post.title}</h1>
-          </div>
-        </section>
-
-        <section className="post-content-sec">
-          <div className="post-content-wrap">
-            {post.mainImage && (
-              <div className="post-main-img">
-                <Image src={post.mainImage} alt={post.title} fill className="object-cover" priority />
+      {/* Hero */}
+      <div className="ph">
+        <div className="ph-sc" />
+        <div className="ph-cnt">
+          <div className="wrap">
+            <div className="ph-flex">
+              <div className="ph-txt">
+                <div className="ph-eye">
+                  Publicado el {new Date(post.createdAt).toLocaleDateString('es-PA', { day: '2-digit', month: 'long', year: 'numeric' })}
+                </div>
+                <h1 className="ph-h1">{post.title}</h1>
               </div>
-            )}
-            
-            <div className="post-body" dangerouslySetInnerHTML={{ __html: post.content }} />
-            
-            <div className="share-sec">
-              <a href="/blogs" className="back-btn">← Volver al blog</a>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
+
+      {/* Breadcrumb */}
+      <div className="bread">
+        <div className="wrap">
+          <div className="bread-i">
+            <Link href="/">Inicio</Link>
+            <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", opacity: 0.5, fill: "none", strokeWidth: 2 }}>
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+            <Link href="/blogs">Blog</Link>
+            <svg viewBox="0 0 24 24" style={{ width: 12, height: 12, stroke: "#38050e", opacity: 0.5, fill: "none", strokeWidth: 2 }}>
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+            <span>{post.title}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Post Section */}
+      <section className="main-sec">
+        <div className="wrap">
+          <div className="post-layout">
+            {post.mainImage && (
+              <div className="img-container">
+                <Image 
+                  src={post.mainImage} 
+                  alt={post.title} 
+                  fill 
+                  className="object-cover" 
+                  priority 
+                />
+              </div>
+            )}
+
+            <div 
+              className="rich-content" 
+              dangerouslySetInnerHTML={{ __html: post.content }} 
+            />
+
+            <div className="back-box">
+              <Link href="/blogs" className="back-btn">
+                ← Volver al blog
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </>
   );

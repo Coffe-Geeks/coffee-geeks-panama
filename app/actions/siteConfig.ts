@@ -39,6 +39,7 @@ export async function updateSiteConfig(state: any, formData: FormData) {
     const guiaConsumidor = formData.get("guiaConsumidor")?.toString() ?? "";
     const termsAndConditions = formData.get("termsAndConditions")?.toString() ?? "";
     const dataProtection = formData.get("dataProtection")?.toString() ?? "";
+    const purchasePolicy = formData.get("purchasePolicy")?.toString() ?? "";
     
     const maxGalleryImagesStr = formData.get("maxGalleryImages")?.toString().trim();
     const maxGalleryImages = maxGalleryImagesStr ? parseInt(maxGalleryImagesStr, 10) : 3;
@@ -71,6 +72,7 @@ export async function updateSiteConfig(state: any, formData: FormData) {
           guiaConsumidor,
           termsAndConditions,
           dataProtection,
+          purchasePolicy,
           maxGalleryImages, 
           votingEndDate 
         } 
@@ -88,6 +90,7 @@ export async function updateSiteConfig(state: any, formData: FormData) {
     revalidatePath("/guia-consumidor", "page");
     revalidatePath("/terminos", "page");
     revalidatePath("/datos-personales", "page");
+    revalidatePath("/politica-de-compras", "page");
 
     return { success: "Configuración guardada correctamente." };
   } catch (err) {

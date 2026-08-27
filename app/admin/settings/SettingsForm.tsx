@@ -320,6 +320,17 @@ export default function SettingsForm({ config }: { config: any }) {
             />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
+            <label className={labelCls} htmlFor="purchasePolicy">Política de Compras</label>
+            <textarea
+              id="purchasePolicy"
+              name="purchasePolicy"
+              rows={8}
+              defaultValue={config.purchasePolicy}
+              placeholder="Políticas de envío, devolución y compras de la tienda..."
+              className={`${inputCls} resize-y font-mono text-xs leading-relaxed`}
+            />
+          </div>
+          <div className="flex flex-col gap-2 md:col-span-2">
             <label className={labelCls} htmlFor="dataProtection">Ley 81 · Datos Personales</label>
             <textarea
               id="dataProtection"

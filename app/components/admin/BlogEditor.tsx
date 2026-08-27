@@ -19,6 +19,7 @@ export default function BlogEditor({ initialContent = "", onChange }: BlogEditor
   }, [initialContent]);
 
   const handleCommand = (command: string, value: string = "") => {
+    editorRef.current?.focus();
     document.execCommand(command, false, value);
     if (editorRef.current) {
       onChange(editorRef.current.innerHTML);
@@ -33,7 +34,14 @@ export default function BlogEditor({ initialContent = "", onChange }: BlogEditor
     formData.append("image", file);
 
     const result = await uploadBlogImage(formData);
+    
+    // Reset file input value
+    e.target.value = "";
+
     if (result.url) {
+      if (editorRef.current) {
+        editorRef.current.focus();
+      }
       handleCommand("insertImage", result.url);
     } else {
       alert("Error al subir imagen");
@@ -49,20 +57,20 @@ export default function BlogEditor({ initialContent = "", onChange }: BlogEditor
   return (
     <div className="flex flex-col gap-2 border border-[#cddbf2]/20 rounded-xl overflow-hidden bg-black/20">
       <div className="flex flex-wrap gap-1 p-2 bg-[#cddbf2]/5 border-b border-[#cddbf2]/10 sticky top-0 z-10 backdrop-blur-md">
-        <button type="button" onClick={() => handleCommand("bold")} className="p-2 hover:bg-[#cddbf2]/20 rounded font-bold transition-colors">B</button>
-        <button type="button" onClick={() => handleCommand("italic")} className="p-2 hover:bg-[#cddbf2]/20 rounded italic transition-colors">I</button>
-        <button type="button" onClick={() => handleCommand("underline")} className="p-2 hover:bg-[#cddbf2]/20 rounded underline transition-colors">U</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("bold"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded font-bold transition-colors text-white">B</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("italic"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded italic transition-colors text-white">I</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("underline"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded underline transition-colors text-white">U</button>
         <div className="w-px h-6 bg-[#cddbf2]/10 mx-1 self-center" />
-        <button type="button" onClick={() => handleCommand("formatBlock", "h2")} className="p-2 hover:bg-[#cddbf2]/20 rounded font-black transition-colors">H2</button>
-        <button type="button" onClick={() => handleCommand("formatBlock", "h3")} className="p-2 hover:bg-[#cddbf2]/20 rounded font-bold transition-colors">H3</button>
-        <button type="button" onClick={() => handleCommand("formatBlock", "p")} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors">P</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("formatBlock", "h2"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded font-black transition-colors text-white">H2</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("formatBlock", "h3"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded font-bold transition-colors text-white">H3</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("formatBlock", "p"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors text-white">P</button>
         <div className="w-px h-6 bg-[#cddbf2]/10 mx-1 self-center" />
-        <button type="button" onClick={() => handleCommand("justifyLeft")} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors">L</button>
-        <button type="button" onClick={() => handleCommand("justifyCenter")} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors">C</button>
-        <button type="button" onClick={() => handleCommand("justifyRight")} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors">R</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("justifyLeft"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors text-white">L</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("justifyCenter"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors text-white">C</button>
+        <button type="button" onMouseDown={(e) => { e.preventDefault(); handleCommand("justifyRight"); }} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors text-white">R</button>
         <div className="w-px h-6 bg-[#cddbf2]/10 mx-1 self-center" />
         {/* Imágenes desactivadas temporalmente para evitar error de 1MB */}
-        {/* <button type="button" onClick={() => fileInputRef.current?.click()} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors">
+        {/* <button type="button" onMouseDown={(e) => { e.preventDefault(); fileInputRef.current?.click(); }} className="p-2 hover:bg-[#cddbf2]/20 rounded transition-colors text-white">
           📷 Imagen
         </button> */}
         <input 
@@ -95,7 +103,7 @@ export default function BlogEditor({ initialContent = "", onChange }: BlogEditor
         }}
       />
       
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         [contenteditable] {
           outline: none;
         }
@@ -109,7 +117,7 @@ export default function BlogEditor({ initialContent = "", onChange }: BlogEditor
         [contenteditable] h2 { font-size: 2rem; font-weight: 800; margin-top: 1.5em; color: #fff; }
         [contenteditable] h3 { font-size: 1.5rem; font-weight: 700; margin-top: 1.2em; color: #fff; }
         [contenteditable] p { margin-bottom: 1em; line-height: 1.6; opacity: 0.9; }
-      `}</style>
+      `}} />
     </div>
   );
 }

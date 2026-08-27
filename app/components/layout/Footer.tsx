@@ -19,6 +19,7 @@ const FOOTER_LINKS = {
     { label: "Política de privacidad", href: "/privacidad" },
     { label: "Términos del concurso", href: "/terminos" },
     { label: "Ley 81 · Datos personales", href: "/datos-personales" },
+    { label: "Política de compras", href: "/politica-de-compras" },
   ],
 };
 
@@ -252,6 +253,8 @@ export default async function Footer() {
               <Link href="/privacidad">Privacidad</Link>
               {" · "}
               <Link href="/terminos">Términos</Link>
+              {" · "}
+              <Link href="/politica-de-compras">Compras</Link>
             </p>
           </div>
         </div>
