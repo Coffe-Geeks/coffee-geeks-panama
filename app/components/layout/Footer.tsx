@@ -1,4 +1,5 @@
 import Link from "next/link";
+import NewsletterForm from "./NewsletterForm";
 
 // Votaciones y Del Origen a la Barra quedan fuera hasta que se activen;
 // sus rutas siguen vivas, solo se retiran los enlaces.
@@ -241,8 +242,7 @@ export default async function Footer() {
             <div>
               <div className="ft-cl">Newsletter</div>
               <p className="ft-nl-desc">Recibe noticias y avances del concurso.</p>
-              <input className="ft-input" type="email" placeholder="tu@correo.com" />
-              <button className="ft-sub-btn">Suscribirme →</button>
+              <NewsletterForm />
             </div>
           </div>
 

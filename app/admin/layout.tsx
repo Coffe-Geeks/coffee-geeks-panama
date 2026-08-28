@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { logout } from "@/app/actions/auth";
 
 export default function AdminLayout({
   children,
@@ -51,6 +52,9 @@ export default function AdminLayout({
                 <Link href="/admin/productos" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
                   Tienda
                 </Link>
+                <Link href="/admin/newsletter" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
+                  Boletín
+                </Link>
                 <Link href="/admin/settings" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
                   Configuración
                 </Link>
@@ -61,13 +65,9 @@ export default function AdminLayout({
               <Link href="/perfil" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-colors duration-300">
                 Mi Perfil
               </Link>
-              <form action="/actions/logout" method="post">
+              <form action={logout}>
                 <button
-                  formAction={async () => {
-                    "use server";
-                    const { logout } = await import("@/app/actions/auth");
-                    await logout();
-                  }}
+                  type="submit"
                   className="text-sm font-semibold px-4 py-2 rounded-xl bg-[#cddbf2]/10 text-[#cddbf2] border border-[#cddbf2]/20 hover:bg-[#cddbf2]/20 hover:text-white transition-all duration-300 hover:scale-105"
                 >
                   Salir

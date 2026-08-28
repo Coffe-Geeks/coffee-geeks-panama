@@ -167,6 +167,7 @@ export default function CourseFormClient({ initialData, isNew }: { initialData: 
                 type="file"
                 name="mainImage"
                 accept="image/*"
+                required={isNew}
                 className="w-full text-[#cddbf2] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#cddbf2]/10 file:text-[#cddbf2] hover:file:bg-[#cddbf2]/20"
               />
               {initialData?.mainImage && (
