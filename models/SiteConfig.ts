@@ -34,6 +34,7 @@ const SiteConfigSchema = new Schema(
     termsAndConditions: { type: String, default: "" },
     dataProtection: { type: String, default: "" },
     purchasePolicy: { type: String, default: "" },
+    cancellationPolicy: { type: String, default: "" },
 
     // Cafeterías
     maxGalleryImages: { type: Number, default: 3 },

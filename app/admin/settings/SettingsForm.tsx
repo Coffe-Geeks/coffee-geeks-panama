@@ -331,6 +331,17 @@ export default function SettingsForm({ config }: { config: any }) {
             />
           </div>
           <div className="flex flex-col gap-2 md:col-span-2">
+            <label className={labelCls} htmlFor="cancellationPolicy">Política de Cancelaciones, Devoluciones y Reembolsos</label>
+            <textarea
+              id="cancellationPolicy"
+              name="cancellationPolicy"
+              rows={8}
+              defaultValue={config.cancellationPolicy}
+              placeholder="Políticas de cancelación, devoluciones y reembolsos de la tienda..."
+              className={`${inputCls} resize-y font-mono text-xs leading-relaxed`}
+            />
+          </div>
+          <div className="flex flex-col gap-2 md:col-span-2">
             <label className={labelCls} htmlFor="dataProtection">Ley 81 · Datos Personales</label>
             <textarea
               id="dataProtection"

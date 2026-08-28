@@ -38,7 +38,19 @@ export default function Navbar() {
   const [voteModalOpen, setVoteModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [pasaporteUrl, setPasaporteUrl] = useState("/pasaporte");
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch("/api/pasaporte-id")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.id) {
+          setPasaporteUrl(`/tienda/${data.id}`);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -273,13 +285,14 @@ export default function Navbar() {
           {/* Nav links */}
           <nav className="tb-nav">
             {NAV_LINKS.map((link) => {
+              const finalHref = link.href === "/pasaporte" ? pasaporteUrl : link.href;
               const activo =
-                pathname === link.href ||
+                pathname === finalHref ||
                 !!link.children?.some((c) => pathname === c.href.split("#")[0]);
 
               if (!link.children) {
                 return (
-                  <Link key={link.href} href={link.href} className={`tb-a${activo ? " active" : ""}`}>
+                  <Link key={link.href} href={finalHref} className={`tb-a${activo ? " active" : ""}`}>
                     {link.label}
                   </Link>
                 );
@@ -289,7 +302,7 @@ export default function Navbar() {
               // con teclado, no solo al pasar el mouse
               return (
                 <div className="tb-drop" key={link.href}>
-                  <Link href={link.href} className={`tb-a${activo ? " active" : ""}`}>
+                  <Link href={finalHref} className={`tb-a${activo ? " active" : ""}`}>
                     {link.label}
                     <svg viewBox="0 0 24 24" className="tb-caret" aria-hidden="true">
                       <polyline points="6 9 12 15 18 9" />
@@ -365,15 +378,17 @@ export default function Navbar() {
 
       {/* Panel del menú móvil */}
       <div className={`mob-menu${menuOpen ? " open" : ""}`}>
-        {NAV_LINKS.map((link) => (
-          <div key={link.href}>
-            <Link
-              href={link.href}
-              className={`mob-a${pathname === link.href ? " active" : ""}`}
-              onClick={() => setMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
+        {NAV_LINKS.map((link) => {
+          const finalHref = link.href === "/pasaporte" ? pasaporteUrl : link.href;
+          return (
+            <div key={link.href}>
+              <Link
+                href={finalHref}
+                className={`mob-a${pathname === finalHref ? " active" : ""}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
             {link.children && (
               <div className="mob-sub">
                 {link.children.map((c) => (
@@ -384,7 +399,8 @@ export default function Navbar() {
               </div>
             )}
           </div>
-        ))}
+        );
+      })}
         <div className="mob-foot">
           <button
             className="mob-btn"

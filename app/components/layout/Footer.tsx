@@ -21,6 +21,7 @@ const FOOTER_LINKS = {
     { label: "Términos del concurso", href: "/terminos" },
     { label: "Ley 81 · Datos personales", href: "/datos-personales" },
     { label: "Política de compras", href: "/politica-de-compras" },
+    { label: "Política de cancelaciones", href: "/politica-de-cancelaciones" },
   ],
 };
 
@@ -248,13 +249,16 @@ export default async function Footer() {
 
           {/* Bottom bar */}
           <div className="ft-bot">
-            <p>© 2026 Coffee Geeks Panamá · Todos los derechos reservados</p>
+            <p>© 2026 Coffee Geeks Panamá · Todos los derechos reservados · PANAMA INTERNATIONAL FIRM BY YELCABALLERO
+RUC 155760730-2-2024</p>
             <p>
               <Link href="/privacidad">Privacidad</Link>
               {" · "}
               <Link href="/terminos">Términos</Link>
               {" · "}
               <Link href="/politica-de-compras">Compras</Link>
+              {" · "}
+              <Link href="/politica-de-cancelaciones">Devoluciones</Link>
             </p>
           </div>
         </div>

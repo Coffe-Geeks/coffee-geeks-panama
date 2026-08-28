@@ -40,6 +40,7 @@ export async function updateSiteConfig(state: any, formData: FormData) {
     const termsAndConditions = formData.get("termsAndConditions")?.toString() ?? "";
     const dataProtection = formData.get("dataProtection")?.toString() ?? "";
     const purchasePolicy = formData.get("purchasePolicy")?.toString() ?? "";
+    const cancellationPolicy = formData.get("cancellationPolicy")?.toString() ?? "";
     
     const maxGalleryImagesStr = formData.get("maxGalleryImages")?.toString().trim();
     const maxGalleryImages = maxGalleryImagesStr ? parseInt(maxGalleryImagesStr, 10) : 3;
@@ -73,6 +74,7 @@ export async function updateSiteConfig(state: any, formData: FormData) {
           termsAndConditions,
           dataProtection,
           purchasePolicy,
+          cancellationPolicy,
           maxGalleryImages, 
           votingEndDate 
         } 
@@ -91,6 +93,7 @@ export async function updateSiteConfig(state: any, formData: FormData) {
     revalidatePath("/terminos", "page");
     revalidatePath("/datos-personales", "page");
     revalidatePath("/politica-de-compras", "page");
+    revalidatePath("/politica-de-cancelaciones", "page");
 
     return { success: "Configuración guardada correctamente." };
   } catch (err) {
