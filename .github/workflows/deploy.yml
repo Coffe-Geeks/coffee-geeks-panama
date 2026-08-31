@@ -1,0 +1,57 @@
+name: Publicar producción
+
+# Cada push a main publica el sitio en coffeegeekspanama.com.
+# También se puede lanzar a mano desde la pestaña Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  # Dos publicaciones simultáneas se pisarían la una a la otra
+  group: publicar-produccion
+  cancel-in-progress: false
+
+jobs:
+  comprobar:
+    # Convierte el secreto en un output normal: sin DEPLOY_TOKEN cargado la
+    # publicación se salta (gris) en vez de fallar (rojo).
+    runs-on: ubuntu-latest
+    outputs:
+      hay_token: ${{ steps.token.outputs.hay }}
+    steps:
+      - id: token
+        run: echo "hay=${{ secrets.DEPLOY_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
+  publicar:
+    needs: comprobar
+    if: needs.comprobar.outputs.hay_token == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.DEPLOY_ORG }}
+      VERCEL_PROJECT_ID: ${{ secrets.DEPLOY_PROJECT }}
+    steps:
+      - name: Traer el código
+        uses: actions/checkout@v4
+
+      - name: Publicar
+        # La compilación corre en la plataforma de hosting; aquí solo se
+        # sube el código y se espera el resultado.
+        run: |
+          npm install -g vercel@latest
+          vercel deploy --prod --yes --token="${{ secrets.DEPLOY_TOKEN }}"
+
+      - name: Comprobar que el sitio responde
+        # Informativo: reintenta unos segundos mientras el dominio apunta a
+        # la versión nueva; no tumba la publicación por un chequeo lento.
+        continue-on-error: true
+        run: |
+          for ruta in / /participantes /guia-de-experiencias /tienda /blogs; do
+            codigo=""
+            for intento in 1 2 3 4 5 6; do
+              codigo=$(curl -s -o /dev/null -w "%{http_code}" "https://coffeegeekspanama.com$ruta")
+              [ "$codigo" = "200" ] && break
+              sleep 5
+            done
+            echo "$ruta -> $codigo"
+          done
