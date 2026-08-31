@@ -1,0 +1,71 @@
+name: Desplegar rama test a pruebas
+
+# Cada push a la rama test publica un despliegue de PRUEBAS en Vercel
+# (no toca coffeegeekspanama.com). La dirección fija del sitio de pruebas
+# queda en el resumen de cada corrida, en la pestaña Actions.
+on:
+  push:
+    branches: [test]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pruebas
+  cancel-in-progress: true
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    outputs:
+      hay_token: ${{ steps.token.outputs.hay }}
+    steps:
+      - id: token
+        run: echo "hay=${{ secrets.VERCEL_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
+  desplegar:
+    needs: comprobar
+    if: needs.comprobar.outputs.hay_token == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Traer el código
+        uses: actions/checkout@v4
+
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Traer la configuración de preview de Vercel
+        run: vercel pull --yes --environment=preview --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Compilar
+        run: vercel build --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Publicar en pruebas
+        id: publicar
+        run: |
+          url=$(vercel deploy --prebuilt --token="${{ secrets.VERCEL_TOKEN }}")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Desplegado en: $url"
+
+      - name: Dirección fija del sitio de pruebas
+        # El alias apunta siempre a la última corrida, para no andar
+        # persiguiendo la URL de cada despliegue.
+        continue-on-error: true
+        run: |
+          vercel alias set "${{ steps.publicar.outputs.url }}" pruebas-coffee-geeks.vercel.app --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Resumen
+        run: |
+          {
+            echo "### Sitio de pruebas actualizado"
+            echo ""
+            echo "- Dirección fija: https://pruebas-coffee-geeks.vercel.app"
+            echo "- Este despliegue: ${{ steps.publicar.outputs.url }}"
+          } >> "$GITHUB_STEP_SUMMARY"

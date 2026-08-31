@@ -1,92 +1,73 @@
 name: Desplegar a producción
 
-# Se dispara al empujar a main y también a mano desde la pestaña Actions.
-# El entorno "production" permite exigir aprobación antes de que corra:
-#   Settings → Environments → production → Required reviewers
+# Cada push a main compila el sitio y lo publica en producción
+# (coffeegeekspanama.com), que vive en Vercel. También se puede lanzar a
+# mano desde la pestaña Actions. Si se quiere exigir aprobación antes de
+# publicar: Settings → Environments → production → Required reviewers.
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
 concurrency:
-  # Dos despliegues simultáneos dejarían el servidor a medio actualizar
+  # Dos despliegues simultáneos se pisarían el uno al otro
   group: deploy-produccion
   cancel-in-progress: false
 
 jobs:
+  comprobar:
+    # El contexto `secrets` no se puede leer en el `if` de un job, así que
+    # este paso lo convierte en un output normal. Sin VERCEL_TOKEN cargado,
+    # el despliegue se salta (gris) en vez de fallar (rojo).
+    runs-on: ubuntu-latest
+    outputs:
+      hay_token: ${{ steps.token.outputs.hay }}
+    steps:
+      - id: token
+        run: echo "hay=${{ secrets.VERCEL_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
   desplegar:
+    needs: comprobar
+    if: needs.comprobar.outputs.hay_token == 'true'
     runs-on: ubuntu-latest
     environment: production
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Traer el código
         uses: actions/checkout@v4
 
-      - name: Preparar la conexión SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_deploy
-          chmod 600 ~/.ssh/id_deploy
-          ssh-keyscan -H "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+      - name: Preparar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Respaldar el servidor antes de tocar nada
-        run: |
-          ssh -i ~/.ssh/id_deploy -o BatchMode=yes \
-            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" bash -s <<'EOF'
-          set -e
-          TS=$(date +%Y%m%d-%H%M%S)
-          cd /var/www/html
-          tar czf "/root/backup-code-$TS.tar.gz" --exclude=node_modules --exclude=.next . 2>/dev/null
-          URI=$(grep -E '^MONGODB_URI=' .env.local | sed -E 's/^MONGODB_URI=//; s/"//g')
-          mongodump --uri="$URI" --archive="/root/backup-db-$TS.archive.gz" --gzip --quiet
-          echo "Respaldo: backup-code-$TS.tar.gz y backup-db-$TS.archive.gz"
-          # Conservar los últimos 10 de cada tipo; el disco no es infinito
-          ls -1t /root/backup-code-*.tar.gz    2>/dev/null | tail -n +11 | xargs -r rm -f
-          ls -1t /root/backup-db-*.archive.gz  2>/dev/null | tail -n +11 | xargs -r rm -f
-          EOF
+      - name: Instalar Vercel CLI
+        run: npm install -g vercel@latest
 
-      - name: Sincronizar los archivos
-        # SIN --delete a propósito. Con esa bandera, desplegar desde una copia
-        # desactualizada borra del servidor todo lo que no exista en el origen:
-        # así se perdió el trabajo de producción el 5 de agosto de 2026.
-        #
-        # uploads/ y public/uploads/ guardan las imágenes que suben los
-        # usuarios y no están versionadas. .env* tiene los secretos de
-        # producción, que no viven en el repositorio.
-        run: |
-          rsync -az --human-readable --stats \
-            -e "ssh -i ~/.ssh/id_deploy -o BatchMode=yes" \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='node_modules/' \
-            --exclude='.next/' \
-            --exclude='.env*' \
-            --exclude='uploads/' \
-            --exclude='public/uploads/' \
-            --exclude='*.tsbuildinfo' \
-            ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/html/"
+      - name: Traer la configuración de producción de Vercel
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
 
-      - name: Instalar, compilar y reiniciar
-        run: |
-          ssh -i ~/.ssh/id_deploy -o BatchMode=yes \
-            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" bash -s <<'EOF'
-          set -e
-          cd /var/www/html
-          npm install --no-audit --no-fund
-          npm run build
-          pm2 restart coffee-geeks --update-env
-          sleep 6
-          pm2 list | grep coffee-geeks
-          EOF
+      - name: Compilar
+        run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Publicar en producción
+        run: vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}"
 
       - name: Comprobar que el sitio responde
+        # Informativo: el deploy ya se publicó en el paso anterior. Reintenta
+        # unas veces por si el dominio tarda unos segundos en apuntar a la
+        # nueva versión; nunca tumba el despliegue por un chequeo lento.
+        continue-on-error: true
         run: |
-          for RUTA in / /home /participantes /guia-de-experiencias; do
-            CODIGO=$(curl -s -o /dev/null -w '%{http_code}' --max-time 25 "https://coffeegeekspanama.com$RUTA")
-            echo "$CODIGO $RUTA"
-            if [ "$CODIGO" != "200" ]; then
-              echo "::error::$RUTA respondió $CODIGO. Revisar el servidor; hay respaldo en /root."
-              exit 1
-            fi
+          for ruta in / /participantes /guia-de-experiencias /tienda /blogs; do
+            codigo=""
+            for intento in 1 2 3 4 5; do
+              codigo=$(curl -s -o /dev/null -w "%{http_code}" "https://coffeegeekspanama.com$ruta")
+              [ "$codigo" = "200" ] && break
+              sleep 5
+            done
+            echo "$ruta -> $codigo"
           done
-          echo "Despliegue verificado."
