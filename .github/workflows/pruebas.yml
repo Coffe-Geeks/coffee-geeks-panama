@@ -43,11 +43,20 @@ jobs:
           echo "Publicado en: $url"
 
       - name: Fijar la dirección de pruebas
-        # El alias apunta siempre a la última corrida, para no andar
-        # persiguiendo la dirección de cada publicación.
-        continue-on-error: true
+        # La dirección fija apunta siempre a la última publicación, para no
+        # andar persiguiendo el enlace de cada corrida. Se pide por la API y
+        # no con `vercel alias`: ese comando necesita permisos de toda la
+        # cuenta y aquí solo hay permiso sobre este proyecto.
         run: |
-          vercel alias set "${{ steps.publicar.outputs.url }}" pruebas-coffee-geeks.vercel.app --scope mucestudios --token="${{ secrets.DEPLOY_TOKEN }}"
+          destino="${{ steps.publicar.outputs.url }}"
+          respuesta=$(curl -s -w '\n%{http_code}' -X POST \
+            "https://api.vercel.com/v2/deployments/${destino#https://}/aliases?teamId=${{ secrets.DEPLOY_ORG }}" \
+            -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"alias":"pruebas-coffee-geeks.vercel.app"}')
+          codigo=$(echo "$respuesta" | tail -1)
+          echo "$respuesta" | head -n -1
+          [ "$codigo" = "200" ] || { echo "La API respondió $codigo"; exit 1; }
 
       - name: Comprobar que responde
         continue-on-error: true
