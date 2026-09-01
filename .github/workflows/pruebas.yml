@@ -47,7 +47,7 @@ jobs:
         # persiguiendo la dirección de cada publicación.
         continue-on-error: true
         run: |
-          vercel alias set "${{ steps.publicar.outputs.url }}" pruebas-coffee-geeks.vercel.app --token="${{ secrets.DEPLOY_TOKEN }}"
+          vercel alias set "${{ steps.publicar.outputs.url }}" pruebas-coffee-geeks.vercel.app --scope mucestudios --token="${{ secrets.DEPLOY_TOKEN }}"
 
       - name: Comprobar que responde
         continue-on-error: true
