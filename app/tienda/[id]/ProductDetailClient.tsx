@@ -74,6 +74,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
         /* ── Detail Page Layout ── */
         .main-sec{background:#fff;padding:56px 0 72px}
         .prod-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
+        .prod-left-col{display:flex;flex-direction:column;gap:48px;min-width:0}
         
         .img-container{width:100%;aspect-ratio:4/3;border-radius:24px;overflow:hidden;border:1px solid #cddbf2;background:#f4efe4;box-shadow:0 8px 30px rgba(56,5,14,0.06)}
         .img-view{width:100%;height:100%;background-size:cover;background-position:center}
@@ -92,7 +93,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
         .btn-pay:hover{background:#24060c;transform:translateY(-2px);box-shadow:0 6px 20px rgba(56,5,14,0.25)}
 
         /* Description content (WYSIWYG output) */
-        .desc-sec{border-top:1px solid #eef3f9;padding-top:48px;margin-top:48px;grid-column:span 2}
+        .desc-sec{border-top:1px solid #eef3f9;padding-top:48px}
         .desc-h{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;text-transform:uppercase;color:#38050e;margin-bottom:20px}
         .rich-content{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.75;color:#38050e;opacity:.9}
         .rich-content img {
@@ -132,7 +133,10 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
         @media(max-width:960px){
           .prod-grid{grid-template-columns:1fr;gap:32px}
-          .desc-sec{grid-column:span 1}
+          .prod-left-col{display:contents}
+          .img-container{order:1}
+          .pay-card{order:2}
+          .desc-sec{order:3;padding-top:32px}
         }
       `}</style>
 
@@ -175,14 +179,27 @@ export default function ProductDetailClient({ product }: { product: any }) {
       <section className="main-sec">
         <div className="wrap">
           <div className="prod-grid">
-            {/* Image display */}
-            <div className="img-container">
-              {product.image ? (
-                <div className="img-view" style={{ backgroundImage: `url('${product.image}')` }} />
-              ) : (
-                <div className="img-lamina">
-                  <span className="img-lamina-eye">Coffee Geeks</span>
-                  <span className="img-lamina-name">{product.name}</span>
+            {/* Left Column: Image & Description */}
+            <div className="prod-left-col">
+              <div className="img-container">
+                {product.image ? (
+                  <div className="img-view" style={{ backgroundImage: `url('${product.image}')` }} />
+                ) : (
+                  <div className="img-lamina">
+                    <span className="img-lamina-eye">Coffee Geeks</span>
+                    <span className="img-lamina-name">{product.name}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Complete Description (WYSIWYG Output) */}
+              {product.description && (
+                <div className="desc-sec">
+                  <h3 className="desc-h">Descripción del Producto</h3>
+                  <div 
+                    className="rich-content" 
+                    dangerouslySetInnerHTML={{ __html: product.description }} 
+                  />
                 </div>
               )}
             </div>
@@ -198,17 +215,6 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 Comprar Ahora
               </button>
             </div>
-
-            {/* Complete Description (WYSIWYG Output) */}
-            {product.description && (
-              <div className="desc-sec">
-                <h3 className="desc-h">Descripción del Producto</h3>
-                <div 
-                  className="rich-content" 
-                  dangerouslySetInnerHTML={{ __html: product.description }} 
-                />
-              </div>
-            )}
           </div>
         </div>
       </section>
