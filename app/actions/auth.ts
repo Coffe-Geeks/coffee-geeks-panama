@@ -7,6 +7,7 @@ import { createSession, deleteSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { sendEmail } from "@/lib/email";
 import { getWelcomeEmailTemplate, getAdminNotificationEmailTemplate } from "@/lib/email-templates";
+import { agregarContactoBrevo } from "@/lib/brevo";
 
 // Utility para sanitizar inputs rápidos contra inyecciones absurdas
 function sanitizeString(input: any) {
@@ -216,6 +217,11 @@ export async function registerCafeteria(state: any, formData: FormData) {
     email,
     password: hashedPassword,
     role,
+  });
+
+  // El participante queda también en la lista de Brevo
+  await agregarContactoBrevo(newUser.email, "BREVO_LISTA_PARTICIPANTES", {
+    CONTACTO: [name, lastName].filter(Boolean).join(" "),
   });
 
   // Enviamos correo de bienvenida

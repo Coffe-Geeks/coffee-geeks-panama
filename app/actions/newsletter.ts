@@ -4,6 +4,7 @@ import dbConnect from "@/lib/mongodb";
 import NewsletterEmail from "@/models/NewsletterEmail";
 import { getSession } from "@/lib/session";
 import { revalidatePath } from "next/cache";
+import { agregarContactoBrevo } from "@/lib/brevo";
 
 // Regex de correo electrónico
 const EMAIL_REGEX = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -28,6 +29,7 @@ export async function subscribeEmail(email: string) {
     }
 
     await NewsletterEmail.create({ email: cleanEmail });
+    await agregarContactoBrevo(cleanEmail);
 
     revalidatePath("/admin/newsletter");
     return { success: "¡Te has suscrito correctamente al boletín!" };
