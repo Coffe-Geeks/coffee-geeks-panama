@@ -19,6 +19,7 @@ export default async function PerfilPage() {
 
   const user = {
     _id: userData._id.toString(),
+    id: userData._id.toString(),
     name: userData.name ?? "",
     lastName: userData.lastName ?? "",
     email: userData.email ?? "",
@@ -44,6 +45,47 @@ export default async function PerfilPage() {
       photo: b.photo ?? "",
       isHighlighted: b.isHighlighted ?? false,
     })),
+    // Campos de información detallada
+    tagline: userData.tagline ?? "",
+    originStory: userData.originStory ?? "",
+    espresso: userData.espresso ?? "",
+    filtrado: userData.filtrado ?? "",
+    signatureDrinkName: userData.signatureDrinkName ?? "",
+    signatureDrink: userData.signatureDrink ?? "",
+    legalName: userData.legalName ?? "",
+    legalRepresentativePosition: userData.legalRepresentativePosition ?? "",
+    operationNotice: userData.operationNotice ?? "",
+    province: userData.province ?? "",
+    yearsOfExistence: userData.yearsOfExistence ?? 0,
+    branchesCount: userData.branchesCount ?? 1,
+    sellsPanamanianCoffee: !!userData.sellsPanamanianCoffee,
+    farmName: userData.farmName ?? "",
+    coffeeVarieties: userData.coffeeVarieties ?? [],
+    machineBrand: userData.machineBrand ?? "",
+    grinderBrand: userData.grinderBrand ?? "",
+    roastsOwnCoffee: !!userData.roastsOwnCoffee,
+    makesOwnProfile: !!userData.makesOwnProfile,
+    coffeeExperiences: userData.coffeeExperiences ?? "",
+    wantsToInternationalize: !!userData.wantsToInternationalize,
+    targetMarkets: userData.targetMarkets ?? "",
+    acceptsNotifications: userData.acceptsNotifications !== false,
+    totalBaristas: userData.totalBaristas ?? 0,
+    mainBaristaName: userData.mainBaristaName ?? "",
+    mainBaristaTraining: userData.mainBaristaTraining ?? "",
+    mainBaristaSpecialty: userData.mainBaristaSpecialty ?? "",
+    mainBaristaYearsExp: userData.mainBaristaYearsExp ?? 0,
+    mainBaristaCertified: !!userData.mainBaristaCertified,
+    mainBaristaSCA: !!userData.mainBaristaSCA,
+    femaleBaristasCount: userData.femaleBaristasCount ?? 0,
+    maleBaristasCount: userData.maleBaristasCount ?? 0,
+    trainingLevel: userData.trainingLevel ?? "",
+    hasCertifiedTraining: !!userData.hasCertifiedTraining,
+    trainingSCA: !!userData.trainingSCA,
+    trainingInstructor: userData.trainingInstructor ?? "",
+    interestInCertification: !!userData.interestInCertification,
+    certificationInterests: userData.certificationInterests ?? [],
+    wantsToJoinCommittee: !!userData.wantsToJoinCommittee,
+    hasDisabledStaff: !!userData.hasDisabledStaff,
   };
 
   const config = await getSiteConfig();
@@ -62,7 +104,7 @@ export default async function PerfilPage() {
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
       </div>
 
-      <div className={`z-10 w-full ${session.role === "cafeteria" ? "max-w-2xl" : "max-w-lg"} p-8 md:p-12 rounded-3xl bg-[#38050e] backdrop-blur-xl shadow-2xl border border-[#cddbf2]/20 my-8`}>
+      <div className={`z-10 w-full ${session.role === "cafeteria" ? "max-w-4xl" : "max-w-lg"} p-6 sm:p-8 md:p-12 rounded-3xl bg-[#38050e] backdrop-blur-xl shadow-2xl border border-[#cddbf2]/20 my-8`}>
 
         <div className="flex justify-between items-start mb-6">
           <div>

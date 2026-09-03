@@ -7,7 +7,15 @@ import MapPicker from "@/app/components/MapPicker";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function DetailedCafeteriaForm({ user, onClose }: { user: any; onClose: () => void }) {
+export default function DetailedCafeteriaForm({
+  user,
+  onClose,
+  isModal = true,
+}: {
+  user: any;
+  onClose?: () => void;
+  isModal?: boolean;
+}) {
   const router = useRouter();
   const [state, action, pending] = useActionState(updateDetailedCafeteriaProfile, null);
   const [locationLat, setLocationLat] = useState<number | null>(user.locationLat);
@@ -23,19 +31,20 @@ export default function DetailedCafeteriaForm({ user, onClose }: { user: any; on
   const labelCls = "text-xs font-bold text-[#cddbf2]/70 uppercase tracking-widest pl-1";
   const sectionCls = "space-y-6 bg-black/20 p-6 rounded-2xl border border-white/5";
 
-  return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-      <div className="bg-[#38050e] border border-[#cddbf2]/20 rounded-3xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
-        <div className="flex justify-between items-center mb-8 sticky top-0 bg-[#38050e] z-10 pb-4 border-b border-[#cddbf2]/10">
-          <div>
-            <h2 className="text-2xl font-black text-[#cddbf2] tracking-tight">Información Detallada del Participante</h2>
-            <p className="text-[#cddbf2]/50 text-sm">{user.cafeteriaName || user.name}</p>
-          </div>
-          <button onClick={onClose} className="text-[#cddbf2] hover:text-white font-bold text-2xl transition-colors">✕</button>
+  const formContent = (
+    <div className={`bg-[#38050e] border border-[#cddbf2]/20 rounded-3xl p-6 md:p-8 w-full ${isModal ? "max-w-4xl max-h-[90vh] overflow-y-auto" : ""} shadow-2xl relative`}>
+      <div className="flex justify-between items-center mb-8 sticky top-0 bg-[#38050e] z-10 pb-4 border-b border-[#cddbf2]/10">
+        <div>
+          <h2 className="text-2xl font-black text-[#cddbf2] tracking-tight">Información Detallada del Participante</h2>
+          <p className="text-[#cddbf2]/50 text-sm">{user.cafeteriaName || user.name}</p>
         </div>
+        {onClose && (
+          <button onClick={onClose} className="text-[#cddbf2] hover:text-white font-bold text-2xl transition-colors">✕</button>
+        )}
+      </div>
 
-        {state?.success && <FlashMessage msg={state.success} type="success" />}
-        {state?.error && <FlashMessage msg={state.error} type="error" />}
+      {state?.success && <FlashMessage msg={state.success} type="success" />}
+      {state?.error && <FlashMessage msg={state.error} type="error" />}
 
         <form action={action} className="space-y-10">
           <input type="hidden" name="targetUserId" value={user.id || user._id} />
@@ -313,15 +322,26 @@ export default function DetailedCafeteriaForm({ user, onClose }: { user: any; on
           </div>
 
           <div className="sticky bottom-0 bg-[#38050e] pt-6 pb-2 border-t border-[#cddbf2]/10 flex justify-end gap-4 z-10">
-            <button type="button" onClick={onClose} className="px-8 py-3.5 rounded-xl bg-[#2a040b] hover:bg-[#38050e] border border-[#cddbf2]/10 text-[#cddbf2] font-bold transition-all">
-              Cancelar
-            </button>
+            {onClose && (
+              <button type="button" onClick={onClose} className="px-8 py-3.5 rounded-xl bg-[#2a040b] hover:bg-[#38050e] border border-[#cddbf2]/10 text-[#cddbf2] font-bold transition-all">
+                Cancelar
+              </button>
+            )}
             <button type="submit" disabled={pending} className="px-10 py-3.5 rounded-xl bg-[#cddbf2] hover:bg-[#cddbf2]/90 text-[#38050e] font-bold shadow-xl transition-all disabled:opacity-50">
               {pending ? "Guardando..." : "Guardar Información Detallada"}
             </button>
           </div>
         </form>
-      </div>
     </div>
   );
+
+  if (isModal) {
+    return (
+      <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+        {formContent}
+      </div>
+    );
+  }
+
+  return formContent;
 }

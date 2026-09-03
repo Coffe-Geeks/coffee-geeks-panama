@@ -15,6 +15,7 @@ import FlashMessage from "@/app/components/FlashMessage";
 import Image from "next/image";
 import { QRCodeSVG } from "qrcode.react";
 import { getSlugId } from "@/lib/utils";
+import DetailedCafeteriaForm from "@/app/admin/users/DetailedCafeteriaForm";
 
 
 
@@ -33,6 +34,7 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
     { id: "personal", label: "Información Personal" },
     ...(user.role === "cafeteria" ? [
       { id: "cafeteria", label: "Datos Cafetería" },
+      { id: "detallado", label: "Información Detallada" },
       { id: "ubicacion", label: "Ubicación" },
       { id: "baristas", label: "Baristas" },
       { id: "imagenes", label: "Imágenes" }
@@ -220,6 +222,7 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
     const incomplete = {
       personal: !formData.name || !formData.email,
       cafeteria: user.role === "cafeteria" && (!formData.cafeteriaName || !formData.ruc || categories.length === 0 || !businessType),
+      detallado: user.role === "cafeteria" && false,
       ubicacion: user.role === "cafeteria" && (!formData.neighborhood || !locationLat),
       baristas: user.role === "cafeteria" && (baristas.length === 0),
       imagenes: user.role === "cafeteria" && (!coverPreview || !user.gallery || user.gallery.length === 0),
@@ -237,13 +240,14 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
       {user.role === "cafeteria" && (
         <div className="flex justify-end">
           <button 
+            type="button"
             onClick={() => setShowQRModal(true)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#cddbf2]/10 hover:bg-[#cddbf2]/20 text-[#cddbf2] font-bold text-[10px] sm:text-xs transition-all border border-[#cddbf2]/10 shadow-lg shadow-black/20"
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current" style={{ strokeWidth: 2 }}>
               <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
             </svg>
-            Mi Código QR
+            Mi QR de Votación
           </button>
         </div>
       )}
@@ -321,6 +325,13 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
                 {basicPending ? "Guardando..." : "Actualizar Información"}
               </button>
             </form>
+          </section>
+        )}
+
+        {/* ─────────────────── SECCIÓN: Info Detallada ─────────────────── */}
+        {user.role === "cafeteria" && activeTab === "detallado" && (
+          <section className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <DetailedCafeteriaForm user={user} isModal={false} />
           </section>
         )}
 

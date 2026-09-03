@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import UserTableManager from "./UserTableManager";
@@ -85,7 +86,9 @@ export default async function AdminUsersPage() {
         <p className="text-[#cddbf2]/60 mt-2 text-lg">Ver, Crear, Editar y Borrar usuarios del sistema.</p>
       </div>
 
-      <UserTableManager initialUsers={users} maxGalleryImages={config.maxGalleryImages} />
+      <Suspense fallback={<div className="text-[#cddbf2] py-8 text-center">Cargando usuarios...</div>}>
+        <UserTableManager initialUsers={users} maxGalleryImages={config.maxGalleryImages} />
+      </Suspense>
     </div>
   );
 }
