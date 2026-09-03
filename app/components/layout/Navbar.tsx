@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import VoteModal from "@/app/components/VoteModal";
+import LanguageSelector from "@/app/components/layout/LanguageSelector";
 
 // Votaciones sigue fuera del menú hasta que se active; su ruta existe.
 // Nuestro Método pasará a ser un desplegable bajo Sobre Nosotros.
@@ -21,7 +22,7 @@ const NAV_LINKS: NavLink[] = [
       { label: "Nuestro Método", href: "/nuestro-metodo" },
     ],
   },
-  { label: "Participantes", href: "/participantes" },
+  { label: "Miembros", href: "/participantes" },
   { label: "Guía de Experiencias", href: "/guia-de-experiencias" },
   { label: "Academia", href: "/academia" },
   { label: "Pasaporte", href: "/pasaporte" },
@@ -166,6 +167,60 @@ export default function Navbar() {
           position: relative; overflow: hidden;
         }
         .ibtn:hover { background: rgba(255,255,255,.15); }
+        .ibtn-lang {
+          width: 38px; height: 38px; border-radius: 50px;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,.08); color: rgba(255,255,255,.75);
+          cursor: pointer; transition: background .15s; border: none;
+          position: relative;
+        }
+        .ibtn-lang:hover { background: rgba(255,255,255,.15); }
+        .lang-dropdown {
+          position: absolute; top: calc(100% + 8px); right: 0;
+          min-width: 140px; padding: 6px; border-radius: 14px;
+          background: #38050e; border: 1px solid rgba(205,219,242,.16);
+          box-shadow: 0 12px 30px rgba(0,0,0,.4);
+          display: flex; flex-direction: column; gap: 2px; z-index: 250;
+        }
+        .lang-option {
+          display: flex; align-items: center; gap: 10px; width: 100%;
+          padding: 8px 12px; border-radius: 10px; background: transparent;
+          border: none; color: rgba(255,255,255,.85);
+          font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 500;
+          cursor: pointer; transition: all .15s; text-align: left;
+        }
+        .lang-option:hover { background: rgba(205,219,242,.13); color: #cddbf2; }
+        .lang-option.selected { background: rgba(205,219,242,.18); color: #fff; font-weight: 700; }
+        .lang-flag { font-size: 18px; line-height: 1; }
+        .lang-name { flex: 1; }
+        .lang-check { font-size: 12px; color: #cddbf2; }
+
+        /* Ocultar barra superior y avisos de Google Translate */
+        .goog-te-banner-frame,
+        iframe.goog-te-banner-frame,
+        .goog-te-banner-frame.skiptranslate,
+        .goog-te-banner,
+        .skiptranslate.goog-te-gadget-simple,
+        #goog-gt-tt,
+        .goog-te-balloon-frame,
+        div#goog-gt-,
+        #goog-gt-vt,
+        .goog-te-spinner-pos,
+        .goog-tooltip,
+        .goog-tooltip:hover {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          height: 0 !important;
+          width: 0 !important;
+          pointer-events: none !important;
+        }
+
+        body { top: 0px !important; position: static !important; }
+        html { top: 0px !important; }
+        .goog-te-gadget { display: none !important; }
+        #google_translate_element { display: none !important; }
+        .goog-text-highlight { background-color: transparent !important; box-shadow: none !important; }
         .btn-vote {
           display: inline-flex; align-items: center; justify-content: center; gap: 8px;
           height: 32px; padding: 0 14px; border-radius: 50px;
@@ -322,6 +377,9 @@ export default function Navbar() {
 
           {/* Actions */}
           <div className="tb-act">
+            {/* Selector de idiomas (a la izquierda del buscador) */}
+            <LanguageSelector />
+
             {/* Search */}
             <button 
               className="ibtn" 

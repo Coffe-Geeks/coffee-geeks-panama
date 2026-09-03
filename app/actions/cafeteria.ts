@@ -272,16 +272,27 @@ export async function toggleCafeteriaStatus(userId: string) {
   }
 }
 
-// ─── Actualizar perfil DETALLADO de cafetería (Solo Admin) ─────────────────────
+// ─── Actualizar perfil DETALLADO de cafetería (Admin y Participante) ───────────
 export async function updateDetailedCafeteriaProfile(state: any, formData: FormData) {
   try {
     const session = await getSession();
-    if (session?.role !== "admin") return { error: "No autorizado." };
+    if (!session || (session.role !== "admin" && session.role !== "cafeteria")) {
+      return { error: "No autorizado." };
+    }
 
-    const { targetUserId } = await getTargetUser(session, formData);
+    const { targetUserId, isAdmin } = await getTargetUser(session, formData);
     await dbConnect();
 
     const updateData: any = {
+      // Ficha de Competencia
+      tagline: formData.get("tagline")?.toString().trim() ?? "",
+      originStory: formData.get("originStory")?.toString().trim() ?? "",
+      espresso: formData.get("espresso")?.toString().trim() ?? "",
+      filtrado: formData.get("filtrado")?.toString().trim() ?? "",
+      signatureDrinkName: formData.get("signatureDrinkName")?.toString().trim() ?? "",
+      signatureDrink: formData.get("signatureDrink")?.toString().trim() ?? "",
+
+      // Identidad Legal y Comercial
       legalRepresentative: formData.get("legalRepresentative")?.toString().trim() ?? "",
       legalRepresentativePosition: formData.get("legalRepresentativePosition")?.toString().trim() ?? "",
       ruc: formData.get("ruc")?.toString().trim() ?? "",
@@ -327,7 +338,7 @@ export async function updateDetailedCafeteriaProfile(state: any, formData: FormD
     };
 
     await User.findByIdAndUpdate(targetUserId, { $set: updateData });
-    revalidatePath("/admin/users");
+    doRevalidate(isAdmin);
     
     return { success: "Información detallada actualizada." };
   } catch (err) {

@@ -511,7 +511,7 @@ export default function CoffeeBeansHero({ config, stats, fotos }: { config?: any
             overflowX: "auto",
           }} className="stats-row">
             {[
-              { num: stats?.cafeterias ?? 0, label: "Cafeterías\nParticipantes" },
+              { num: stats?.cafeterias ?? 0, label: "Miembros\nParticipantes" },
               { num: stats?.votos ?? 0,      label: "Votos\nEmitidos" },
               { num: stats?.fincas ?? 0,     label: "Fincas\nAliadas" },
               // La fecha va como texto, no como contador: un día suelto
@@ -530,7 +530,7 @@ export default function CoffeeBeansHero({ config, stats, fotos }: { config?: any
               </div>
             ))}
             <div className="stat-item" style={{ borderRight: "none" }}>
-              <span className="stat-num" style={{ color: "#38050e" }}>OCT</span>
+              <span className="stat-num" style={{ color: "#38050e" }}>23 OCT</span>
               <span className="stat-label">Gran Final<br />2026</span>
             </div>
           </div>

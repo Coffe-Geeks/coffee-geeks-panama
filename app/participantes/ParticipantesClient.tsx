@@ -137,7 +137,7 @@ export default function ParticipantesClient({ initialShops }: { initialShops: an
             <div className="ph-flex">
               <div className="ph-txt">
                 <div className="ph-eye">Coffee Geeks Panamá · Temporada 2026</div>
-                <h1 className="ph-h1">Participantes</h1>
+                <h1 className="ph-h1">Miembros participantes</h1>
                 <h2 className="ph-h2">Los protagonistas<br />de la ruta del café</h2>
               </div>
             </div>

@@ -7,10 +7,12 @@ import { register } from "@/app/actions/auth";
 import AdminMenuModal from "./AdminMenuModal";
 import ProfileForm from "@/app/perfil/ProfileForm";
 import DetailedCafeteriaForm from "./DetailedCafeteriaForm";
-import { useRouter } from "next/navigation";
+import ParticipantQRModal from "./ParticipantQRModal";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function UserTableManager({ initialUsers, maxGalleryImages }: { initialUsers: any[], maxGalleryImages?: number }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [editingUser, setEditingUser] = useState<any>(null);
   const [detailedUser, setDetailedUser] = useState<any>(null);
   const [managingMenu, setManagingMenu] = useState<any>(null);
@@ -19,8 +21,23 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
   const [loading, setLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState(searchParams.get("role") || "all");
+  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "all");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+
+  const [qrModalMode, setQrModalMode] = useState<"all" | "single" | null>(null);
+  const [selectedQrParticipant, setSelectedQrParticipant] = useState<any>(null);
+
+  // Sincronizar filtros si la URL cambia (ej. al hacer clic desde el Dashboard)
+  useEffect(() => {
+    const roleParam = searchParams.get("role");
+    const statusParam = searchParams.get("status");
+    const qParam = searchParams.get("q");
+
+    if (roleParam !== null) setRoleFilter(roleParam);
+    if (statusParam !== null) setStatusFilter(statusParam);
+    if (qParam !== null) setSearchQuery(qParam);
+  }, [searchParams]);
 
   // Sincronizar el usuario detallado si cambian los props (después de router.refresh)
   useEffect(() => {
@@ -60,13 +77,42 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
        if (statusFilter === "active" && !u.isActive) return false;
        if (statusFilter === "inactive" && u.isActive) return false;
     }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const fullName = `${u.name || ""} ${u.lastName || ""}`.toLowerCase();
+      const email = (u.email || "").toLowerCase();
+      const cafeteriaName = (u.cafeteriaName || "").toLowerCase();
+      if (!fullName.includes(q) && !email.includes(q) && !cafeteriaName.includes(q)) {
+        return false;
+      }
+    }
     return true;
   });
 
   return (
     <div className="relative">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex flex-wrap gap-4 w-full md:w-auto flex-1">
+          {/* Campo de búsqueda abierta por texto */}
+          <div className="relative flex-1 min-w-[260px]">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar por nombre, email o cafetería..."
+              className="w-full bg-[#cddbf2] border border-[#cddbf2]/20 text-[#38050e] placeholder-[#38050e]/60 px-4 py-2.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-[#cddbf2]/50"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#38050e]/60 hover:text-[#38050e] text-xs font-bold bg-black/10 px-2 py-0.5 rounded-full transition-colors"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
           <select 
             value={roleFilter} 
             onChange={(e) => setRoleFilter(e.target.value)}
@@ -93,12 +139,25 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
           )}
         </div>
 
-        <button
-          onClick={() => setCreating(true)}
-          className="bg-[#cddbf2] hover:bg-[#cddbf2]/90 text-[#38050e] px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all duration-300 hover:-translate-y-0.5 tracking-wide whitespace-nowrap"
-        >
-          + Agregar Usuario
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setQrModalMode("all");
+              setSelectedQrParticipant(null);
+            }}
+            className="bg-[#38050e] hover:bg-[#2a040b] border border-[#cddbf2]/30 text-[#cddbf2] px-4 py-2.5 rounded-xl font-bold shadow-lg transition-all duration-300 hover:-translate-y-0.5 tracking-wide whitespace-nowrap flex items-center gap-2 text-sm"
+            title="Listado e Impresión de Códigos QR de Participantes"
+          >
+            🖨️ QRs Participantes
+          </button>
+
+          <button
+            onClick={() => setCreating(true)}
+            className="bg-[#cddbf2] hover:bg-[#cddbf2]/90 text-[#38050e] px-5 py-2.5 rounded-xl font-bold shadow-lg transition-all duration-300 hover:-translate-y-0.5 tracking-wide whitespace-nowrap text-sm"
+          >
+            + Agregar Usuario
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-[#cddbf2]/20 bg-[#38050e] backdrop-blur-md shadow-2xl">
@@ -164,6 +223,9 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
                            <>
                              <button onClick={() => { setDetailedUser(u); setOpenDropdown(null); }} className="px-4 py-2.5 text-blue-400 hover:bg-white/5 text-left text-sm transition-colors border-b border-white/5" disabled={loading}>
                                🔍 Detallado
+                             </button>
+                             <button onClick={() => { setSelectedQrParticipant(u); setQrModalMode("single"); setOpenDropdown(null); }} className="px-4 py-2.5 text-green-400 hover:bg-white/5 text-left text-sm transition-colors border-b border-white/5" disabled={loading}>
+                               📱 Ver / Imprimir QR
                              </button>
                            </>
                          )}
@@ -300,6 +362,18 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
             onClose={() => setDetailedUser(null)} 
          />
        )}
+      {/* Modal de Impresión y Descarga de QRs */}
+      {qrModalMode && (
+        <ParticipantQRModal
+          mode={qrModalMode}
+          participant={selectedQrParticipant}
+          participants={initialUsers.filter((u) => u.role === "cafeteria")}
+          onClose={() => {
+            setQrModalMode(null);
+            setSelectedQrParticipant(null);
+          }}
+        />
+      )}
     </div>
   );
 }
