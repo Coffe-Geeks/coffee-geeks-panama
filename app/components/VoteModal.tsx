@@ -230,12 +230,17 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
     );
   };
 
-  const renderR2Scale = (value: number, setValue: (v: number) => void) => {
-    const options = [
-      { v: 1, label: "Excelente" },
-      { v: 2, label: "Varias veces al día" },
-      { v: 3, label: "Moriré sin él" },
+  const renderR2Scale = (
+    value: number,
+    setValue: (v: number) => void,
+    customOptions?: { v: number; label: string }[]
+  ) => {
+    const defaultOptions = [
+      { v: 1, label: "Bueno" },
+      { v: 2, label: "Excelente" },
+      { v: 3, label: "Excepcional" },
     ];
+    const options = customOptions || defaultOptions;
     return (
       <div className="vm-opts">
         {options.map((opt) => (
@@ -560,14 +565,32 @@ export default function VoteModal({ open, preselected, onClose }: VoteModalProps
                   </div>
                 ) : (
                   <div style={{ marginTop: 20 }}>
-                    <div className="vm-q">Experiencia general</div>
-                    {round === 1 ? renderStars(exp, setExp) : renderR2Scale(exp, setExp)}
+                    <div className="vm-q">Experiencia integral</div>
+                    {round === 1
+                      ? renderStars(exp, setExp)
+                      : renderR2Scale(exp, setExp, [
+                          { v: 1, label: "Bueno" },
+                          { v: 2, label: "Excelente" },
+                          { v: 3, label: "Excepcional" },
+                        ])}
                     <div className="vm-sep" />
                     <div className="vm-q">Presencia del barista</div>
-                    {round === 1 ? renderStars(pres, setPres) : renderR2Scale(pres, setPres)}
+                    {round === 1
+                      ? renderStars(pres, setPres)
+                      : renderR2Scale(pres, setPres, [
+                          { v: 1, label: "Buena presentación" },
+                          { v: 2, label: "Alto Potencial" },
+                          { v: 3, label: "Excepcional" },
+                        ])}
                     <div className="vm-sep" />
                     <div className="vm-q">Calidad de la taza</div>
-                    {round === 1 ? renderStars(cup, setCup) : renderR2Scale(cup, setCup)}
+                    {round === 1
+                      ? renderStars(cup, setCup)
+                      : renderR2Scale(cup, setCup, [
+                          { v: 1, label: "Alta calidad" },
+                          { v: 2, label: "Limpieza de taza" },
+                          { v: 3, label: "Creatividad e innovación" },
+                        ])}
                   </div>
                 )}
 

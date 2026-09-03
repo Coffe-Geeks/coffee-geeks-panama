@@ -87,3 +87,53 @@ body {
     cursor: not-allowed !important;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Ocultar barra superior y avisos de Google Translate
+   ───────────────────────────────────────────────────────────── */
+.goog-te-banner-frame,
+iframe.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner,
+.skiptranslate,
+iframe.skiptranslate,
+.skiptranslate.goog-te-gadget-simple,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+div#goog-gt-,
+#goog-gt-vt,
+.goog-te-spinner-pos,
+.goog-tooltip,
+.goog-tooltip:hover,
+.VIpgJd-Z69j5b-O4fe2d,
+.VIpgJd-Z69j5b-O4fe2d-sn548e,
+.VIpgJd-Z69j5b-O4fe2d-ibn2d,
+iframe[id^=":"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  pointer-events: none !important;
+}
+
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+html {
+  top: 0px !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+#google_translate_element,
+.goog-te-gadget {
+  display: none !important;
+}
+

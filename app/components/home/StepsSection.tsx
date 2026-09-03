@@ -17,7 +17,7 @@ const STEPS = [
       </svg>
     ),
     name: "Visítalas",
-    desc: "Vive la experiencia y prueba sus mejores extracciones",
+    desc: "Vive la experiencia, pruébalas y elige las mejores propuestas",
   },
   {
     n: "03",
@@ -38,7 +38,7 @@ const STEPS = [
       </svg>
     ),
     name: "Gana puntos",
-    desc: "Acumula en tu pasaporte digital",
+    desc: "Acumula en tu pasaporte virtual",
   },
   {
     n: "05",

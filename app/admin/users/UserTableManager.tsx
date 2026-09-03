@@ -21,6 +21,7 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
 
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Sincronizar el usuario detallado si cambian los props (después de router.refresh)
   useEffect(() => {
@@ -60,13 +61,42 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
        if (statusFilter === "active" && !u.isActive) return false;
        if (statusFilter === "inactive" && u.isActive) return false;
     }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const fullName = `${u.name || ""} ${u.lastName || ""}`.toLowerCase();
+      const email = (u.email || "").toLowerCase();
+      const cafeteriaName = (u.cafeteriaName || "").toLowerCase();
+      if (!fullName.includes(q) && !email.includes(q) && !cafeteriaName.includes(q)) {
+        return false;
+      }
+    }
     return true;
   });
 
   return (
     <div className="relative">
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex flex-wrap gap-4 w-full md:w-auto flex-1">
+          {/* Campo de búsqueda abierta por texto */}
+          <div className="relative flex-1 min-w-[260px]">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar por nombre, email o cafetería..."
+              className="w-full bg-[#cddbf2] border border-[#cddbf2]/20 text-[#38050e] placeholder-[#38050e]/60 px-4 py-2.5 rounded-xl font-medium focus:outline-none focus:ring-2 focus:ring-[#cddbf2]/50"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#38050e]/60 hover:text-[#38050e] text-xs font-bold bg-black/10 px-2 py-0.5 rounded-full transition-colors"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
           <select 
             value={roleFilter} 
             onChange={(e) => setRoleFilter(e.target.value)}

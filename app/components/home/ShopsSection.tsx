@@ -62,7 +62,7 @@ export default function ShopsSection({ initialShops }: { initialShops: any[] }) 
                 <span className="eyebrow-text-p">Los protagonistas</span>
               </div>
               <h2 className="sec-title">De la ruta<br />del café</h2>
-              <p className="sec-sub">Conoce las cafeterías que están redefiniendo el estándar del café en Panamá</p>
+              <p className="sec-sub">Conoce las cafeterías que están redefiniendo el estándar de experiencias del café en Panamá</p>
             </div>
             <Link href="/participantes" className="btn-out">Ver todas →</Link>
           </div>
