@@ -1,0 +1,29 @@
+name: Avisar a Muce de cada Pull Request
+
+# Cada PR nuevo (o reabierto, o que sale de borrador) deja un comentario que
+# menciona a @mucestudios: así llega correo y notificación aunque quien abra
+# el PR sea otra cuenta, y queda claro que nada entra a main sin esa revisión.
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comentar y pedir la revisión
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.html_url }}
+          AUTOR: ${{ github.event.pull_request.user.login }}
+          ACCION: ${{ github.event.action }}
+        run: |
+          if [ "$ACCION" = "synchronize" ]; then
+            texto="@mucestudios hay cambios nuevos en este PR de @$AUTOR. Revisar antes de aprobar."
+          else
+            texto="@mucestudios nuevo Pull Request de @$AUTOR. Nada entra a producción hasta que Muce lo revise y apruebe."
+          fi
+          gh pr comment "$PR" --body "$texto"
