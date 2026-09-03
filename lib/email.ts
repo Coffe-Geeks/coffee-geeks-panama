@@ -1,6 +1,8 @@
 /**
- * SMTP2GO API integration using fetch.
+ * Envío de correo: primero Brevo (dominio autenticado); si no hay clave de
+ * Brevo o Brevo falla, se usa SMTP2GO como respaldo.
  */
+import { enviarCorreoBrevo } from "./brevo";
 
 export interface SendEmailOptions {
   to: string;
@@ -9,6 +11,10 @@ export interface SendEmailOptions {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailOptions) {
+  if (await enviarCorreoBrevo({ to, subject, html })) {
+    return { success: true, data: { proveedor: "brevo" } };
+  }
+
   const apiKey = process.env.SMTP2GO_API_KEY;
   const from = process.env.EMAIL_FROM || "Coffee Geeks <noreply@coffeegeekspanama.com>";
 
