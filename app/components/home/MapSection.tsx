@@ -233,8 +233,12 @@ export default function MapSection({ shops }: { shops: any[] }) {
               map.whenReady(() => setTimeout(encuadrar, 250));
             }}
           >
+            {/* Tiles de Esri (sin llave): Carto empezó a exigir API key para
+                sus basemaps y el mapa salía con "API KEY REQUIRED". */}
             <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+              attribution="Tiles &copy; Esri"
+              maxZoom={16}
             />
             
             {displayShops.map((shop: any) => (
