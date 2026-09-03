@@ -79,7 +79,7 @@ export const getWelcomeEmailTemplate = (name: string) => {
             Estamos emocionados de tenerte en nuestra comunidad de amantes del café. 
             Tu registro ha sido exitoso y ya puedes empezar a explorar todo lo que tenemos para ti.
           </p>
-          <a href="https://coffee-geeks.com/login" class="button">Ir a mi Perfil</a>
+          <a href="https://coffeegeekspanama.com/login" class="button">Ir a mi Perfil</a>
         </div>
         <div class="footer">
           &copy; ${new Date().getFullYear()} Coffee Geeks. Todos los derechos reservados.
