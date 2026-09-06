@@ -285,6 +285,8 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
     country?: string;
     notes?: string;
   };
+  /** Acceso al Coffee Geeks Passport, si la compra lo incluía */
+  magicLink?: string;
 }) => {
   const brandColor = "#4c000a";
   const accentColor = "#bedcf8";
@@ -302,6 +304,28 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
         </tr>`
     )
     .join("");
+
+  // El acceso al pasaporte va arriba del detalle: es lo que el comprador
+  // vino a buscar, y enterrarlo bajo la lista de importes lo esconde.
+  const bloquePasaporte = pedido.magicLink
+    ? `
+        <div style="background-color:${accentColor};color:${brandColor};padding:26px;border-radius:12px;margin-bottom:26px;text-align:center;">
+          <div style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:0.75;margin-bottom:8px;">
+            Tu pasaporte ya está activo
+          </div>
+          <div style="font-size:16px;line-height:1.55;margin-bottom:20px;">
+            Entra con este enlace para empezar a sellar tu ruta del café.
+          </div>
+          <a href="${pedido.magicLink}"
+             style="display:inline-block;background-color:${brandColor};color:${accentColor};
+                    text-decoration:none;padding:14px 32px;border-radius:50px;font-weight:bold;font-size:16px;">
+            Abrir mi pasaporte
+          </a>
+          <div style="font-size:12px;opacity:0.7;margin-top:16px;line-height:1.5;">
+            El enlace es personal: no lo compartas.
+          </div>
+        </div>`
+    : "";
 
   const dir = pedido.shippingAddress || {};
   const bloqueEnvio =
@@ -353,6 +377,8 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
               ${pedido.orderNumber}
             </span>
           </div>
+
+          ${bloquePasaporte}
 
           <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
             ${filas}

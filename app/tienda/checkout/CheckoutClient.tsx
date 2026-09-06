@@ -155,7 +155,15 @@ export default function CheckoutClient({
                     </div>
                     <div className="campo">
                       <label htmlFor="phone">Teléfono</label>
-                      <input id="phone" name="phone" type="tel" defaultValue={clienteInicial.phone} autoComplete="tel" placeholder="6000-0000" />
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        required
+                        defaultValue={clienteInicial.phone}
+                        autoComplete="tel"
+                        placeholder="6000-0000"
+                      />
                     </div>
                   </div>
                 </div>

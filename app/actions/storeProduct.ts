@@ -51,6 +51,7 @@ export async function saveStoreProduct(formData: FormData) {
     const isActive = formData.get("isActive") === "true";
     const sku = formData.get("sku")?.toString().trim() || "";
     const requiresShipping = formData.get("requiresShipping") === "true";
+    const activaPasaporte = formData.get("activaPasaporte") === "true";
 
     // -1 significa existencias sin límite; cualquier valor inválido cae ahí
     const stockStr = formData.get("stock")?.toString().trim();
@@ -89,6 +90,7 @@ export async function saveStoreProduct(formData: FormData) {
       stock,
       variants,
       requiresShipping,
+      activaPasaporte,
       shortDescription,
       description,
       webhook,

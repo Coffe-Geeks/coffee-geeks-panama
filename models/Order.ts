@@ -37,8 +37,30 @@ const ItemSchema = new Schema(
     quantity: { type: Number, required: true, min: 1 },
     image: { type: String, default: "" },
     requiresShipping: { type: Boolean, default: true },
+    // Copia del interruptor: si mañana se apaga en el producto, este pedido
+    // debe seguir contando por qué activó un pasaporte
+    activatesPassport: { type: Boolean, default: false },
   },
   { _id: true }
+);
+
+/**
+ * Rastro de la activación del Coffee Geeks Passport.
+ *
+ * No guarda la contraseña temporal ni el enlace mágico: los dos abren la
+ * cuenta del comprador y no tienen por qué vivir en nuestra base. Queda lo
+ * necesario para saber si hay que reintentar.
+ */
+const ActivacionPasaporteSchema = new Schema(
+  {
+    intentada: { type: Boolean, default: false },
+    ok: { type: Boolean, default: false },
+    usuarioId: { type: String, default: "" },
+    cuentaYaExistia: { type: Boolean, default: false },
+    error: { type: String, default: "" },
+    activadaEl: { type: Date, default: null },
+  },
+  { _id: false }
 );
 
 const DireccionSchema = new Schema(
@@ -106,6 +128,7 @@ const OrderSchema = new Schema(
 
     status: { type: String, enum: ESTADOS_PEDIDO, default: "pendiente", index: true },
     payment: { type: PagoSchema, default: () => ({}) },
+    passportActivation: { type: ActivacionPasaporteSchema, default: () => ({}) },
 
     // Notas internas del equipo, nunca visibles para el cliente
     internalNotes: { type: String, default: "" },

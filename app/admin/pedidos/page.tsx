@@ -1,6 +1,7 @@
 import { getPedidos } from "@/app/actions/pedidos";
 import { ESTADOS_PEDIDO } from "@/models/Order";
 import SelectorEstado from "./SelectorEstado";
+import ActivacionPasaporte from "./ActivacionPasaporte";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,15 @@ export default async function AdminPedidosPage() {
     .reduce((s: number, p: any) => s + p.total, 0);
   const porDespachar = pedidos.filter((p: any) => p.status === "pagado" && p.requiresShipping).length;
 
+  // Pagados que compraron pasaporte y siguen sin activarlo: dinero cobrado
+  // con el servicio sin entregar, lo primero que hay que ver al entrar.
+  const pasaportesPendientes = pedidos.filter(
+    (p: any) =>
+      ["pagado", "enviado", "entregado"].includes(p.status) &&
+      p.items?.some((i: any) => i.activatesPassport) &&
+      !p.passportActivation?.ok
+  ).length;
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-end flex-wrap gap-4">
@@ -49,6 +59,12 @@ export default async function AdminPedidosPage() {
             <div className="text-[10px] uppercase tracking-widest text-[#cddbf2]/40 font-black">Por despachar</div>
             <div className="text-2xl font-black text-white tabular-nums">{porDespachar}</div>
           </div>
+          {pasaportesPendientes > 0 && (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-2xl px-6 py-3">
+              <div className="text-[10px] uppercase tracking-widest text-red-300/70 font-black">Pasaportes sin activar</div>
+              <div className="text-2xl font-black text-red-300 tabular-nums">{pasaportesPendientes}</div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -120,6 +136,12 @@ export default async function AdminPedidosPage() {
                   {p.internalNotes && (
                     <div className="mt-2 text-[11px] text-amber-300/60">{p.internalNotes}</div>
                   )}
+
+                  {/* Solo los pedidos que compraron pasaporte */}
+                  {p.items?.some((i: any) => i.activatesPassport) &&
+                    ["pagado", "enviado", "entregado"].includes(p.status) && (
+                      <ActivacionPasaporte id={p._id} activacion={p.passportActivation} />
+                    )}
                 </div>
 
                 <div className="flex flex-col items-end gap-3">

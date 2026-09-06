@@ -64,6 +64,9 @@ export default function StoreProductForm({ initialData }: StoreProductFormProps)
     const requiresShipping = formData.get("requiresShipping") === "true";
     formData.set("requiresShipping", requiresShipping ? "true" : "false");
 
+    const activaPasaporte = formData.get("activaPasaporte") === "true";
+    formData.set("activaPasaporte", activaPasaporte ? "true" : "false");
+
     startTransition(async () => {
       const result = await saveStoreProduct(formData);
       if (result.success) {
@@ -252,6 +255,23 @@ export default function StoreProductForm({ initialData }: StoreProductFormProps)
                 name="requiresShipping"
                 type="checkbox"
                 defaultChecked={initialData?.requiresShipping ?? true}
+                className="sr-only peer"
+                value="true"
+              />
+              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#cddbf2]"></div>
+            </label>
+          </div>
+
+          <div className="flex items-center gap-4 bg-[#cddbf2]/5 p-4 rounded-xl border border-[#cddbf2]/10 text-white">
+            <div className="flex-1">
+              <div className="font-bold text-sm">Activa el Pasaporte</div>
+              <div className="text-xs opacity-60">Al aprobarse el pago, crea la cuenta del comprador en Coffee Geeks Passport y le manda el acceso.</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                name="activaPasaporte"
+                type="checkbox"
+                defaultChecked={initialData?.activaPasaporte ?? false}
                 className="sr-only peer"
                 value="true"
               />

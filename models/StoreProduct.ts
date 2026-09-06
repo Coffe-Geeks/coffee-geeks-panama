@@ -13,6 +13,7 @@ export interface IStoreProduct extends Document {
   stock: number;
   variants: IVariante[];
   requiresShipping: boolean;
+  activaPasaporte: boolean;
   shortDescription: string;
   description: string; // Rich HTML format from WYSIWYG editor
   image: string; // Cover image URL
@@ -70,6 +71,15 @@ const StoreProductSchema: Schema = new Schema(
     requiresShipping: {
       type: Boolean,
       default: true,
+    },
+    /**
+     * Al confirmarse el pago, este producto activa una cuenta del Coffee
+     * Geeks Passport. Es un interruptor y no una comparación por nombre o
+     * SKU a propósito: renombrar el producto no debe romper la activación.
+     */
+    activaPasaporte: {
+      type: Boolean,
+      default: false,
     },
     shortDescription: {
       type: String,

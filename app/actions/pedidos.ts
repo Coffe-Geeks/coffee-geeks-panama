@@ -7,6 +7,7 @@ import { getSession } from "@/lib/session";
 import { getSiteConfig } from "@/lib/siteConfig";
 import { revalidatePath } from "next/cache";
 import { redondear } from "@/lib/tienda/carrito";
+import { activarPasaporteDePedido } from "@/lib/tienda/pago-pedido";
 
 /** Lo que el navegador puede pedir: qué y cuánto. Nunca a qué precio. */
 export type LineaSolicitada = {
@@ -87,9 +88,19 @@ export async function crearPedido(datos: {
 
     const nombre = datos.cliente?.name?.trim();
     const correo = datos.cliente?.email?.trim().toLowerCase();
+    const telefono = datos.cliente?.phone?.trim() || "";
+
     if (!nombre) return { error: "Necesitamos tu nombre para el pedido." };
     if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
       return { error: "Necesitamos un correo válido para enviarte la confirmación." };
+    }
+
+    /**
+     * El teléfono es obligatorio: el servicio del pasaporte lo exige y lo
+     * valida. Sin él, alguien pagaría y se quedaría sin activación.
+     */
+    if (telefono.replace(/\D/g, "").length < 7) {
+      return { error: "Necesitamos un teléfono válido, de al menos 7 dígitos." };
     }
 
     const items: any[] = [];
@@ -137,6 +148,7 @@ export async function crearPedido(datos: {
         quantity: cantidad,
         image: producto.image || "",
         requiresShipping: producto.requiresShipping !== false,
+        activatesPassport: producto.activaPasaporte === true,
       });
     }
 
@@ -167,7 +179,7 @@ export async function crearPedido(datos: {
         pedido = await Order.create({
           orderNumber: await generarNumeroPedido(),
           userId: session?.userId || null,
-          customer: { name: nombre, email: correo, phone: datos.cliente.phone?.trim() || "" },
+          customer: { name: nombre, email: correo, phone: telefono },
           items,
           subtotal,
           shippingCost: gastosEnvio,
@@ -239,6 +251,40 @@ export async function actualizarEstadoPedido(id: string, estado: string) {
   } catch (err: any) {
     console.error(err);
     return { error: err.message || "No se pudo actualizar el pedido." };
+  }
+}
+
+/**
+ * Reintenta la activación del pasaporte desde el panel.
+ *
+ * Hace falta porque el cobro y la activación son dos sistemas distintos: si
+ * el segundo estaba caído, el cliente pagó igual y alguien tiene que poder
+ * completarlo sin devolverle el dinero.
+ */
+export async function reintentarActivacionPasaporte(id: string) {
+  try {
+    await checkAdminAuth();
+    await dbConnect();
+
+    const pedido = await Order.findById(id).lean<any>();
+    if (!pedido) return { error: "No encontramos ese pedido." };
+
+    if (pedido.status !== "pagado" && pedido.status !== "enviado" && pedido.status !== "entregado") {
+      return { error: "Solo se activa el pasaporte de un pedido ya pagado." };
+    }
+
+    const magicLink = await activarPasaporteDePedido(pedido);
+    revalidatePath("/admin/pedidos");
+
+    if (!magicLink) {
+      const actualizado = await Order.findById(id).select("passportActivation").lean<any>();
+      return { error: actualizado?.passportActivation?.error || "No se pudo activar el pasaporte." };
+    }
+
+    return { success: "Pasaporte activado. Reenvía el acceso al comprador si hace falta." };
+  } catch (err: any) {
+    console.error(err);
+    return { error: err.message || "No se pudo activar el pasaporte." };
   }
 }
 

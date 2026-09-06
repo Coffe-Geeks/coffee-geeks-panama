@@ -15,6 +15,7 @@ import Order from "@/models/Order";
 import StoreProduct from "@/models/StoreProduct";
 import { sendEmail } from "@/lib/email";
 import { getOrderConfirmationEmailTemplate } from "@/lib/email-templates";
+import { activarPasaporte, activacionDisponible } from "@/lib/tienda/pasaporte";
 
 export type DatosPago = {
   transactionIdentifier?: string;
@@ -93,6 +94,72 @@ function camposDePago(
 }
 
 /**
+ * Activa el Coffee Geeks Passport si el pedido lo incluye.
+ *
+ * Devuelve el enlace de acceso para armar el correo, y guarda en el pedido
+ * únicamente si salió bien: el enlace no se persiste.
+ *
+ * Un fallo aquí NO invalida el pedido — el cobro ya ocurrió. Se registra el
+ * motivo para que el equipo lo reintente desde el panel.
+ */
+export async function activarPasaporteDePedido(pedido: any): Promise<string> {
+  const necesita = (pedido.items || []).some((i: any) => i.activatesPassport);
+  if (!necesita) return "";
+
+  if (!activacionDisponible()) {
+    await Order.updateOne(
+      { orderNumber: pedido.orderNumber },
+      {
+        $set: {
+          "passportActivation.intentada": true,
+          "passportActivation.ok": false,
+          "passportActivation.error": "Falta PASAPORTE_API_KEY en este entorno.",
+        },
+      }
+    );
+    console.error(`Pedido ${pedido.orderNumber}: no hay clave para activar el pasaporte.`);
+    return "";
+  }
+
+  try {
+    const r = await activarPasaporte({
+      nombre: pedido.customer.name,
+      correo: pedido.customer.email,
+      telefono: pedido.customer.phone,
+    });
+
+    await Order.updateOne(
+      { orderNumber: pedido.orderNumber },
+      {
+        $set: {
+          "passportActivation.intentada": true,
+          "passportActivation.ok": true,
+          "passportActivation.usuarioId": r.usuarioId,
+          "passportActivation.cuentaYaExistia": r.cuentaYaExistia,
+          "passportActivation.error": "",
+          "passportActivation.activadaEl": new Date(),
+        },
+      }
+    );
+
+    return r.magicLink;
+  } catch (err: any) {
+    await Order.updateOne(
+      { orderNumber: pedido.orderNumber },
+      {
+        $set: {
+          "passportActivation.intentada": true,
+          "passportActivation.ok": false,
+          "passportActivation.error": err?.message || "Error desconocido al activar.",
+        },
+      }
+    );
+    console.error(`Pedido ${pedido.orderNumber}: falló la activación del pasaporte:`, err?.message);
+    return "";
+  }
+}
+
+/**
  * Marca el pedido como pagado, descuenta existencias y envía el
  * comprobante. Devuelve null si el pedido no existía o ya no estaba
  * pendiente (notificación repetida).
@@ -115,6 +182,10 @@ export async function marcarPedidoPagado(orderNumber: string, datos: DatosPago) 
 
   await descontarExistencias(pedido.items || []);
 
+  // El pasaporte se activa antes del correo, para que el acceso viaje en el
+  // mismo comprobante y el comprador no tenga que esperar un segundo envío.
+  const magicLink = await activarPasaporteDePedido(pedido);
+
   try {
     await sendEmail({
       to: pedido.customer.email,
@@ -128,6 +199,7 @@ export async function marcarPedidoPagado(orderNumber: string, datos: DatosPago) 
         total: pedido.total,
         requiresShipping: pedido.requiresShipping,
         shippingAddress: pedido.shippingAddress,
+        magicLink,
       }),
     });
   } catch (err) {
