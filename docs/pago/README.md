@@ -25,6 +25,7 @@ producción.
 | `POWERTRANZ_CURRENCY` | Moneda ISO | `840` (USD) |
 | `POWERTRANZ_PAGE_SET` | Conjunto de páginas alojadas | *lo crea FAC en el Portal* |
 | `POWERTRANZ_PAGE_NAME` | Página dentro del conjunto | *lo crea FAC en el Portal* |
+| `POWERTRANZ_FRAUD_CHECK` | Enciende la verificación antifraude Kount | `false` (ver abajo) |
 | `POWERTRANZ_ACEPTAR_3DS_U` | Si se cobra cuando 3DS responde `U` | `false` |
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio, para armar el `MerchantResponseUrl` | `https://coffeegeekspanama.com` |
 | `POWERTRANZ_MODO_PRUEBA` | **Solo pruebas.** Habilita simular el cobro sin pasarela | *no debe existir en producción* |
@@ -32,6 +33,56 @@ producción.
 Mientras falten `POWERTRANZ_PAGE_SET` y `POWERTRANZ_PAGE_NAME`, la tienda
 sigue funcionando: registra el pedido, avisa que el pago en línea aún no
 está habilitado y no cobra nada.
+
+---
+
+## Lo que ya se probó contra staging
+
+Prueba hecha el 6 de septiembre de 2026 con las credenciales del handoff,
+desde un servidor local en HTTPS.
+
+**Funciona:**
+
+- Las credenciales son válidas. `/sale` responde `HTTP 200` con
+  `IsoResponseCode: SP4 · SPI Preprocessing complete`, más `SpiToken` y
+  `RedirectData`. Un error de autenticación daría 401; no es el caso.
+- El `RedirectData` es un formulario que se auto-envía a
+  `/api/spi/Conductor` recogiendo datos del navegador para 3DS2. Se monta
+  bien dentro del iframe.
+- El pedido guarda el `TransactionIdentifier` y el `SpiToken` reales.
+- El retorno a `MerchantResponseUrl` llega como formulario con un campo
+  `Response` en JSON. Nuestra ruta lo interpreta, actualiza el pedido y
+  saca al cliente del iframe.
+
+**Dos cosas bloqueadas del lado de FAC:**
+
+1. **Antifraude sin aprovisionar.** Con `fraudCheck: true` la pasarela
+   responde `FC3 · FraudCheck error` con `Code 1011 · Invalid Provider`, y
+   **ninguna transacción llega a abrirse**. Por eso `POWERTRANZ_FRAUD_CHECK`
+   viene apagado. Hay que pedirle a FAC que habilite el proveedor Kount para
+   este comercio y luego encenderlo.
+2. **Página alojada inexistente.** Con un `PageSet` de relleno, `/sale` pasa
+   pero el `Conductor` devuelve `Code 757 · Hosted page not found`. Es decir:
+   el `PageSet`/`PageName` hace falta de verdad para que el cliente vea el
+   formulario de tarjeta.
+
+**Para probar en local** hace falta servir por HTTPS: la página de BAC es
+`https`, y un formulario que envíe hacia `http://localhost` lo bloquea el
+navegador por contenido mixto. Con certificado propio:
+
+```
+openssl req -x509 -newkey rsa:2048 -nodes \
+  -keyout certificates/localhost-key.pem -out certificates/localhost.pem \
+  -days 365 -subj "/CN=localhost" \
+  -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:::1"
+
+npx next dev -p 3000 --experimental-https \
+  --experimental-https-key certificates/localhost-key.pem \
+  --experimental-https-cert certificates/localhost.pem
+```
+
+Tarjeta de prueba del handoff: `4012000000020006`, CVV `323`, vence `2310`,
+contraseña del desafío 3DS2 `3ds2`.
 
 ---
 
@@ -122,8 +173,11 @@ posible.
 
 ## Pendiente
 
-- FAC debe crear el `PageSet` / `PageName`. **Sin eso no se puede probar
-  contra staging**, aunque el código ya está completo.
+- FAC debe crear el `PageSet` / `PageName` en el Portal del Comercio. Sin
+  eso el cliente nunca ve el formulario de tarjeta (`757 · Hosted page not
+  found`), aunque el resto del recorrido ya quedó probado.
+- FAC debe aprovisionar el antifraude Kount (`1011 · Invalid Provider`), o
+  confirmar que se opera sin él.
 - Decidir si se acepta `AuthenticationStatus = U`. Es una decisión de
   negocio, no técnica: cobrar en ese caso aumenta las ventas aprobadas y
   traslada al comercio el riesgo del contracargo. Por eso viene apagado.

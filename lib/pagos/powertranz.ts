@@ -22,10 +22,22 @@
 const BASE_URL = process.env.POWERTRANZ_BASE_URL || "https://staging.ptranz.com/api/spi";
 const MONEDA = process.env.POWERTRANZ_CURRENCY || "840"; // 840 = USD
 
+/**
+ * Verificación antifraude (Kount).
+ *
+ * Viene apagada por omisión porque el comercio todavía no la tiene
+ * aprovisionada: con `fraudCheck: true` la pasarela responde
+ * `FC3 / Invalid Provider (1011)` y **ninguna transacción llega a abrirse**.
+ * Se enciende con POWERTRANZ_FRAUD_CHECK=true cuando FAC lo habilite.
+ */
+const ANTIFRAUDE = process.env.POWERTRANZ_FRAUD_CHECK === "true";
+
 export type ResultadoAutenticacion = {
   Approved?: boolean;
   IsoResponseCode?: string;
   ResponseMessage?: string;
+  /** Errores de la pasarela: sin ellos un fallo se diagnostica a ciegas */
+  Errors?: { Code?: string; Message?: string }[];
   CardBrand?: string;
   SpiToken?: string;
   TotalAmount?: number;
@@ -112,7 +124,7 @@ export async function iniciarPago(params: {
     TotalAmount: Number(params.total.toFixed(2)),
     CurrencyCode: MONEDA,
     ThreeDSecure: true,
-    fraudCheck: true,
+    fraudCheck: ANTIFRAUDE,
     OrderIdentifier: params.orderIdentifier,
     AddressMatch: false,
     ExtendedData: {
@@ -151,6 +163,22 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
 } {
   const authStatus = r?.RiskManagement?.ThreeDSecure?.AuthenticationStatus || "";
   const fraudCode = r?.RiskManagement?.FraudCheck?.FcResponseCode || "";
+
+  /**
+   * Errores explícitos de la pasarela: se atienden antes que nada y se
+   * conserva su texto. Un "Hosted page not found" diagnosticado como "la
+   * tarjeta no se pudo verificar" manda al equipo a buscar donde no es.
+   */
+  if (r?.Errors?.length) {
+    const detalle = r.Errors.map((e) => `${e.Code}: ${e.Message}`).join(" · ");
+    return {
+      cobrar: false,
+      motivo: `${r.ResponseMessage || "La pasarela rechazó la transacción"} (${detalle})`,
+      authStatus,
+      fraudCode,
+      sinProteccion: false,
+    };
+  }
 
   if (fraudCode === "D") {
     return {
