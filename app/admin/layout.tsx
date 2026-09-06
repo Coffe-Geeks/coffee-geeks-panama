@@ -52,6 +52,9 @@ export default function AdminLayout({
                 <Link href="/admin/productos" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
                   Tienda
                 </Link>
+                <Link href="/admin/pedidos" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
+                  Pedidos
+                </Link>
                 <Link href="/admin/newsletter" className="text-sm font-medium text-[#cddbf2]/70 hover:text-[#cddbf2] transition-all duration-300 relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-0.5 after:bg-[#cddbf2] hover:after:w-full after:transition-all after:duration-300">
                   Boletín
                 </Link>

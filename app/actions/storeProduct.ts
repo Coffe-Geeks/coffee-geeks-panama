@@ -49,6 +49,33 @@ export async function saveStoreProduct(formData: FormData) {
     const description = formData.get("description")?.toString() || "";
     const webhook = formData.get("webhook")?.toString() || "";
     const isActive = formData.get("isActive") === "true";
+    const sku = formData.get("sku")?.toString().trim() || "";
+    const requiresShipping = formData.get("requiresShipping") === "true";
+
+    // -1 significa existencias sin límite; cualquier valor inválido cae ahí
+    const stockStr = formData.get("stock")?.toString().trim();
+    const stockNum = stockStr !== undefined && stockStr !== "" ? parseInt(stockStr, 10) : -1;
+    const stock = Number.isFinite(stockNum) ? Math.max(-1, stockNum) : -1;
+
+    // Las presentaciones llegan como JSON desde el formulario
+    let variants: { label: string; sku: string; stock: number }[] = [];
+    try {
+      const bruto = formData.get("variants")?.toString();
+      if (bruto) {
+        const datos = JSON.parse(bruto);
+        if (Array.isArray(datos)) {
+          variants = datos
+            .filter((v: any) => v?.label?.toString().trim())
+            .map((v: any) => ({
+              label: v.label.toString().trim(),
+              sku: v.sku?.toString().trim() || "",
+              stock: Number.isFinite(Number(v.stock)) ? Math.max(-1, Number(v.stock)) : -1,
+            }));
+        }
+      }
+    } catch {
+      return { error: "No se pudieron leer las presentaciones del producto." };
+    }
 
     if (!name) return { error: "El nombre es obligatorio." };
 
@@ -58,6 +85,10 @@ export async function saveStoreProduct(formData: FormData) {
     const updateData: any = {
       name,
       price,
+      sku,
+      stock,
+      variants,
+      requiresShipping,
       shortDescription,
       description,
       webhook,
@@ -77,6 +108,7 @@ export async function saveStoreProduct(formData: FormData) {
 
     revalidatePath("/admin/productos");
     revalidatePath("/tienda");
+    revalidatePath("/tienda/carrito");
     if (id) {
       revalidatePath(`/tienda/${id}`);
     }

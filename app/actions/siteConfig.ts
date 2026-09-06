@@ -47,6 +47,14 @@ export async function updateSiteConfig(state: any, formData: FormData) {
     
     const votingEndDate = formData.get("votingEndDate")?.toString().trim() ?? "";
 
+    // Tienda: se aceptan solo montos válidos y no negativos
+    const aMonto = (campo: string) => {
+      const bruto = parseFloat(formData.get(campo)?.toString().trim() || "0");
+      return Number.isFinite(bruto) && bruto > 0 ? Math.round(bruto * 100) / 100 : 0;
+    };
+    const costoEnvio = aMonto("costoEnvio");
+    const envioGratisDesde = aMonto("envioGratisDesde");
+
     // Usamos updateOne con upsert para asegurar que el registro único se cree o actualice
     await SiteConfig.updateOne(
       {}, // filtro vacío para el singleton
@@ -76,7 +84,9 @@ export async function updateSiteConfig(state: any, formData: FormData) {
           purchasePolicy,
           cancellationPolicy,
           maxGalleryImages, 
-          votingEndDate 
+          votingEndDate,
+          costoEnvio,
+          envioGratisDesde 
         } 
       },
       { upsert: true }
@@ -94,6 +104,7 @@ export async function updateSiteConfig(state: any, formData: FormData) {
     revalidatePath("/datos-personales", "page");
     revalidatePath("/politica-de-compras", "page");
     revalidatePath("/politica-de-cancelaciones", "page");
+    revalidatePath("/tienda", "layout");
 
     return { success: "Configuración guardada correctamente." };
   } catch (err) {

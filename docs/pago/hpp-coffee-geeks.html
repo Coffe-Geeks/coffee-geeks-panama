@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pago seguro · Coffee Geeks Panamá</title>
+
+  <!--
+    ══════════════════════════════════════════════════════════════════════
+    Coffee Geeks Panamá — Plantilla de la Hosted Payment Page
+    PowerTranz / First Atlantic Commerce (BAC Credomatic)
+
+    QUÉ ES ESTE ARCHIVO
+    El armazón de marca de la pantalla donde el cliente escribe su tarjeta.
+    Se carga en el Portal del Comercio de FAC como parte del Page Set, y es
+    lo que después se invoca con ExtendedData.HostedPage.
+
+    QUÉ LE TOCA A FAC
+    Los campos de tarjeta, los tokens de la plantilla y el envío del
+    formulario los pone FAC según su propia especificación. Aquí queda
+    marcado con un comentario el punto exacto donde va ese bloque: todo lo
+    que está alrededor —tipografías, colores, logo, textos y pie— es lo que
+    define la identidad de Coffee Geeks y debe conservarse tal cual.
+
+    REQUISITO
+    El logo y las tipografías se cargan desde dominios externos. Si la
+    política de contenido del portal los bloquea, hay que pedirle a FAC que
+    permita coffeegeekspanama.com y fonts.googleapis.com, o alojar el logo
+    dentro del portal y sustituir el src.
+    ══════════════════════════════════════════════════════════════════════
+  -->
+
+  <link rel="stylesheet" href="hpp-coffee-geeks.css">
+  <link rel="icon" href="https://coffeegeekspanama.com/fav.png">
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- ── Marca ────────────────────────────────────────────────────── -->
+    <div class="cg-marca">
+      <img src="https://coffeegeekspanama.com/logo.webp" alt="Coffee Geeks Panamá">
+      <span class="cg-marca-txt">Pago seguro</span>
+    </div>
+
+    <h1>Datos de tu tarjeta</h1>
+    <p>Completa el pago de tu compra en la tienda oficial de Coffee Geeks Panamá.</p>
+
+    <!--
+      ══════════════════════════════════════════════════════════════════
+      AQUÍ VA EL BLOQUE DE FAC
+
+      Los campos de tarjeta, el token del monto y el botón de envío que
+      genera PowerTranz. La hoja de estilo adjunta usa selectores de
+      elemento (input, select, button), así que el bloque toma la
+      apariencia de Coffee Geeks sin necesidad de tocar sus clases ni sus
+      identificadores.
+
+      Los campos que se esperan son los del formulario estándar:
+      número de tarjeta, vencimiento, código de seguridad y nombre del
+      tarjetahabiente.
+      ══════════════════════════════════════════════════════════════════
+    -->
+
+    <!-- ── Pie ──────────────────────────────────────────────────────── -->
+    <div class="cg-pie">
+      Tus datos viajan cifrados y son procesados por BAC Credomatic.<br>
+      Coffee Geeks Panamá no almacena información de tu tarjeta.<br>
+      El cargo aparece en tu estado de cuenta a nombre de Panamá International Firm.
+    </div>
+
+  </div>
+</body>
+</html>

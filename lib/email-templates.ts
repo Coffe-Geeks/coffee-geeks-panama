@@ -262,3 +262,131 @@ export const getPasswordResetEmailTemplate = (name: string, resetUrl: string) =>
     </html>
   `;
 };
+
+/**
+ * Comprobante de compra. Va con tablas y estilos en línea porque los
+ * clientes de correo ignoran hojas de estilo y buena parte del CSS moderno;
+ * lo que aquí parece anticuado es lo que hace que se vea igual en Gmail,
+ * Outlook y el correo del teléfono.
+ */
+export const getOrderConfirmationEmailTemplate = (pedido: {
+  orderNumber: string;
+  customer: { name: string; email: string; phone?: string };
+  items: { name: string; variant?: string; quantity: number; unitPrice: number }[];
+  subtotal: number;
+  shippingCost: number;
+  total: number;
+  requiresShipping: boolean;
+  shippingAddress?: {
+    line1?: string;
+    line2?: string;
+    city?: string;
+    province?: string;
+    country?: string;
+    notes?: string;
+  };
+}) => {
+  const brandColor = "#4c000a";
+  const accentColor = "#bedcf8";
+
+  const filas = pedido.items
+    .map(
+      (i) => `
+        <tr>
+          <td style="padding:12px 0;border-bottom:1px solid rgba(190,220,248,0.12);font-size:15px;">
+            ${i.quantity} × ${i.name}${i.variant ? ` <span style="opacity:0.6;">· ${i.variant}</span>` : ""}
+          </td>
+          <td style="padding:12px 0;border-bottom:1px solid rgba(190,220,248,0.12);font-size:15px;text-align:right;white-space:nowrap;">
+            $${(i.unitPrice * i.quantity).toFixed(2)}
+          </td>
+        </tr>`
+    )
+    .join("");
+
+  const dir = pedido.shippingAddress || {};
+  const bloqueEnvio =
+    pedido.requiresShipping && dir.line1
+      ? `
+        <div style="background-color:rgba(0,0,0,0.25);padding:22px;border-radius:12px;margin-top:22px;text-align:left;">
+          <div style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:0.6;margin-bottom:10px;">
+            Dirección de entrega
+          </div>
+          <div style="font-size:15px;line-height:1.6;">
+            ${[dir.line1, dir.line2].filter(Boolean).join("<br>")}<br>
+            ${[dir.city, dir.province].filter(Boolean).join(", ")}<br>
+            ${dir.country || "Panamá"}
+            ${dir.notes ? `<br><span style="opacity:0.7;font-size:14px;">Indicaciones: ${dir.notes}</span>` : ""}
+          </div>
+        </div>`
+      : `
+        <div style="background-color:rgba(0,0,0,0.25);padding:22px;border-radius:12px;margin-top:22px;text-align:left;">
+          <div style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:0.6;margin-bottom:10px;">
+            Entrega
+          </div>
+          <div style="font-size:15px;line-height:1.6;">
+            Tu compra es digital. Te escribimos a este mismo correo con las instrucciones de acceso.
+          </div>
+        </div>`;
+
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Confirmación de tu compra ${pedido.orderNumber}</title>
+    </head>
+    <body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background-color:${brandColor};color:${accentColor};">
+      <div style="max-width:600px;margin:0 auto;padding:40px 20px;">
+        <div style="font-size:28px;font-weight:bold;margin-bottom:30px;letter-spacing:2px;text-transform:uppercase;text-align:center;">
+          Coffee Geeks Panamá
+        </div>
+
+        <div style="background-color:rgba(0,0,0,0.2);padding:36px;border-radius:12px;border:1px solid rgba(190,220,248,0.1);">
+          <h1 style="font-size:24px;margin:0 0 14px;color:${accentColor};text-align:center;">¡Gracias por tu compra!</h1>
+          <p style="font-size:16px;line-height:1.6;text-align:center;margin:0 0 24px;">
+            ${pedido.customer.name ? `${pedido.customer.name}, tu` : "Tu"} pago fue aprobado y ya estamos preparando tu pedido.
+          </p>
+
+          <div style="text-align:center;margin-bottom:26px;">
+            <span style="display:inline-block;background-color:${accentColor};color:${brandColor};padding:8px 22px;border-radius:50px;font-weight:bold;font-size:16px;letter-spacing:1px;">
+              ${pedido.orderNumber}
+            </span>
+          </div>
+
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            ${filas}
+            <tr>
+              <td style="padding:12px 0;font-size:15px;opacity:0.8;">Subtotal</td>
+              <td style="padding:12px 0;font-size:15px;text-align:right;opacity:0.8;">$${pedido.subtotal.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td style="padding:0 0 12px;font-size:15px;opacity:0.8;">Envío</td>
+              <td style="padding:0 0 12px;font-size:15px;text-align:right;opacity:0.8;">
+                ${pedido.shippingCost === 0 ? (pedido.requiresShipping ? "Gratis" : "No aplica") : `$${pedido.shippingCost.toFixed(2)}`}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:16px 0 0;border-top:2px solid rgba(190,220,248,0.3);font-size:19px;font-weight:bold;">Total</td>
+              <td style="padding:16px 0 0;border-top:2px solid rgba(190,220,248,0.3);font-size:19px;font-weight:bold;text-align:right;">
+                $${pedido.total.toFixed(2)} USD
+              </td>
+            </tr>
+          </table>
+
+          ${bloqueEnvio}
+
+          <p style="font-size:14px;opacity:0.75;line-height:1.6;margin-top:26px;text-align:center;">
+            Guarda este correo: el número de pedido es lo que necesitas si escribes para consultar por tu compra.
+          </p>
+        </div>
+
+        <div style="margin-top:24px;font-size:12px;opacity:0.5;text-align:center;">
+          Correo automático del sistema Coffee Geeks Panamá.<br>
+          El cobro aparece en tu estado de cuenta procesado por Panamá International Firm.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};

@@ -16,6 +16,23 @@ export default function StoreProductForm({ initialData }: StoreProductFormProps)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [content, setContent] = useState(initialData?.description || "");
   const [previewImage, setPreviewImage] = useState<string | null>(initialData?.image || null);
+  // Tallas o presentaciones. Cada una lleva su propia existencia; un stock
+  // de -1 significa sin límite, que es lo correcto para lo digital.
+  const [variantes, setVariantes] = useState<{ label: string; sku: string; stock: number }[]>(
+    (initialData?.variants || []).map((v: any) => ({
+      label: v.label || "",
+      sku: v.sku || "",
+      stock: typeof v.stock === "number" ? v.stock : -1,
+    }))
+  );
+
+  const cambiarVariante = (i: number, campo: string, valor: string) => {
+    setVariantes((actual) =>
+      actual.map((v, idx) =>
+        idx === i ? { ...v, [campo]: campo === "stock" ? parseInt(valor, 10) || 0 : valor } : v
+      )
+    );
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,12 +50,19 @@ export default function StoreProductForm({ initialData }: StoreProductFormProps)
     }
 
     formData.append("description", content);
+    formData.append(
+      "variants",
+      JSON.stringify(variantes.filter((v) => v.label.trim()))
+    );
     if (initialData?._id) {
       formData.append("id", initialData._id);
     }
     
     const isActive = formData.get("isActive") === "true";
     formData.set("isActive", isActive ? "true" : "false");
+
+    const requiresShipping = formData.get("requiresShipping") === "true";
+    formData.set("requiresShipping", requiresShipping ? "true" : "false");
 
     startTransition(async () => {
       const result = await saveStoreProduct(formData);
@@ -90,6 +114,88 @@ export default function StoreProductForm({ initialData }: StoreProductFormProps)
             </div>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-bold uppercase tracking-wider text-[#cddbf2]/60">SKU</label>
+              <input
+                name="sku"
+                type="text"
+                defaultValue={initialData?.sku}
+                className="w-full bg-black/50 border border-[#cddbf2]/20 rounded-xl px-4 py-3 focus:border-[#cddbf2] transition-all outline-none text-white"
+                placeholder="Ej: CG-CAMISA-01"
+              />
+              <p className="text-xs text-[#cddbf2]/40">Código interno del producto. Solo aplica si no usas presentaciones.</p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-bold uppercase tracking-wider text-[#cddbf2]/60">Existencias</label>
+              <input
+                name="stock"
+                type="number"
+                step="1"
+                defaultValue={initialData?.stock ?? -1}
+                className="w-full bg-black/50 border border-[#cddbf2]/20 rounded-xl px-4 py-3 focus:border-[#cddbf2] transition-all outline-none text-white"
+              />
+              <p className="text-xs text-[#cddbf2]/40">Escribe <strong>-1</strong> para existencias sin límite (pasaporte digital, cursos).</p>
+            </div>
+          </div>
+
+          {/* ── Presentaciones ── */}
+          <div className="space-y-3 bg-black/20 p-5 rounded-2xl border border-[#cddbf2]/10">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="text-sm font-bold uppercase tracking-wider text-[#cddbf2]/60">Presentaciones</label>
+                <p className="text-xs text-[#cddbf2]/40 mt-1">Tallas o tamaños. Cada uno lleva su propia existencia y desplaza a la de arriba.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setVariantes((a) => [...a, { label: "", sku: "", stock: -1 }])}
+                className="px-4 py-2 rounded-xl bg-[#cddbf2]/10 hover:bg-[#cddbf2]/20 text-[#cddbf2] text-xs font-bold uppercase tracking-widest transition-colors"
+              >
+                + Agregar
+              </button>
+            </div>
+
+            {variantes.length === 0 ? (
+              <p className="text-xs text-[#cddbf2]/30 py-2">Sin presentaciones: se vende como una sola opción.</p>
+            ) : (
+              <div className="space-y-2">
+                {variantes.map((v, i) => (
+                  <div key={i} className="grid grid-cols-[1fr_1fr_100px_40px] gap-2 items-center">
+                    <input
+                      value={v.label}
+                      onChange={(e) => cambiarVariante(i, "label", e.target.value)}
+                      placeholder="Talla M"
+                      className="bg-black/50 border border-[#cddbf2]/20 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-[#cddbf2]"
+                    />
+                    <input
+                      value={v.sku}
+                      onChange={(e) => cambiarVariante(i, "sku", e.target.value)}
+                      placeholder="SKU"
+                      className="bg-black/50 border border-[#cddbf2]/20 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-[#cddbf2]"
+                    />
+                    <input
+                      value={v.stock}
+                      onChange={(e) => cambiarVariante(i, "stock", e.target.value)}
+                      type="number"
+                      step="1"
+                      title="Existencias (-1 = sin límite)"
+                      className="bg-black/50 border border-[#cddbf2]/20 rounded-xl px-3 py-2 text-sm text-white outline-none focus:border-[#cddbf2] tabular-nums"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setVariantes((a) => a.filter((_, idx) => idx !== i))}
+                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                      title="Quitar presentación"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-bold uppercase tracking-wider text-[#cddbf2]/60">Descripción Corta</label>
             <textarea
@@ -110,7 +216,7 @@ export default function StoreProductForm({ initialData }: StoreProductFormProps)
               className="w-full bg-black/50 border border-[#cddbf2]/20 rounded-xl px-4 py-3 focus:border-[#cddbf2] transition-all outline-none text-white"
               placeholder="https://tudominio.com/webhook-compra"
             />
-            <p className="text-xs text-[#cddbf2]/40">URL a la que se redireccionará al usuario después de completar el pago simulado.</p>
+            <p className="text-xs text-[#cddbf2]/40">URL a la que se lleva al comprador después de una compra aprobada.</p>
           </div>
         </div>
 
@@ -134,6 +240,23 @@ export default function StoreProductForm({ initialData }: StoreProductFormProps)
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
             </div>
+          </div>
+
+          <div className="flex items-center gap-4 bg-[#cddbf2]/5 p-4 rounded-xl border border-[#cddbf2]/10 text-white">
+            <div className="flex-1">
+              <div className="font-bold text-sm">Requiere envío</div>
+              <div className="text-xs opacity-60">Apágalo para lo digital: no pedirá dirección ni cobrará envío.</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                name="requiresShipping"
+                type="checkbox"
+                defaultChecked={initialData?.requiresShipping ?? true}
+                className="sr-only peer"
+                value="true"
+              />
+              <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#cddbf2]"></div>
+            </label>
           </div>
 
           <div className="flex items-center gap-4 bg-[#cddbf2]/5 p-4 rounded-xl border border-[#cddbf2]/10 text-white">

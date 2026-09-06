@@ -386,6 +386,41 @@ export default function SettingsForm({ config }: { config: any }) {
         </div>
       </div>
 
+      {/* ── Tienda ── */}
+      <div className={`${sectionCls} lg:col-span-2`}>
+        <SectionTitle icon="📦" label="Envíos de la Tienda" />
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-2">
+            <label className={labelCls} htmlFor="costoEnvio">Costo de Envío Nacional (USD)</label>
+            <input
+              id="costoEnvio"
+              name="costoEnvio"
+              type="number"
+              min="0"
+              step="0.01"
+              defaultValue={(config as any).costoEnvio ?? 0}
+              className={inputCls}
+            />
+            <p className="text-[#cddbf2]/30 text-xs pl-1">Tarifa plana que se suma cuando el pedido incluye productos que se despachan. El pasaporte digital y los cursos nunca la pagan.</p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className={labelCls} htmlFor="envioGratisDesde">Envío Gratis Desde (USD)</label>
+            <input
+              id="envioGratisDesde"
+              name="envioGratisDesde"
+              type="number"
+              min="0"
+              step="0.01"
+              defaultValue={(config as any).envioGratisDesde ?? 0}
+              className={inputCls}
+            />
+            <p className="text-[#cddbf2]/30 text-xs pl-1">Compras iguales o mayores a este monto no pagan envío. Deja 0 para cobrar siempre.</p>
+          </div>
+        </div>
+      </div>
+
       <div className="lg:col-span-2">
         <button
           type="submit"

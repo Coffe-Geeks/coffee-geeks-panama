@@ -1,0 +1,241 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Coffee Geeks Panamá — Hoja de estilo para la Hosted Payment Page
+   PowerTranz / First Atlantic Commerce (BAC Credomatic)
+
+   Se carga en el Portal del Comercio, dentro del Page Set que aloja el
+   formulario de tarjeta. La página se muestra embebida en un iframe dentro
+   de coffeegeekspanama.com, así que el objetivo es que el visitante no note
+   el salto entre un dominio y el otro.
+
+   Los selectores son de ELEMENTO y no de clase a propósito: el marcado de
+   FAC no está a la vista y sus nombres de clase pueden cambiar entre
+   versiones. Un input sigue siendo un input.
+   ══════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@300;400;500;700&display=swap');
+
+:root {
+  --cg-vino:      #38050e;  /* Color de marca; botones y titulares       */
+  --cg-vino-osc:  #24060c;  /* Estado :hover del botón principal          */
+  --cg-azul:      #cddbf2;  /* Azul pálido; bordes y detalles             */
+  --cg-crema:     #f4efe4;  /* Fondo de la página y de los campos         */
+  --cg-blanco:    #ffffff;
+  --cg-error:     #8a1220;
+  --cg-radio:     14px;     /* Radio de los campos                        */
+  --cg-radio-btn: 50px;     /* Los botones del sitio son cápsulas         */
+}
+
+/* ── Lienzo ──────────────────────────────────────────────────────────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cg-crema);
+  color: var(--cg-vino);
+  font-family: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* El contenedor principal, sea cual sea su nombre de clase */
+body > form,
+body > div,
+.container,
+#container {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 28px 24px 36px;
+  box-sizing: border-box;
+}
+
+/* ── Titulares ───────────────────────────────────────────────────────── */
+h1, h2, h3, legend {
+  font-family: 'Barlow Condensed', 'Barlow', sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--cg-vino);
+  letter-spacing: .01em;
+  line-height: 1.05;
+  margin: 0 0 14px;
+}
+h1 { font-size: 30px; }
+h2 { font-size: 23px; }
+h3 { font-size: 19px; }
+
+p { margin: 0 0 16px; color: var(--cg-vino); opacity: .8; }
+
+/* ── Etiquetas de campo ──────────────────────────────────────────────── */
+label {
+  display: block;
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--cg-vino);
+  opacity: .65;
+  margin-bottom: 6px;
+}
+
+/* ── Campos ──────────────────────────────────────────────────────────── */
+input[type="text"],
+input[type="tel"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Barlow', sans-serif;
+  font-size: 16px;              /* 16px evita que iOS haga zoom al enfocar */
+  color: var(--cg-vino);
+  background: var(--cg-blanco);
+  border: 1px solid var(--cg-azul);
+  border-radius: var(--cg-radio);
+  padding: 13px 15px;
+  margin-bottom: 16px;
+  transition: border-color .15s, box-shadow .15s;
+  appearance: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--cg-vino);
+  box-shadow: 0 0 0 3px rgba(56, 5, 14, .10);
+}
+
+input::placeholder { color: var(--cg-vino); opacity: .35; }
+
+/* El número de tarjeta y la fecha se leen mejor con cifras de ancho fijo */
+input[name*="ard"],
+input[id*="ard"],
+input[name*="xpir"],
+input[id*="xpir"],
+input[name*="vv"],
+input[id*="vv"] {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .06em;
+}
+
+/* ── Botones ─────────────────────────────────────────────────────────── */
+button,
+input[type="submit"],
+input[type="button"],
+a.button {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  height: 54px;
+  margin-top: 8px;
+  background: var(--cg-vino);
+  color: var(--cg-blanco);
+  font-family: 'Barlow', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  line-height: 54px;
+  padding: 0 24px;
+  border: none;
+  border-radius: var(--cg-radio-btn);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(56, 5, 14, .18);
+  transition: background .2s, transform .2s, box-shadow .2s;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+  background: var(--cg-vino-osc);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(56, 5, 14, .25);
+}
+
+button:disabled,
+input[type="submit"]:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* El botón secundario (cancelar / volver) no compite con el principal */
+button[type="button"],
+input[type="button"] {
+  background: transparent;
+  color: var(--cg-vino);
+  border: 1px solid var(--cg-vino);
+  line-height: 52px;
+  box-shadow: none;
+}
+button[type="button"]:hover,
+input[type="button"]:hover {
+  background: var(--cg-vino);
+  color: var(--cg-blanco);
+}
+
+/* ── Errores ─────────────────────────────────────────────────────────── */
+.error, .Error, .validation-error, [class*="error"] {
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  color: var(--cg-error);
+  background: #fdecee;
+  border: 1px solid #f3c9ce;
+  border-radius: var(--cg-radio);
+  padding: 12px 15px;
+  margin-bottom: 16px;
+}
+
+input.error, input[aria-invalid="true"] {
+  background: #fdecee;
+  border-color: var(--cg-error);
+}
+
+/* ── Encabezado de marca ─────────────────────────────────────────────── */
+/* Va en la plantilla HTML; requiere el logo alojado en un dominio público */
+.cg-marca {
+  text-align: center;
+  padding: 4px 0 22px;
+}
+.cg-marca img {
+  height: 54px;
+  width: auto;
+}
+.cg-marca-txt {
+  display: block;
+  margin-top: 10px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--cg-vino);
+  opacity: .55;
+}
+
+/* ── Pie de seguridad ────────────────────────────────────────────────── */
+.cg-pie {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--cg-azul);
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--cg-vino);
+  opacity: .6;
+}
+
+/* ── Pantallas pequeñas ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  body > form, body > div, .container, #container { padding: 20px 16px 28px; }
+  h1 { font-size: 26px; }
+  .cg-marca img { height: 46px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:hover, input[type="submit"]:hover { transform: none; }
+}

@@ -36,6 +36,13 @@ const SiteConfigSchema = new Schema(
     purchasePolicy: { type: String, default: "" },
     cancellationPolicy: { type: String, default: "" },
 
+    // Tienda
+    // Tarifa plana de envío nacional; el pasaporte digital y los cursos no
+    // la pagan porque no se despachan.
+    costoEnvio: { type: Number, default: 0 },
+    // Compras iguales o mayores a este monto no pagan envío. 0 lo desactiva.
+    envioGratisDesde: { type: Number, default: 0 },
+
     // Cafeterías
     maxGalleryImages: { type: Number, default: 3 },
     

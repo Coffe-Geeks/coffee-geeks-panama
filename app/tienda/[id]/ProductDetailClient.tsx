@@ -1,53 +1,45 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Navbar from "@/app/components/layout/Navbar";
+import { useCarrito } from "@/app/components/tienda/CarritoContext";
 
 export default function ProductDetailClient({ product }: { product: any }) {
-  const [showModal, setShowModal] = useState(false);
-  const [paymentStage, setPaymentStage] = useState<"processing" | "success">("processing");
-  const [orderNumber, setOrderNumber] = useState("");
+  const { agregarProducto } = useCarrito();
+  const router = useRouter();
 
-  useEffect(() => {
-    if (showModal) {
-      setPaymentStage("processing");
-      // Generate a random order number
-      const randomOrder = `CG-${Math.floor(100000 + Math.random() * 900000)}`;
-      setOrderNumber(randomOrder);
+  const variantes: any[] = product.variants || [];
+  const [varianteId, setVarianteId] = useState<string>(variantes[0]?._id?.toString() || "");
+  const [cantidad, setCantidad] = useState(1);
+  const [agregado, setAgregado] = useState(false);
 
-      // Simulate processing checkout
-      const timer = setTimeout(() => {
-        setPaymentStage("success");
-      }, 2000);
+  const variante = variantes.find((v) => v._id?.toString() === varianteId);
+  // -1 significa existencia ilimitada: es lo correcto para el pasaporte digital
+  const existencia = variante ? variante.stock : product.stock ?? -1;
+  const agotado = existencia === 0;
+  const quedanPocas = existencia > 0 && existencia <= 5;
 
-      return () => clearTimeout(timer);
-    }
-  }, [showModal]);
+  function alCarrito() {
+    agregarProducto({
+      productId: product._id,
+      variantId: varianteId,
+      variant: variante?.label || "",
+      name: product.name,
+      price: product.price,
+      image: product.image || "",
+      requiresShipping: product.requiresShipping !== false,
+      quantity: cantidad,
+    });
+    setAgregado(true);
+    return true;
+  }
 
-  // Handle redirection if webhook exists when payment succeeds
-  useEffect(() => {
-    if (showModal && paymentStage === "success" && product.webhook) {
-      const redirectTimer = setTimeout(() => {
-        try {
-          const webhookUrl = new URL(product.webhook);
-          webhookUrl.searchParams.append("status", "success");
-          webhookUrl.searchParams.append("orderId", orderNumber);
-          webhookUrl.searchParams.append("productId", product._id);
-          webhookUrl.searchParams.append("price", product.price.toString());
-          webhookUrl.searchParams.append("productName", product.name);
-          
-          window.location.href = webhookUrl.toString();
-        } catch (e) {
-          // If URL parsing fails, redirect to the literal string
-          const divider = product.webhook.includes("?") ? "&" : "?";
-          window.location.href = `${product.webhook}${divider}status=success&orderId=${orderNumber}&productId=${product._id}`;
-        }
-      }, 2500);
-
-      return () => clearTimeout(redirectTimer);
-    }
-  }, [paymentStage, showModal, product.webhook, orderNumber, product._id, product.name, product.price]);
+  function comprarAhora() {
+    alCarrito();
+    router.push("/tienda/checkout");
+  }
 
   return (
     <>
@@ -109,27 +101,33 @@ export default function ProductDetailClient({ product }: { product: any }) {
         .rich-content ul{list-style-type:disc;padding-left:20px;margin-bottom:20px}
         .rich-content ol{list-style-type:decimal;padding-left:20px;margin-bottom:20px}
 
-        /* ── Modal ── */
-        .modal-overlay{position:fixed;inset:0;background:rgba(20,5,8,0.75);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
-        .modal-card{width:100%;max-width:480px;background:#fff;border:1px solid #cddbf2;border-radius:32px;padding:40px;box-shadow:0 20px 50px rgba(0,0,0,0.3);text-align:center;position:relative;overflow:hidden;animation:fadeInUp 0.3s ease-out}
-        @keyframes fadeInUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-        
-        .modal-eye{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:#38050e;opacity:.5;margin-bottom:8px}
-        .modal-title{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:900;text-transform:uppercase;color:#38050e;line-height:1;margin-bottom:20px}
-        .modal-desc{font-family:'Barlow',sans-serif;font-size:15px;line-height:1.6;color:#38050e;opacity:.8;margin-bottom:28px}
-        
-        /* Spinner */
-        .spinner{width:56px;height:56px;border:4px solid #cddbf2;border-top-color:#38050e;border-radius:50px;animation:spin 1s linear infinite;margin:0 auto 24px}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        
-        /* Success Icon */
-        .success-icon{width:64px;height:64px;background:#cddbf2;color:#38050e;font-size:32px;border-radius:50px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;box-shadow:0 8px 20px rgba(205,219,242,0.4)}
-        
-        .order-badge{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;background:#f4efe4;color:#38050e;padding:6px 16px;border-radius:50px;display:inline-block;margin-bottom:20px}
-        .webhook-notice{font-family:'Barlow',sans-serif;font-size:12px;color:#cddbf2;background:#38050e;padding:8px 16px;border-radius:8px;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+        /* ── Selector de compra ── */
+        .opciones{margin-bottom:22px}
+        .opciones-lbl{display:block;font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#38050e;opacity:.65;margin-bottom:9px}
+        .variantes{display:flex;flex-wrap:wrap;gap:8px}
+        .variante{padding:9px 18px;border-radius:50px;border:1px solid #cddbf2;background:#fff;color:#38050e;font-family:'Barlow',sans-serif;font-size:14px;cursor:pointer;transition:all .15s}
+        .variante:hover{border-color:#38050e}
+        .variante.sel{background:#38050e;color:#fff;border-color:#38050e}
+        .variante:disabled{opacity:.35;cursor:not-allowed;text-decoration:line-through}
 
-        .btn-close{height:44px;padding:0 24px;background:#38050e;color:#fff;font-family:'Barlow',sans-serif;font-weight:500;font-size:14px;border-radius:50px;border:none;cursor:pointer;transition:all .15s}
-        .btn-close:hover{background:#24060c}
+        .cant{display:inline-flex;align-items:center;border:1px solid #cddbf2;border-radius:50px;overflow:hidden;background:#fff}
+        .cant button{width:38px;height:38px;border:none;background:transparent;color:#38050e;font-size:18px;font-family:'Barlow',sans-serif;cursor:pointer;transition:background .15s}
+        .cant button:hover{background:#cddbf2}
+        .cant button:disabled{opacity:.3;cursor:not-allowed}
+        .cant span{min-width:40px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:17px;color:#38050e;font-variant-numeric:tabular-nums}
+
+        .stock{font-family:'Barlow',sans-serif;font-size:13px;margin-top:10px}
+        .stock-pocas{color:#8a1220}
+        .stock-agotado{color:#8a1220;font-weight:500}
+
+        .btn-sec{width:100%;height:52px;margin-top:12px;background:transparent;color:#38050e;font-family:'Barlow',sans-serif;font-weight:500;font-size:15px;border-radius:50px;border:1px solid #38050e;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+        .btn-sec:hover{background:#38050e;color:#fff}
+        .btn-pay:disabled,.btn-sec:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+
+        .listo{display:flex;align-items:center;gap:9px;margin-top:14px;padding:12px 16px;background:#fff;border:1px solid #cddbf2;border-radius:14px;font-family:'Barlow',sans-serif;font-size:14px;color:#38050e}
+        .listo a{color:#38050e;font-weight:500}
+
+        .envio-nota{font-family:'Barlow',sans-serif;font-size:13px;line-height:1.5;color:#38050e;opacity:.65;margin-top:16px}
 
         @media(max-width:960px){
           .prod-grid{grid-template-columns:1fr;gap:32px}
@@ -204,68 +202,94 @@ export default function ProductDetailClient({ product }: { product: any }) {
               )}
             </div>
 
-            {/* Pay Card Info */}
+            {/* Tarjeta de compra */}
             <div className="pay-card">
               <h2 className="pay-name">{product.name}</h2>
               <div className="pay-price">${product.price.toFixed(2)} USD</div>
               <p className="pay-short">{product.shortDescription || "Este producto no tiene una descripción corta asignada."}</p>
-              
-              <button className="btn-pay" onClick={() => setShowModal(true)}>
-                <span>🛒</span>
-                Comprar Ahora
+
+              {variantes.length > 0 && (
+                <div className="opciones">
+                  <span className="opciones-lbl">Presentación</span>
+                  <div className="variantes">
+                    {variantes.map((v) => {
+                      const id = v._id?.toString();
+                      return (
+                        <button
+                          key={id}
+                          type="button"
+                          className={`variante${id === varianteId ? " sel" : ""}`}
+                          disabled={v.stock === 0}
+                          onClick={() => {
+                            setVarianteId(id);
+                            setCantidad(1);
+                            setAgregado(false);
+                          }}
+                        >
+                          {v.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="opciones">
+                <span className="opciones-lbl">Cantidad</span>
+                <div className="cant">
+                  <button
+                    type="button"
+                    onClick={() => setCantidad((c) => Math.max(1, c - 1))}
+                    disabled={cantidad <= 1}
+                    aria-label="Quitar una unidad"
+                  >
+                    −
+                  </button>
+                  <span>{cantidad}</span>
+                  <button
+                    type="button"
+                    onClick={() => setCantidad((c) => (existencia === -1 ? c + 1 : Math.min(existencia, c + 1)))}
+                    disabled={existencia !== -1 && cantidad >= existencia}
+                    aria-label="Agregar una unidad"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {agotado ? (
+                  <div className="stock stock-agotado">Agotado por ahora</div>
+                ) : quedanPocas ? (
+                  <div className="stock stock-pocas">Quedan {existencia} unidades</div>
+                ) : null}
+              </div>
+
+              <button className="btn-pay" onClick={comprarAhora} disabled={agotado}>
+                Comprar ahora
               </button>
+
+              <button className="btn-sec" onClick={alCarrito} disabled={agotado}>
+                Agregar al carrito
+              </button>
+
+              {agregado && (
+                <div className="listo">
+                  <span>✓</span>
+                  <span>
+                    Listo, está en tu carrito. <Link href="/tienda/carrito">Ver carrito</Link>
+                  </span>
+                </div>
+              )}
+
+              <p className="envio-nota">
+                {product.requiresShipping === false
+                  ? "Entrega digital: te llega por correo, sin costo de envío."
+                  : "Envíos a todo Panamá. El costo se calcula en el siguiente paso."}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Simulated Payment Modal */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            {paymentStage === "processing" ? (
-              <>
-                <div className="spinner" />
-                <div className="modal-eye">Pasarela Simulado</div>
-                <h3 className="modal-title">Procesando Pago</h3>
-                <p className="modal-desc">
-                  Estamos contactando a tu banco de prueba para validar los fondos de tu compra de <strong>{product.name}</strong> por un total de <strong>${product.price.toFixed(2)} USD</strong>.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="success-icon">✓</div>
-                <div className="modal-eye">¡Transacción Exitosa!</div>
-                <h3 className="modal-title">¡Gracias por tu compra!</h3>
-                <div className="order-badge">Orden: {orderNumber}</div>
-                <p className="modal-desc">
-                  Tu pago de <strong>${product.price.toFixed(2)} USD</strong> por <strong>{product.name}</strong> ha sido acreditado exitosamente. Se ha enviado un comprobante a tu correo de prueba.
-                </p>
-                
-                {product.webhook ? (
-                  <div className="webhook-notice">
-                    <svg viewBox="0 0 24 24" style={{ width: 16, height: 16, stroke: "currentColor", fill: "none", strokeWidth: 2, animation: "spin 2s linear infinite" }}>
-                      <line x1="12" y1="2" x2="12" y2="6"></line>
-                      <line x1="12" y1="18" x2="12" y2="22"></line>
-                      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
-                      <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
-                      <line x1="2" y1="12" x2="6" y2="12"></line>
-                      <line x1="18" y1="12" x2="22" y2="12"></line>
-                      <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
-                      <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
-                    </svg>
-                    <span>Redireccionando al webhook de destino...</span>
-                  </div>
-                ) : (
-                  <button className="btn-close" onClick={() => setShowModal(false)}>
-                    Cerrar Ventana
-                  </button>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 }
