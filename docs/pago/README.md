@@ -112,6 +112,25 @@ pedido no se mueve dos veces ni el cliente recibe dos correos.
 
 ## Alcance PCI
 
+### Se evaluó el formulario propio y se descartó (6 de septiembre de 2026)
+
+PowerTranz permite un segundo camino: mandar la tarjeta en `Source` desde
+nuestro servidor, sin `HostedPage`. **Funciona hoy** — se probó contra
+staging y devuelve `SP4` con `SpiToken` y `RedirectData`, sin depender del
+`PageSet`. Habría desbloqueado el cobro de inmediato.
+
+Se descartó igual. La tabla de FAC es clara: el sitio que genera el
+formulario de pago cae en **SAQ A-EP**, cuya complejidad de cumplimiento pasa
+de baja a alta y arrastra controles adicionales sobre el sitio, con cada
+cambio del checkout dentro del alcance de auditoría. Y quien firma ese SAQ es
+Panamá International Firm, que es quien procesa los cargos: no es una
+decisión que se tome solo por conveniencia de calendario.
+
+Los dos bloqueos que quedan se resuelven con un correo a FAC, no con semanas
+de trabajo. Ver `solicitud-pageset-fac.md`.
+
+### El camino elegido
+
 La integración es **SAQ A**: el formulario de tarjeta lo aloja y lo sirve
 PowerTranz. Ningún dato de tarjeta pasa por este servidor ni queda en la
 base de datos. En el pedido solo se guardan identificadores de transacción,
