@@ -11,12 +11,22 @@ Estimado Giancarlo, buen día:
 Escribimos por la integración de **Coffee Geeks Panamá**, comercio con
 **PowerTranz ID 77702076**, en el entorno de staging.
 
+Agradecemos su correo con el resumen del proceso de integración y las
+credenciales del entorno de pruebas.
+
 Ya completamos el desarrollo del checkout con el producto **Hosted Payment
 Page** y lo validamos contra `https://staging.ptranz.com/api/spi`. Nuestras
 credenciales funcionan correctamente: el endpoint `/sale` responde
 `IsoResponseCode: SP4 · SPI Preprocessing complete`, con `SpiToken` y
 `RedirectData` válidos, y nuestro `MerchantResponseUrl` recibe e interpreta
 bien la respuesta.
+
+Confirmamos además que nuestro manejo del campo `AuthenticationStatus` sigue
+exactamente la tabla que nos enviaron: completamos el pago con `Y` y `A`, lo
+denegamos con `N` y `R`, y dejamos `U` como decisión configurable del
+comercio, entendiendo que en ese caso se pierde la protección ante ciertos
+contracargos. Ese último punto lo revisaremos con el adquirente, como
+ustedes indican.
 
 Nos quedan **dos puntos que dependen de la configuración de la cuenta** y que
 no podemos resolver de nuestro lado. Les agradecemos su apoyo con ambos:
@@ -67,11 +77,21 @@ Con ese error **la transacción no llega a abrirse**, así que hoy operamos con
 antifraude para esta cuenta, o bien confirmarnos que debemos continuar sin
 él.
 
-## 3. Acceso al Portal del Comercio
+## 3. Tarjetas de prueba de American Express
 
-Aún no hemos recibido el correo con el usuario y el enlace para crear la
-contraseña del Portal del Comercio. Agradecemos nos lo hagan llegar para
-poder monitorear las transacciones.
+Recibimos el anexo de tarjetas de prueba, que agradecemos. Contiene seis
+tarjetas Visa y seis MasterCard, pero **ninguna de American Express**.
+
+Como nuestra cuenta está habilitada para Amex y ustedes nos indican que las
+pruebas deben incluir transacciones aprobadas y denegadas de cada marca,
+les solicitamos las tarjetas de prueba de Amex con SafeKey para poder cerrar
+la batería completa.
+
+## 4. Acceso al Portal del Comercio
+
+Su correo indica que recibiríamos un mensaje desde `support@powertranz.bm`
+con los usuarios y el enlace para crear la contraseña del Portal del
+Comercio. Aún no nos ha llegado; agradecemos su seguimiento.
 
 ---
 
