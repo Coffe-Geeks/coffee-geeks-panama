@@ -110,6 +110,13 @@ export default async function PedidoPage({ params }: { params: Promise<{ numero:
                 <p className="conf-p">{mensaje.texto}</p>
                 <span className="num">{pedido.orderNumber}</span>
 
+                {/* Indicación del banco emisor, cuando la manda */}
+                {pedido.payment?.cardholderInfo && (
+                  <p className="conf-p" style={{ marginTop: 20, fontSize: 14 }}>
+                    <strong>Tu banco indica:</strong> {pedido.payment.cardholderInfo}
+                  </p>
+                )}
+
                 {pedido.status === "rechazado" && (
                   <Link href="/tienda/carrito" className="btn-primario" style={{ maxWidth: 320, margin: "26px auto 0" }}>
                     Volver a intentar

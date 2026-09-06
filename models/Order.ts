@@ -94,6 +94,9 @@ const PagoSchema = new Schema(
     cardBrand: { type: String, default: "" },
     // Resultado de la autenticación 3DS/SafeKey: Y, A, U, N o R
     authenticationStatus: { type: String, default: "" },
+    // Indicación del emisor para el tarjetahabiente ("contacte a su banco…").
+    // La documentación de PowerTranz pide mostrársela si viene.
+    cardholderInfo: { type: String, default: "" },
     // Antifraude Kount: A aprobado, D denegado
     fraudResponseCode: { type: String, default: "" },
     fraudScore: { type: String, default: "" },

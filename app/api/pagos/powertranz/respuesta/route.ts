@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
         isoResponseCode: resultado.IsoResponseCode || "",
         responseMessage: veredicto.motivo,
         authenticationStatus: veredicto.authStatus,
+        cardholderInfo: veredicto.mensajeParaCliente,
         fraudResponseCode: veredicto.fraudCode,
         fraudScore: resultado.RiskManagement?.FraudCheck?.FcScore || "",
       },
@@ -104,6 +105,7 @@ export async function POST(req: NextRequest) {
       responseMessage: cobro.responseMessage,
       cardBrand: cobro.cardBrand || datosBase.cardBrand,
       authenticationStatus: veredicto.authStatus,
+      cardholderInfo: veredicto.mensajeParaCliente,
       fraudResponseCode: veredicto.fraudCode,
       fraudScore: resultado.RiskManagement?.FraudCheck?.FcScore || "",
     };

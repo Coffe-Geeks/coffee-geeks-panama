@@ -25,6 +25,7 @@ export type DatosPago = {
   responseMessage?: string;
   cardBrand?: string;
   authenticationStatus?: string;
+  cardholderInfo?: string;
   fraudResponseCode?: string;
   fraudScore?: string;
 };
@@ -82,6 +83,7 @@ function camposDePago(
     "payment.responseMessage": datos.responseMessage,
     "payment.cardBrand": datos.cardBrand,
     "payment.authenticationStatus": datos.authenticationStatus,
+    "payment.cardholderInfo": datos.cardholderInfo,
     "payment.fraudResponseCode": datos.fraudResponseCode,
     "payment.fraudScore": datos.fraudScore,
   };

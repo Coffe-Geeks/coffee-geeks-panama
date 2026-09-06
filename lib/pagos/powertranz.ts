@@ -43,7 +43,12 @@ export type ResultadoAutenticacion = {
   TotalAmount?: number;
   OrderIdentifier?: string;
   RiskManagement?: {
-    ThreeDSecure?: { AuthenticationStatus?: string; Eci?: string };
+    ThreeDSecure?: {
+      AuthenticationStatus?: string;
+      Eci?: string;
+      /** Mensaje del emisor que la documentación pide mostrar al cliente */
+      CardholderInfo?: string;
+    };
     FraudCheck?: { FcResponseCode?: string; FcScore?: string };
   };
 };
@@ -69,13 +74,17 @@ export function pasarelaDisponible(): boolean {
   );
 }
 
-async function llamar(endpoint: string, body: unknown) {
-  const { id, password } = credenciales();
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    "PowerTranz-PowerTranzId": id,
-    "PowerTranz-PowerTranzPassword": password,
-  };
+async function llamar(endpoint: string, body: unknown, conCredenciales = true) {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+
+  // La documentación es explícita: la finalización del pago no requiere
+  // PowerTranz-PowerTranzId ni PowerTranz-PowerTranzPassword. Se autentica
+  // con el propio SpiToken.
+  if (conCredenciales) {
+    const { id, password } = credenciales();
+    headers["PowerTranz-PowerTranzId"] = id;
+    headers["PowerTranz-PowerTranzPassword"] = password;
+  }
 
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
     method: "POST",
@@ -160,9 +169,12 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
   authStatus: string;
   fraudCode: string;
   sinProteccion: boolean;
+  /** Indicación del emisor para el cliente, si la mandó */
+  mensajeParaCliente: string;
 } {
   const authStatus = r?.RiskManagement?.ThreeDSecure?.AuthenticationStatus || "";
   const fraudCode = r?.RiskManagement?.FraudCheck?.FcResponseCode || "";
+  const infoCliente = r?.RiskManagement?.ThreeDSecure?.CardholderInfo || "";
 
   /**
    * Errores explícitos de la pasarela: se atienden antes que nada y se
@@ -176,7 +188,28 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
       motivo: `${r.ResponseMessage || "La pasarela rechazó la transacción"} (${detalle})`,
       authStatus,
       fraudCode,
+      mensajeParaCliente: infoCliente,
       sinProteccion: false,
+    };
+  }
+
+  /**
+   * SP1 significa que la tarjeta no es apta para 3D-Secure y la transacción
+   * se procesa sin autenticación. Se puede cobrar, pero sin traslado de
+   * responsabilidad: ante un contracargo responde el comercio. Por eso es
+   * una decisión de negocio y no una constante.
+   */
+  if (r?.IsoResponseCode === "SP1") {
+    const aceptar = process.env.POWERTRANZ_ACEPTAR_SIN_3DS === "true";
+    return {
+      cobrar: aceptar,
+      motivo: aceptar
+        ? "La tarjeta no admite 3D Secure; se cobra sin protección ante contracargos."
+        : "La tarjeta no admite la verificación de seguridad requerida.",
+      authStatus,
+      fraudCode,
+      mensajeParaCliente: infoCliente,
+      sinProteccion: true,
     };
   }
 
@@ -186,12 +219,20 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
       motivo: "La verificación antifraude rechazó la transacción.",
       authStatus,
       fraudCode,
+      mensajeParaCliente: infoCliente,
       sinProteccion: false,
     };
   }
 
   if (authStatus === "Y" || authStatus === "A") {
-    return { cobrar: true, motivo: "Autenticación exitosa.", authStatus, fraudCode, sinProteccion: false };
+    return {
+      cobrar: true,
+      motivo: "Autenticación exitosa.",
+      authStatus,
+      fraudCode,
+      mensajeParaCliente: infoCliente,
+      sinProteccion: false,
+    };
   }
 
   if (authStatus === "U") {
@@ -203,6 +244,7 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
         : "No se pudo verificar la tarjeta con el banco emisor.",
       authStatus,
       fraudCode,
+      mensajeParaCliente: infoCliente,
       sinProteccion: true,
     };
   }
@@ -217,6 +259,7 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
       : "La tarjeta no completó la verificación de seguridad.",
     authStatus,
     fraudCode,
+    mensajeParaCliente: infoCliente,
     sinProteccion: false,
   };
 }
@@ -227,7 +270,7 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
  */
 export async function finalizarPago(spiToken: string) {
   // El cuerpo es el token entre comillas, no un objeto JSON
-  const respuesta = await llamar("payment", spiToken);
+  const respuesta = await llamar("payment", spiToken, false);
 
   return {
     aprobado: Boolean(respuesta?.Approved) && respuesta?.IsoResponseCode === "00",
