@@ -2,7 +2,7 @@
 
 **Para:** BACSoporte@powertranz.bm (Giancarlo Torres, Operations Analyst)
 **Copia:** el ejecutivo de BAC Credomatic que atiende la cuenta
-**Asunto:** Coffee Geeks Panamá (PowerTranz ID 77702076) — Solicitud de Hosted Page y habilitación de FraudCheck
+**Asunto:** Coffee Geeks Panamá (PowerTranz ID 77702076) — Acceso al Portal, Hosted Page y habilitación de FraudCheck
 
 ---
 
@@ -31,16 +31,31 @@ ustedes indican.
 Nos quedan **dos puntos que dependen de la configuración de la cuenta** y que
 no podemos resolver de nuestro lado. Les agradecemos su apoyo con ambos:
 
-## 1. Crear la Página Alojada (Page Set / Page Name)
+## 1. Acceso al Portal del Comercio (lo más urgente)
+
+Su correo indica que recibiríamos un mensaje desde `support@powertranz.bm`
+con los usuarios y el enlace para crear la contraseña del Portal del
+Comercio. **Aún no nos ha llegado.**
+
+Lo ponemos de primero porque la documentación indica que la Página Alojada se
+crea en ese portal. Si con ese acceso podemos crearla nosotros mismos, se
+resuelve el punto 2 sin ocupar a su equipo. Agradecemos su seguimiento.
+
+## 2. Crear la Página Alojada (Page Set / Page Name)
 
 Cuando el navegador envía el `SpiToken` a `/api/spi/Conductor`, la respuesta
 es:
 
 > `Code 757 — "Hosted page not found"`
 
-La documentación indica que la Página Alojada se crea en el Portal del
-Comercio. Les solicitamos crear el **Page Set** y el **Page Name** para
-nuestro comercio, e informarnos los valores literales para enviarlos en
+Verificamos que no se trata de un valor por omisión: probamos una veintena de
+nombres genéricos (`Default`, `Test`, `Standard`, el propio PowerTranz ID,
+entre otros) y todos devuelven el mismo `757`, lo cual entendemos que
+confirma que la página debe existir creada bajo nuestra cuenta.
+
+Si con el acceso al portal podemos crearla nosotros, indíquennos y
+procedemos. Si no, les solicitamos crear el **Page Set** y el **Page Name**
+para nuestro comercio e informarnos los valores literales para enviarlos en
 `ExtendedData.HostedPage`.
 
 Ya tenemos preparada la personalización visual de esa página con la marca de
@@ -65,7 +80,7 @@ Dos notas técnicas sobre esa página:
   bloquea, indíquennos y les enviamos el logo para alojarlo dentro del
   portal.
 
-## 2. Habilitar la verificación antifraude
+## 3. Habilitar la verificación antifraude
 
 Toda solicitud enviada con `"fraudCheck": true` devuelve:
 
@@ -77,7 +92,7 @@ Con ese error **la transacción no llega a abrirse**, así que hoy operamos con
 antifraude para esta cuenta, o bien confirmarnos que debemos continuar sin
 él.
 
-## 3. Tarjetas de prueba de American Express
+## 4. Tarjetas de prueba de American Express
 
 Recibimos el anexo de tarjetas de prueba, que agradecemos. Contiene seis
 tarjetas Visa y seis MasterCard, pero **ninguna de American Express**.
@@ -87,11 +102,7 @@ pruebas deben incluir transacciones aprobadas y denegadas de cada marca,
 les solicitamos las tarjetas de prueba de Amex con SafeKey para poder cerrar
 la batería completa.
 
-## 4. Acceso al Portal del Comercio
 
-Su correo indica que recibiríamos un mensaje desde `support@powertranz.bm`
-con los usuarios y el enlace para crear la contraseña del Portal del
-Comercio. Aún no nos ha llegado; agradecemos su seguimiento.
 
 ---
 
