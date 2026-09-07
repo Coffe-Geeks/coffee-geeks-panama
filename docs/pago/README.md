@@ -181,7 +181,7 @@ En esta carpeta queda lista para entregar:
 | Texto y campos | Barlow 400/500 |
 | Botones | Cápsula, radio 50px, alto 54px |
 | Campos | Radio 14px, borde `#cddbf2`, fondo blanco |
-| Logo | `https://coffeegeekspanama.com/logo.webp` |
+| Logo (fondo claro) | `https://coffeegeekspanama.com/logo-vino.png` |
 
 Lo que ya está de nuestro lado: el iframe va montado dentro de la página de
 la tienda, con el mismo encabezado, el mismo resumen del pedido al costado y
