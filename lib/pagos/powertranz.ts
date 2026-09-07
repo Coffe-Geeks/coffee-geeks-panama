@@ -202,12 +202,15 @@ export function evaluarResultado(r: ResultadoAutenticacion): {
   }
 
   /**
-   * SP1 significa que la tarjeta no es apta para 3D-Secure y la transacción
-   * se procesa sin autenticación. Se puede cobrar, pero sin traslado de
-   * responsabilidad: ante un contracargo responde el comercio. Por eso es
-   * una decisión de negocio y no una constante.
+   * La tarjeta no es apta para 3D-Secure y la transacción se procesa sin
+   * autenticación. La pasarela lo señala de dos maneras: `SP1` en la
+   * documentación y `3D1` en las respuestas reales de staging.
+   *
+   * Se puede cobrar, pero sin traslado de responsabilidad: ante un
+   * contracargo responde el comercio. Por eso es una decisión de negocio y
+   * no una constante.
    */
-  if (r?.IsoResponseCode === "SP1") {
+  if (r?.IsoResponseCode === "SP1" || r?.IsoResponseCode === "3D1") {
     const aceptar = process.env.POWERTRANZ_ACEPTAR_SIN_3DS === "true";
     return {
       cobrar: aceptar,
