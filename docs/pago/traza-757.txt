@@ -1,0 +1,95 @@
+# Coffee Geeks Panamá — Traza completa del error 757
+
+PowerTranz ID: 77702076
+Ambiente: https://staging.ptranz.com/api/spi
+Fecha (UTC): 2026-09-07T18:32:55.502Z
+
+================================================================
+1) REQUEST — POST https://staging.ptranz.com/api/spi/sale
+================================================================
+
+Headers:
+  Content-Type: application/json
+  PowerTranz-PowerTranzId: 77702076
+  PowerTranz-PowerTranzPassword: ********  (la del correo de incorporación)
+
+Body:
+{
+    "TransactionIdentifier": "77440f64-6719-4ba9-874d-a714d5d3ee9c",
+    "TotalAmount": 20,
+    "CurrencyCode": "840",
+    "ThreeDSecure": true,
+    "fraudCheck": false,
+    "OrderIdentifier": "CG-TRAZA-0001",
+    "AddressMatch": false,
+    "ExtendedData": {
+        "ThreeDSecure": {
+            "ChallengeWindowSize": 4,
+            "ChallengeIndicator": "01"
+        },
+        "HostedPage": {
+            "PageSet": "CoffeeGeeks",
+            "PageName": "Checkout"
+        },
+        "MerchantResponseUrl": "https://coffeegeekspanama.com/api/pagos/powertranz/respuesta"
+    }
+}
+
+================================================================
+2) RESPONSE — HTTP 200
+================================================================
+
+{
+    "TransactionType": 2,
+    "Approved": false,
+    "TransactionIdentifier": "77440f64-6719-4ba9-874d-a714d5d3ee9c",
+    "TotalAmount": 20,
+    "CurrencyCode": "840",
+    "IsoResponseCode": "SP4",
+    "ResponseMessage": "SPI Preprocessing complete",
+    "OrderIdentifier": "CG-TRAZA-0001",
+    "RedirectData": "<!DOCTYPE html><html><head></head><body><form id='powertranz_spi' name='powertranz_spi' action='https://staging.ptranz.com/api/spi/Conductor' method='POST'><input name='SpiToken' id='SpiToken' type='hidden' value='2looinunmsr8ds5kro909asmzsrqkkjroqrqumqthv9uv3 …[recortado]",
+    "SpiToken": "2looinunmsr8ds5kro909asmzsrqkkjroqrqumqthv9uv3m7sl-3plyg9wt7wz"
+}
+
+Nota: la respuesta es correcta (SP4) y entrega SpiToken y RedirectData.
+
+================================================================
+3) REQUEST — POST https://staging.ptranz.com/api/spi/Conductor
+================================================================
+
+Es el envío automático del formulario que viene dentro de RedirectData,
+tal como lo haría el navegador del tarjetahabiente dentro del iframe.
+
+Headers:
+  Content-Type: application/x-www-form-urlencoded
+
+Body (form-urlencoded):
+  SpiToken=2looinunmsr8ds5kro909asmzsrqkkjroqrqumqthv9uv3m7sl-3plyg9wt7wz
+  browserLanguage=es-PA
+  browserWidth=1440
+  browserHeight=900
+  browserTimeZone=300
+  browserJavaEnabled=false
+  browserJavascriptEnabled=true
+  browserColorDepth=24
+
+================================================================
+4) RESPONSE — HTTP 200
+================================================================
+
+<!DOCTYPE html><html><head></head><body><form id='merchantresponse' name='merchantresponse' action='https://coffeegeekspanama.com/api/pagos/powertranz/respuesta' method='POST'><input name='Response' id='Response' type='hidden' value='{"TransactionType":2,"Approved":false,"TransactionIdentifier":"77440f64-6719-4ba9-874d-a714d5d3ee9c","IsoResponseCode":"12","ResponseMessage":"Invalid transaction","OrderIdentifier":"CG-TRAZA-0001","Errors":[{"Code":"757","Message":"Hosted page not found"}]}'><input name='TransactionIdentifier' id='TransactionIdentifier' type='hidden' value='77440f64-6719-4ba9-874d-a714d5d3ee9c'><input name='SpiToken' id='SpiToken' type='hidden' value='2looinunmsr8ds5kro909asmzsrqkkjroqrqumqthv9uv3m7sl-3plyg9wt7wz'></form><script>window.onload=submitForm;function submitForm() {document.getElementById('merchantresponse').submit();}</script></body></html>
+
+================================================================
+RESUMEN
+================================================================
+
+La Hosted Page figura en el Portal del Comercio como:
+  Id        2071
+  Page Set  CoffeeGeeks
+  Page Name Checkout
+  Estado    Published
+  Comercio  77702076 — PANAMA UNIQUE
+
+El /sale acepta esos mismos valores y responde SP4, pero el Conductor
+devuelve 757 "Hosted page not found".
