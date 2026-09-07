@@ -1,0 +1,21 @@
+# WORKFLOW TEMPORAL DE DIAGNÓSTICO — se elimina al terminar.
+# Solo lista los NOMBRES de las variables del proyecto de pruebas para
+# saber cuáles faltan. No imprime ningún valor ni modifica nada.
+name: Diagnóstico temporal
+
+on:
+  workflow_dispatch:
+
+jobs:
+  listar:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.DEPLOY_ORG }}
+      VERCEL_PROJECT_ID: ${{ secrets.DEPLOY_PROJECT }}
+    steps:
+      - name: Variables configuradas en el proyecto
+        run: |
+          npm install -g vercel@latest
+          vercel pull --yes --environment=preview --token="${{ secrets.DEPLOY_TOKEN }}" > /dev/null 2>&1 || true
+          echo "── Variables del proyecto (solo nombres y entornos) ──"
+          vercel env ls --token="${{ secrets.DEPLOY_TOKEN }}" 2>&1 | grep -viE "value|decrypt" || true
