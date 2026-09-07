@@ -2,6 +2,7 @@ import { getPedidos } from "@/app/actions/pedidos";
 import { ESTADOS_PEDIDO } from "@/models/Order";
 import SelectorEstado from "./SelectorEstado";
 import ActivacionPasaporte from "./ActivacionPasaporte";
+import EstadoPasarela from "./EstadoPasarela";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +68,8 @@ export default async function AdminPedidosPage() {
           )}
         </div>
       </div>
+
+      <EstadoPasarela />
 
       {pedidos.length === 0 ? (
         <div className="bg-black/20 p-20 rounded-3xl border border-dashed border-[#cddbf2]/10 text-center">
