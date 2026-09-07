@@ -38,7 +38,7 @@ página**. En el portal figura así:
 
 | | |
 |---|---|
-| Id | `2701` |
+| Id | `2071` |
 | Page Set | `CoffeeGeeks` |
 | Page Name | `Checkout` |
 | Editor Type | Advanced |
@@ -63,11 +63,17 @@ siguientes pruebas devuelven todas el mismo `757`:
   principio y al final, y con corchetes (`[CoffeeGeeks]` / `[Checkout]`),
   por si los corchetes que muestra el portal formaran parte del valor.
 - El endpoint `/auth` en lugar de `/sale`.
-- Referenciando la página por su id `2701`, y con un campo `PageId` adicional.
+- Referenciando la página por su id `2071`, y con un campo `PageId` adicional.
 - Veinte nombres genéricos (`Default`, `Test`, `Standard`, el propio
   PowerTranz ID, entre otros), para descartar que hubiera una página por
   omisión.
 - Reintentos espaciados en el tiempo, por si se trataba de propagación.
+
+En el portal, la página aparece listada bajo *All hosted pages for 77702076
+[PANAMA UNIQUE]* y las acciones disponibles para ella son **Editor, Copy,
+Unpublish y Delete**. Que ofrezca *Unpublish* confirma que está publicada, y
+entendemos que no queda ninguna acción de activación pendiente de nuestro
+lado.
 
 Todas las pruebas se hicieron contra `https://staging.ptranz.com/api/spi` con
 las credenciales del ID `77702076`, las mismas con las que el `/sale`
