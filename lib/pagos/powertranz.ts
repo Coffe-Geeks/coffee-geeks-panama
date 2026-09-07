@@ -124,9 +124,17 @@ export async function iniciarPago(params: {
 
   if (!pageSet || !pageName) {
     throw new Error(
-      "Faltan POWERTRANZ_PAGE_SET y POWERTRANZ_PAGE_NAME. FAC debe crearlos en el Portal del Comercio antes de poder cobrar."
+      "Faltan POWERTRANZ_PAGE_SET y POWERTRANZ_PAGE_NAME. Se crean en el Portal del Comercio."
     );
   }
+
+  /**
+   * El PageSet lleva el prefijo "Ptz/" — sin él la pasarela responde
+   * 757 "Hosted page not found" aunque la página exista y esté publicada.
+   * No está en la documentación; lo confirmó el soporte de FAC. Se agrega
+   * aquí para que nadie pierda una tarde por escribirlo sin el prefijo.
+   */
+  const pageSetCompleto = pageSet.startsWith("Ptz/") ? pageSet : `Ptz/${pageSet}`;
 
   const respuesta = await llamar("sale", {
     TransactionIdentifier: params.transactionIdentifier,
@@ -138,7 +146,7 @@ export async function iniciarPago(params: {
     AddressMatch: false,
     ExtendedData: {
       ThreeDSecure: { ChallengeWindowSize: 4, ChallengeIndicator: "01" },
-      HostedPage: { PageSet: pageSet, PageName: pageName },
+      HostedPage: { PageSet: pageSetCompleto, PageName: pageName },
       MerchantResponseUrl: params.merchantResponseUrl,
     },
   });
