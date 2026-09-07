@@ -40,6 +40,8 @@ const ItemSchema = new Schema(
     // Copia del interruptor: si mañana se apaga en el producto, este pedido
     // debe seguir contando por qué activó un pasaporte
     activatesPassport: { type: Boolean, default: false },
+    // Tiene parte física que se retira en un punto de venta
+    pickupInStore: { type: Boolean, default: false },
   },
   { _id: true }
 );

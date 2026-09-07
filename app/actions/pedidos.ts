@@ -149,6 +149,7 @@ export async function crearPedido(datos: {
         image: producto.image || "",
         requiresShipping: producto.requiresShipping !== false,
         activatesPassport: producto.activaPasaporte === true,
+        pickupInStore: producto.retiroEnPunto === true,
       });
     }
 

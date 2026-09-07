@@ -287,6 +287,8 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
   };
   /** Acceso al Coffee Geeks Passport, si la compra lo incluía */
   magicLink?: string;
+  /** Establecimientos donde retirar lo físico, si aplica */
+  puntosRetiro?: { nombre: string; ubicacion: string }[];
 }) => {
   const brandColor = "#4c000a";
   const accentColor = "#bedcf8";
@@ -327,6 +329,34 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
         </div>`
     : "";
 
+  // Dónde retirar la parte física. Va después del acceso digital, porque
+  // primero se usa lo que ya está disponible y luego se recoge la libreta.
+  const bloqueRetiro = pedido.puntosRetiro?.length
+    ? `
+        <div style="background-color:rgba(0,0,0,0.25);padding:24px;border-radius:12px;margin-bottom:26px;text-align:left;">
+          <div style="font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:0.6;margin-bottom:10px;">
+            Dónde retirar tu pasaporte físico
+          </div>
+          <div style="font-size:14px;line-height:1.55;opacity:0.85;margin-bottom:16px;">
+            Presenta tu número de pedido <strong>${pedido.orderNumber}</strong> en cualquiera de
+            estos establecimientos. No hacemos entregas a domicilio.
+          </div>
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            ${pedido.puntosRetiro
+              .map(
+                (p) => `
+              <tr>
+                <td style="padding:7px 0;border-bottom:1px solid rgba(190,220,248,0.10);font-size:14px;">
+                  ${p.nombre}
+                  <span style="opacity:0.6;"> · ${p.ubicacion}</span>
+                </td>
+              </tr>`
+              )
+              .join("")}
+          </table>
+        </div>`
+    : "";
+
   const dir = pedido.shippingAddress || {};
   const bloqueEnvio =
     pedido.requiresShipping && dir.line1
@@ -348,7 +378,11 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
             Entrega
           </div>
           <div style="font-size:15px;line-height:1.6;">
-            Tu compra es digital. Te escribimos a este mismo correo con las instrucciones de acceso.
+            ${
+              pedido.puntosRetiro?.length
+                ? "Tu acceso digital va en este correo; la parte física la retiras en los puntos indicados arriba."
+                : "Tu compra es digital. Te escribimos a este mismo correo con las instrucciones de acceso."
+            }
           </div>
         </div>`;
 
@@ -379,6 +413,7 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
           </div>
 
           ${bloquePasaporte}
+          ${bloqueRetiro}
 
           <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
             ${filas}

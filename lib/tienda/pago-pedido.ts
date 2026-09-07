@@ -16,6 +16,7 @@ import StoreProduct from "@/models/StoreProduct";
 import { sendEmail } from "@/lib/email";
 import { getOrderConfirmationEmailTemplate } from "@/lib/email-templates";
 import { activarPasaporte, activacionDisponible } from "@/lib/tienda/pasaporte";
+import { PUNTOS_RETIRO } from "@/lib/tienda/puntos-retiro";
 
 export type DatosPago = {
   transactionIdentifier?: string;
@@ -202,6 +203,9 @@ export async function marcarPedidoPagado(orderNumber: string, datos: DatosPago) 
         requiresShipping: pedido.requiresShipping,
         shippingAddress: pedido.shippingAddress,
         magicLink,
+        puntosRetiro: (pedido.items || []).some((i: any) => i.pickupInStore)
+          ? PUNTOS_RETIRO
+          : undefined,
       }),
     });
   } catch (err) {

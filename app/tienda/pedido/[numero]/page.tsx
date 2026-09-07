@@ -5,6 +5,7 @@ import Footer from "@/app/components/layout/Footer";
 import { estilosTienda } from "@/app/components/tienda/estilos";
 import { getPedidoPorNumero } from "@/app/actions/pedidos";
 import LimpiarCarrito from "./LimpiarCarrito";
+import { PUNTOS_RETIRO } from "@/lib/tienda/puntos-retiro";
 
 export const metadata = {
   title: "Tu pedido | Tienda · Coffee Geeks Panamá",
@@ -54,6 +55,11 @@ export default async function PedidoPage({ params }: { params: Promise<{ numero:
 
   const mensaje = MENSAJES[pedido.status] || MENSAJES.pendiente;
   const dir = pedido.shippingAddress || {};
+  // Solo se listan los puntos si el pedido trae algo físico que retirar, y
+  // solo cuando ya está pagado: antes no hay nada que recoger.
+  const hayRetiro =
+    pedido.items?.some((i: any) => i.pickupInStore) &&
+    ["pagado", "enviado", "entregado"].includes(pedido.status);
 
   return (
     <>
@@ -69,6 +75,12 @@ export default async function PedidoPage({ params }: { params: Promise<{ numero:
         .datos-envio{font-family:'Barlow',sans-serif;font-size:14px;line-height:1.65;color:#38050e;opacity:.85}
         .datos-envio dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-bottom:4px}
         .datos-envio dd{margin:0 0 14px}
+
+        .puntos{display:grid;grid-template-columns:repeat(2,1fr);gap:2px 20px;margin-top:14px;list-style:none;padding:0}
+        .punto{font-family:'Barlow',sans-serif;font-size:14px;line-height:1.5;color:#38050e;padding:7px 0;border-bottom:1px solid #f4efe4}
+        .punto b{font-weight:500}
+        .punto span{display:block;font-size:12.5px;opacity:.62}
+        @media(max-width:640px){.puntos{grid-template-columns:1fr}}
       `}</style>
 
       <Navbar />
@@ -124,12 +136,31 @@ export default async function PedidoPage({ params }: { params: Promise<{ numero:
                 )}
               </div>
 
+              {hayRetiro && (
+                <div className="tarjeta">
+                  <h2 className="tarjeta-h">Dónde retirar tu pasaporte</h2>
+                  <p className="tarjeta-p">
+                    Tu cuenta digital ya quedó activa. La libreta física la retiras en cualquiera de
+                    estos establecimientos, presentando tu número de pedido{" "}
+                    <strong>{pedido.orderNumber}</strong>. No hacemos entregas a domicilio.
+                  </p>
+                  <ul className="puntos">
+                    {PUNTOS_RETIRO.map((p, i) => (
+                      <li className="punto" key={i}>
+                        <b>{p.nombre}</b>
+                        <span>{p.ubicacion}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div className="tarjeta">
                 <h2 className="tarjeta-h">{pedido.requiresShipping ? "Entrega" : "Cómo lo recibes"}</h2>
                 <p className="tarjeta-p">
                   {pedido.requiresShipping
                     ? "Despachamos a esta dirección."
-                    : "Tu compra es digital: te escribimos al correo con las instrucciones de acceso."}
+                    : "Te escribimos al correo con las instrucciones de acceso."}
                 </p>
 
                 <dl className="datos-envio">

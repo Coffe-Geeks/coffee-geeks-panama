@@ -14,6 +14,7 @@ export interface IStoreProduct extends Document {
   variants: IVariante[];
   requiresShipping: boolean;
   activaPasaporte: boolean;
+  retiroEnPunto: boolean;
   shortDescription: string;
   description: string; // Rich HTML format from WYSIWYG editor
   image: string; // Cover image URL
@@ -78,6 +79,15 @@ const StoreProductSchema: Schema = new Schema(
      * SKU a propósito: renombrar el producto no debe romper la activación.
      */
     activaPasaporte: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Tiene una parte física que el comprador retira en un punto de venta.
+     * No es lo mismo que requiresShipping: no se despacha ni se cobra flete,
+     * pero al comprador hay que decirle dónde recogerla.
+     */
+    retiroEnPunto: {
       type: Boolean,
       default: false,
     },
