@@ -68,6 +68,9 @@ siguientes pruebas devuelven todas el mismo `757`:
   PowerTranz ID, entre otros), para descartar que hubiera una página por
   omisión.
 - Reintentos espaciados en el tiempo, por si se trataba de propagación.
+- **Despublicar la página y volver a publicarla** desde el portal, por si el
+  registro hubiera quedado desincronizado al guardarse. El resultado es el
+  mismo.
 
 En el portal, la página aparece listada bajo *All hosted pages for 77702076
 [PANAMA UNIQUE]* y las acciones disponibles para ella son **Editor, Copy,
