@@ -2,7 +2,7 @@
 
 **Para:** BACSoporte@powertranz.bm (Giancarlo Torres, Operations Analyst)
 **Copia:** el ejecutivo de BAC Credomatic que atiende la cuenta
-**Asunto:** Coffee Geeks Panamá (PowerTranz ID 77702076) — Acceso al Portal, Hosted Page y habilitación de FraudCheck
+**Asunto:** Coffee Geeks Panamá (PowerTranz ID 77702076) — Hosted Page publicada devuelve 757 y habilitación de FraudCheck
 
 ---
 
@@ -11,8 +11,8 @@ Estimado Giancarlo, buen día:
 Escribimos por la integración de **Coffee Geeks Panamá**, comercio con
 **PowerTranz ID 77702076**, en el entorno de staging.
 
-Agradecemos su correo con el resumen del proceso de integración y las
-credenciales del entorno de pruebas.
+Agradecemos su correo con el resumen del proceso de integración, las
+credenciales del entorno de pruebas y el acceso al Portal del Comercio.
 
 Ya completamos el desarrollo del checkout con el producto **Hosted Payment
 Page** y lo validamos contra `https://staging.ptranz.com/api/spi`. Nuestras
@@ -31,54 +31,52 @@ ustedes indican.
 Nos quedan **dos puntos que dependen de la configuración de la cuenta** y que
 no podemos resolver de nuestro lado. Les agradecemos su apoyo con ambos:
 
-## 1. Acceso al Portal del Comercio (lo más urgente)
+## 1. La Hosted Page está publicada pero el Conductor no la encuentra
 
-Su correo indica que recibiríamos un mensaje desde `support@powertranz.bm`
-con los usuarios y el enlace para crear la contraseña del Portal del
-Comercio. **Aún no nos ha llegado.**
+Ya recibimos el acceso al Portal del Comercio y **creamos y publicamos la
+página**. En el portal figura así:
 
-Lo ponemos de primero porque la documentación indica que la Página Alojada se
-crea en ese portal. Si con ese acceso podemos crearla nosotros mismos, se
-resuelve el punto 2 sin ocupar a su equipo. Agradecemos su seguimiento.
+| | |
+|---|---|
+| Id | `2701` |
+| Page Set | `CoffeeGeeks` |
+| Page Name | `Checkout` |
+| Editor Type | Advanced |
+| Estado | **Published** |
+| Comercio | `77702076` — PANAMA UNIQUE |
 
-## 2. Crear la Página Alojada (Page Set / Page Name)
+Sin embargo, al enviar esos mismos valores en `ExtendedData.HostedPage`, el
+flujo se corta:
 
-Cuando el navegador envía el `SpiToken` a `/api/spi/Conductor`, la respuesta
-es:
+1. `/api/spi/sale` responde correctamente
+   `IsoResponseCode: SP4 · SPI Preprocessing complete`, con `SpiToken` y
+   `RedirectData`.
+2. Al postear ese `SpiToken` a `/api/spi/Conductor`, la respuesta es:
 
 > `Code 757 — "Hosted page not found"`
 
-Verificamos que no se trata de un valor por omisión: probamos una veintena de
-nombres genéricos (`Default`, `Test`, `Standard`, el propio PowerTranz ID,
-entre otros) y todos devuelven el mismo `757`, lo cual entendemos que
-confirma que la página debe existir creada bajo nuestra cuenta.
+Antes de escribirles descartamos lo que estaba a nuestro alcance. Las
+siguientes pruebas devuelven todas el mismo `757`:
 
-Si con el acceso al portal podemos crearla nosotros, indíquennos y
-procedemos. Si no, les solicitamos crear el **Page Set** y el **Page Name**
-para nuestro comercio e informarnos los valores literales para enviarlos en
-`ExtendedData.HostedPage`.
+- Los valores exactos del portal, `CoffeeGeeks` / `Checkout`.
+- Cinco variantes de mayúsculas y espacios de esos nombres.
+- El endpoint `/auth` en lugar de `/sale`.
+- Referenciando la página por su id `2701`, y con un campo `PageId` adicional.
+- Veinte nombres genéricos (`Default`, `Test`, `Standard`, el propio
+  PowerTranz ID, entre otros), para descartar que hubiera una página por
+  omisión.
+- Reintentos espaciados en el tiempo, por si se trataba de propagación.
 
-Ya tenemos preparada la personalización visual de esa página con la marca de
-Coffee Geeks Panamá, y podemos enviarla en el formato que su portal acepte:
+Todas las pruebas se hicieron contra `https://staging.ptranz.com/api/spi` con
+las credenciales del ID `77702076`, las mismas con las que el `/sale`
+responde `SP4` sin problema.
 
-- una hoja de estilo con selectores de elemento (`input`, `select`,
-  `button`), de modo que se aplique sin depender de los nombres de clase
-  internos del formulario;
-- un armazón HTML con nuestro logo, títulos y pie de seguridad, indicando el
-  punto exacto donde va el bloque de campos de tarjeta.
+**Nuestra consulta:** ¿queda algún paso pendiente para que una página
+publicada quede disponible para el `Conductor` —alguna asociación al
+comercio, un permiso, o una activación adicional—, o hay algo en la cuenta
+que debamos ajustar de nuestro lado?
 
-¿Podrían confirmarnos **qué formato acepta el Portal del Comercio** para esa
-personalización, y si podemos cargarla nosotros o la aplican ustedes?
-
-Dos notas técnicas sobre esa página:
-
-- Va embebida en un iframe dentro de nuestro dominio, así que necesitamos que
-  permita `frame-ancestors` desde `coffeegeekspanama.com` y desde nuestros
-  dominios de prueba.
-- Carga nuestro logo desde `https://coffeegeekspanama.com/logo.webp` y las
-  tipografías desde `fonts.googleapis.com`. Si su política de contenido lo
-  bloquea, indíquennos y les enviamos el logo para alojarlo dentro del
-  portal.
+Quedamos a disposición para hacer las pruebas que necesiten mientras revisan.
 
 ## 3. Habilitar la verificación antifraude
 
