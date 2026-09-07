@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Navbar from "@/app/components/layout/Navbar";
+import { enlaceExterno } from "@/lib/utils";
 
 export default function FincaDetailClient({ finca }: { finca: any }) {
   const [slide, setSlide] = useState(0);
@@ -293,15 +294,15 @@ export default function FincaDetailClient({ finca }: { finca: any }) {
                 </div>
               )}
 
-              {(finca.website || finca.instagram || finca.whatsapp) && (
+              {(enlaceExterno(finca.website) || enlaceExterno(finca.instagram, "instagram") || finca.whatsapp) && (
                 <div className="spec-links">
-                  {finca.website && (
-                    <a className="spec-lnk" href={finca.website} target="_blank" rel="noopener noreferrer">
+                  {enlaceExterno(finca.website) && (
+                    <a className="spec-lnk" href={enlaceExterno(finca.website)} target="_blank" rel="noopener noreferrer">
                       Sitio web
                     </a>
                   )}
-                  {finca.instagram && (
-                    <a className="spec-lnk" href={finca.instagram} target="_blank" rel="noopener noreferrer">
+                  {enlaceExterno(finca.instagram, "instagram") && (
+                    <a className="spec-lnk" href={enlaceExterno(finca.instagram, "instagram")} target="_blank" rel="noopener noreferrer">
                       Instagram
                     </a>
                   )}

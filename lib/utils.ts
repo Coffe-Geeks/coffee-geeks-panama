@@ -33,3 +33,46 @@ export function formatFechaCierre(
   const texto = d.toLocaleDateString("es-PA", opciones).replace(".", "");
   return formato === "corta" ? texto.toUpperCase() : texto;
 }
+
+/**
+ * Convierte en URL absoluta lo que se escribe en el admin.
+ *
+ * Quien llena una ficha escribe "www.ejemplo.com" o "@sucuenta", no
+ * "https://www.ejemplo.com". Puesto tal cual en un href, el navegador lo
+ * toma como ruta relativa y manda a un 404 dentro de nuestro propio sitio:
+ * fue exactamente lo que pasó en las fichas de fincas.
+ *
+ * Devuelve cadena vacía si el valor no sirve como enlace, para que quien
+ * llama simplemente no lo pinte.
+ */
+const DOMINIOS_RED: Record<string, string> = {
+  instagram: "instagram.com",
+  facebook: "facebook.com",
+  twitter: "x.com",
+  youtube: "youtube.com",
+};
+
+export function enlaceExterno(valor?: string, red?: string): string {
+  const v = (valor || "").trim();
+  if (!v) return "";
+
+  if (/^https?:\/\//i.test(v)) return v;
+  if (v.startsWith("//")) return `https:${v}`;
+
+  const dominio = red ? DOMINIOS_RED[red] : undefined;
+
+  // Un usuario suelto: "@cuenta" o "cuenta", sin puntos ni barras
+  if (dominio && (v.startsWith("@") || !/[./]/.test(v))) {
+    const usuario = v.replace(/^@+/, "");
+    if (!usuario) return "";
+    // YouTube identifica los canales con la arroba incluida
+    return red === "youtube"
+      ? `https://${dominio}/@${usuario}`
+      : `https://${dominio}/${usuario}`;
+  }
+
+  // "www.ejemplo.com", "ejemplo.com/algo"
+  if (/^[\w-]+(\.[\w-]+)+/.test(v)) return `https://${v}`;
+
+  return "";
+}
