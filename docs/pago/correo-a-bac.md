@@ -71,6 +71,10 @@ siguientes pruebas devuelven todas el mismo `757`:
 - **Despublicar la página y volver a publicarla** desde el portal, por si el
   registro hubiera quedado desincronizado al guardarse. El resultado es el
   mismo.
+- Enviar el `MerchantResponseUrl` apuntando a nuestro dominio de producción
+  (`https://coffeegeekspanama.com`), a nuestro dominio de pruebas y a un
+  entorno local, por si el dominio de retorno influyera en la búsqueda de la
+  página. Las tres devuelven el mismo `757`.
 
 En el portal, la página aparece listada bajo *All hosted pages for 77702076
 [PANAMA UNIQUE]* y las acciones disponibles para ella son **Editor, Copy,
