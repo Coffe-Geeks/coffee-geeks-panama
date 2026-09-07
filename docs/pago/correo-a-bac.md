@@ -59,7 +59,9 @@ Antes de escribirles descartamos lo que estaba a nuestro alcance. Las
 siguientes pruebas devuelven todas el mismo `757`:
 
 - Los valores exactos del portal, `CoffeeGeeks` / `Checkout`.
-- Cinco variantes de mayúsculas y espacios de esos nombres.
+- Once variantes de esos nombres: mayúsculas, minúsculas, espacios al
+  principio y al final, y con corchetes (`[CoffeeGeeks]` / `[Checkout]`),
+  por si los corchetes que muestra el portal formaran parte del valor.
 - El endpoint `/auth` en lugar de `/sale`.
 - Referenciando la página por su id `2701`, y con un campo `PageId` adicional.
 - Veinte nombres genéricos (`Default`, `Test`, `Standard`, el propio
