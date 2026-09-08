@@ -1,51 +1,72 @@
 # Tarjetas de prueba — staging de FAC
 
-Fuente: anexo *"3D Secure (Test Cards) - Cobalt.pdf"* enviado por FAC.
-Son números de prueba emitidos por el procesador: no corresponden a ninguna
-tarjeta real y solo funcionan contra `staging.ptranz.com`.
+Enviadas por José González (PowerTranz) el 8 de septiembre de 2026.
 
-**Fecha de vencimiento y CVV: cualquiera.**
+**Estas son las que corresponden a nuestra cuenta.** El anexo anterior
+(*"3D Secure (Test Cards) - Cobalt.pdf"*) trae otros números que en esta
+cuenta devuelven `3D1 · 3DS not supported`; no sirven y conviene ignorarlo.
 
-| Marca | Tarjeta | 3DS | Resultado esperado |
+**Vencimiento:** `1228` (diciembre de 2028) · **CVV:** `123`, y `1234` en
+American Express · **Nombre:** cualquiera.
+
+## Aprobadas
+
+| Caso | Tarjeta | Marca | Desafío | Clave | Estatus |
+|---|---|---|---|---|---|
+| V2-01-YA | `4012000000020071` | Visa | no | | Y |
+| V2-02-AA | `4012000000020089` | Visa | no | | A |
+| V2-03-YA | `4012000000020006` | Visa | sí | `3ds2` | Y |
+| V2-04-YA | `4012010000020070` | Visa | no, con huella | | Y |
+| V2-05-AA | `4012010000020088` | Visa | no, con huella | | A |
+| V2-06-YA | `4012010000020005` | Visa | sí, con huella | `3ds2` | Y |
+| M2-01-YA | `5100270000000023` | MasterCard | no | | Y |
+| M2-03-YA | `5100270000000031` | MasterCard | sí | `3ds2` | Y |
+| M2-04-YA | `5100271000000120` | MasterCard | no, con huella | | Y |
+| A2-01-YA | `341111000000009` | Amex | no | | Y |
+| A2-02-AA | `341111000000011` | Amex | no | | A |
+| A2-03-YA | `341112000000001` | Amex | sí, con huella | `3ds2` | Y |
+| A2-04-YA | `341111000000037` | Amex | sí | `3ds2` | Y |
+| A2-05-YA | `341112000008012` | Amex | no, con huella | | Y |
+
+## Sin 3DS
+
+| Caso | Tarjeta | Marca |
+|---|---|---|
+| VI-01-0A | `4333333333332222` | Visa |
+| MC-01-0A | `5333333333332222` | MasterCard |
+| AX-01-0A | `343333333333335` | Amex |
+| DS-01-0A | `6011111111111111` | Discover |
+| JC-01-0A | `3528111111111108` | JCB |
+
+## Denegadas
+
+| Caso | Tarjeta | Estatus | Resultado |
 |---|---|---|---|
-| MasterCard | `5158060000000003` | Challenge | Aprobada |
-| MasterCard | `5527100000000001` | Frictionless | Aprobada |
-| MasterCard | `5597600000000005` | Challenge | Declinada – 51 |
-| MasterCard | `5158060100000002` | Frictionless | Aleatorio |
-| MasterCard | `5527101234567898` | Challenge | Rechazada |
-| MasterCard | `5597601234567892` | Frictionless | Sin respuesta |
-| Visa | `4196581200000003` | Frictionless | Aprobada |
-| Visa | `4196591200000002` | Challenge | Aprobada |
-| Visa | `4196601200000009` | Frictionless | Declinada – 51 |
-| Visa | `4525000000000008` | Challenge | Aleatorio |
-| Visa | `4137261200000004` | Challenge | Sin respuesta |
-| Visa | `4196601212345673` | Frictionless | Rechazada |
+| V2-01-ND | `4012000000020121` | N | no permite completar el pago (ISO 12) |
+| M2-01-ND | `5100270000000098` | N | no permite completar el pago (ISO 12) |
+| M2-02-ND | `5100270000000056` | N | con desafío, no permite completar (ISO 12) |
+| M2-02-RA | `5100270000000072` | R | sin desafío |
+| A2-01-ND | `341111000000029` | N | no permite completar el pago (ISO 12) |
+| V2-02-AD | `4666666666662222` | A | ISO 05, respuesta de CVV = N |
+| M2-03-UD | `5555666666662222` | U | ISO 05 |
+| V2-03-AD | `4111111111119999` | A | ISO 98 |
+| M2-04-AD | `5111111111113333` | A | ISO 05 |
+| V2-04-YD | `4111111111110000` | Y | con desafío, ISO 91 |
+| M2-05-YD | `5111111111110000` | Y | con desafío, ISO 91 |
+| DS-01-0D | `6011111111111152` | | Discover |
+| JC-01-0D | `3528111111111157` | | JCB |
 
-## Notas del anexo
+## Resultados obtenidos
 
-- **El OTP de todos los escenarios con desafío es `123456`.** Cualquier otro
-  valor produce un rechazo por OTP inválido.
-- Las tarjetas de estado *aleatorio* se aprueban el 95% de las veces, así que
-  no sirven para verificar el camino de rechazo.
+Las tres transacciones que FAC exige, una por marca, el 8 de septiembre de
+2026 contra `staging.ptranz.com`:
 
-## La tarjeta del manual
+| Marca | Tarjeta | 3DS | ISO | Autorización | RRN |
+|---|---|---|---|---|---|
+| Visa | `4012000000020071` | Y · ECI 05 | `00` | `123456` | `625123380623` |
+| MasterCard | `5100270000000023` | Y · ECI 02 | `00` | `123456` | `625123380624` |
+| Amex | `341111000000009` | Y · ECI 05 | `00` | `123456` | `625123380625` |
 
-El manual de integración usa otra distinta, con datos fijos:
-`4012000000020006`, CVV `323`, vence `2310`, y la clave del desafío 3DS2 es
-`3ds2` (no `123456`). Es la que aparece en el simulador DS/ACS.
-
-## Falta American Express
-
-La cuenta está habilitada para **Amex, MasterCard y Visa**, y FAC exige que
-las pruebas incluyan transacciones aprobadas y denegadas **de cada marca**.
-El anexo solo trae Visa y MasterCard. Hay que pedirles las tarjetas de prueba
-de Amex con SafeKey; sin ellas no se puede cerrar la batería que ellos mismos
-piden para habilitar producción.
-
-## Qué hay que probar
-
-Según el correo de incorporación de FAC, la batería debe cubrir transacciones
-**aprobadas y denegadas de cada marca y en cada moneda** que maneje el
-comercio. La única moneda habilitada es USD (`840`), así que son dos marcas
-—tres cuando lleguen las de Amex— por los dos resultados, más los caminos de
-desafío y sin fricción.
+Las tres con `3D0 · 3D-Secure complete`, protocolo 2.1.0, y `CardholderInfo`
+presente en la respuesta —que la confirmación del pedido muestra al cliente,
+tal como pide el criterio de validación de FAC.
