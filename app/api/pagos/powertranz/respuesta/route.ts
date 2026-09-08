@@ -74,6 +74,8 @@ export async function POST(req: NextRequest) {
     orderIdentifier: orderNumber,
     spiToken: resultado.SpiToken || "",
     cardBrand: resultado.CardBrand || "",
+    // Se recorta por si algún día crece: lo que importa cabe de sobra
+    respuestaCruda: JSON.stringify(resultado).slice(0, 4000),
   };
 
   const veredicto = evaluarResultado(resultado);

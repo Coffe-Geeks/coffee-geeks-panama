@@ -140,6 +140,24 @@ export default async function AdminPedidosPage() {
                     <div className="mt-2 text-[11px] text-amber-300/60">{p.internalNotes}</div>
                   )}
 
+                  {/* Respuesta cruda: lo primero que pide FAC al abrir un ticket */}
+                  {p.payment?.respuestaCruda && (
+                    <details className="mt-2">
+                      <summary className="text-[11px] text-[#cddbf2]/40 cursor-pointer hover:text-[#cddbf2]/70">
+                        Ver respuesta de la pasarela
+                      </summary>
+                      <pre className="mt-2 p-3 rounded-xl bg-black/50 border border-[#cddbf2]/10 text-[10px] text-[#cddbf2]/60 overflow-x-auto whitespace-pre-wrap break-all">
+{(() => {
+  try {
+    return JSON.stringify(JSON.parse(p.payment.respuestaCruda), null, 2);
+  } catch {
+    return p.payment.respuestaCruda;
+  }
+})()}
+                      </pre>
+                    </details>
+                  )}
+
                   {/* Solo los pedidos que compraron pasaporte */}
                   {p.items?.some((i: any) => i.activatesPassport) &&
                     ["pagado", "enviado", "entregado"].includes(p.status) && (
