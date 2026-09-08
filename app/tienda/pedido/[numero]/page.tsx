@@ -22,7 +22,11 @@ const MENSAJES: Record<string, { titulo: string; texto: string; tono: "bien" | "
   },
   rechazado: {
     titulo: "El pago no se completó",
-    texto: "Tu banco no autorizó la transacción. No se te ha cobrado nada. Puedes intentarlo de nuevo con otra tarjeta.",
+    // Sin texto propio a propósito: el motivo lo pone la pasarela. Inventar
+    // aquí "tu banco no autorizó" afirma algo que muchas veces no es cierto
+    // —puede ser la tarjeta, la verificación o un fallo técnico— y manda al
+    // cliente a reclamarle a quien no tiene la culpa.
+    texto: "",
     tono: "mal",
   },
   cancelado: {
@@ -119,7 +123,20 @@ export default async function PedidoPage({ params }: { params: Promise<{ numero:
                   {mensaje.tono === "bien" ? "✓" : mensaje.tono === "mal" ? "✕" : "…"}
                 </div>
                 <h2 className="conf-h">{mensaje.titulo}</h2>
-                <p className="conf-p">{mensaje.texto}</p>
+
+                {/* El motivo real de la pasarela manda sobre el texto genérico */}
+                {pedido.status === "rechazado" ? (
+                  <>
+                    {pedido.payment?.responseMessage && (
+                      <p className="conf-p">{pedido.payment.responseMessage}</p>
+                    )}
+                    <p className="conf-p" style={{ marginTop: 10 }}>
+                      No se te ha cobrado nada.
+                    </p>
+                  </>
+                ) : (
+                  mensaje.texto && <p className="conf-p">{mensaje.texto}</p>
+                )}
                 <span className="num">{pedido.orderNumber}</span>
 
                 {/* Indicación del banco emisor, cuando la manda */}
