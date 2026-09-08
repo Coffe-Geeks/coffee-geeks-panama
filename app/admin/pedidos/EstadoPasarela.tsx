@@ -27,8 +27,9 @@ export default function EstadoPasarela() {
   const hay = (n: string) => Boolean(process.env[n]);
 
   const credenciales = hay("POWERTRANZ_ID") && hay("POWERTRANZ_PASSWORD");
-  const paginas = hay("POWERTRANZ_PAGE_SET") && hay("POWERTRANZ_PAGE_NAME");
-  const pasarelaLista = credenciales && paginas;
+  // La página alojada tiene valores por omisión en el código
+  const paginas = true;
+  const pasarelaLista = credenciales;
 
   const base = process.env.POWERTRANZ_BASE_URL || "";
   const enStaging = base.includes("staging");
@@ -64,8 +65,11 @@ export default function EstadoPasarela() {
         <Señal ok={credenciales} texto={credenciales ? "Credenciales de BAC cargadas" : "Faltan POWERTRANZ_ID / PASSWORD"} />
         <Señal
           ok={paginas}
-          texto={paginas ? "Página alojada configurada" : "Falta el PageSet — pendiente de FAC"}
-          aviso={!paginas}
+          texto={
+            hay("POWERTRANZ_PAGE_SET")
+              ? "Página alojada del entorno"
+              : "Página alojada por omisión (Ptz/CoffeeGeeks · Checkout)"
+          }
         />
         <Señal ok={Boolean(base)} texto={base ? (enStaging ? "Ambiente: pruebas (staging)" : "Ambiente: PRODUCCIÓN") : "Falta POWERTRANZ_BASE_URL"} aviso={Boolean(base) && !enStaging} />
         <Señal
