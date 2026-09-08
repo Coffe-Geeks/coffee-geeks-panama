@@ -23,8 +23,8 @@ producción.
 | `POWERTRANZ_PASSWORD` | Contraseña (cabecera `PowerTranz-PowerTranzPassword`) | *lo entrega FAC* |
 | `POWERTRANZ_BASE_URL` | Ambiente | `https://staging.ptranz.com/api/spi` |
 | `POWERTRANZ_CURRENCY` | Moneda ISO | `840` (USD) |
-| `POWERTRANZ_PAGE_SET` | Conjunto de páginas alojadas. **Lleva el prefijo `Ptz/`** | `Ptz/CoffeeGeeks` |
-| `POWERTRANZ_PAGE_NAME` | Página dentro del conjunto | `Checkout` |
+| `POWERTRANZ_PAGE_SET` | Conjunto de páginas alojadas. **Lleva el prefijo `Ptz/`** | *se consulta en el Portal* |
+| `POWERTRANZ_PAGE_NAME` | Página dentro del conjunto | *se consulta en el Portal* |
 | `POWERTRANZ_FRAUD_CHECK` | Enciende la verificación antifraude Kount | `false` (ver abajo) |
 | `POWERTRANZ_ACEPTAR_3DS_U` | Si se cobra cuando 3DS responde `U` | `false` |
 | `NEXT_PUBLIC_SITE_URL` | URL pública del sitio, para armar el `MerchantResponseUrl` | `https://coffeegeekspanama.com` |
