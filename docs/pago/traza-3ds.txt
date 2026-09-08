@@ -1,0 +1,79 @@
+Coffee Geeks Panamá — PowerTranz ID 77702076
+Ambiente: https://staging.ptranz.com/api/spi
+Fecha (UTC): 2026-09-08T17:23:26.465Z
+Tarjeta de prueba: 4196581200000003 → se usó 4196591200000002 (Visa, Challenge según anexo)
+
+============================================================
+1) REQUEST  POST https://staging.ptranz.com/api/spi/sale
+============================================================
+Headers:
+  PowerTranz-PowerTranzId: 77702076
+  PowerTranz-PowerTranzPassword: ********
+
+{
+    "TransactionIdentifier": "74192d6f-ca03-429f-b0d2-6b8fad3c220f",
+    "TotalAmount": 20,
+    "CurrencyCode": "840",
+    "ThreeDSecure": true,
+    "fraudCheck": false,
+    "OrderIdentifier": "CG-3DS-0001",
+    "AddressMatch": false,
+    "ExtendedData": {
+        "ThreeDSecure": {
+            "ChallengeWindowSize": 4,
+            "ChallengeIndicator": "04"
+        },
+        "HostedPage": {
+            "PageSet": "Ptz/CoffeeGeeks",
+            "PageName": "Checkout"
+        },
+        "MerchantResponseUrl": "https://coffeegeekspanama.com/api/pagos/powertranz/respuesta"
+    }
+}
+
+============================================================
+2) RESPONSE  HTTP 200
+============================================================
+{
+    "TransactionType": 2,
+    "Approved": false,
+    "TransactionIdentifier": "74192d6f-ca03-429f-b0d2-6b8fad3c220f",
+    "TotalAmount": 20,
+    "CurrencyCode": "840",
+    "IsoResponseCode": "SP4",
+    "ResponseMessage": "SPI Preprocessing complete",
+    "OrderIdentifier": "CG-3DS-0001",
+    "RedirectData": "<!DOCTYPE html><html><head></head><body><form id='powertranz_spi' name='powertranz_spi' action='https://staging.ptranz.com/api/spi/Conductor' method='POST'><input name='SpiToken' i …[recortado]",
+    "SpiToken": "288dsr9fxt3ck5vvdh47xq45glwaok392k8ccngotmi4br3kg0-3plyg9wt7wz"
+}
+
+============================================================
+3) REQUEST  POST https://staging.ptranz.com/api/spi/HostedPage   (envío de la tarjeta)
+============================================================
+  SpiToken=288dsr9fxt3ck5vvdh47xq45glwaok392k8ccngotmi4br3kg0-3plyg9wt7wz
+  CardNo=4196591200000002
+  CardExpDate=1229
+  CardCVV2=123
+  CardHolderName=PRUEBA COFFEE GEEKS
+  Amount=20.00
+
+============================================================
+4) RESPONSE  (contenido del campo Response del formulario de retorno)
+============================================================
+{
+    "TransactionType": 2,
+    "Approved": false,
+    "TransactionIdentifier": "74192d6f-ca03-429f-b0d2-6b8fad3c220f",
+    "TotalAmount": 20,
+    "CurrencyCode": "840",
+    "CardBrand": "Visa",
+    "IsoResponseCode": "3D1",
+    "ResponseMessage": "3DS not supported",
+    "RiskManagement": {
+        "ThreeDSecure": {
+            "ResponseCode": "3D1"
+        }
+    },
+    "OrderIdentifier": "CG-3DS-0001",
+    "SpiToken": "288dsr9fxt3ck5vvdh47xq45glwaok392k8ccngotmi4br3kg0-3plyg9wt7wz"
+}
