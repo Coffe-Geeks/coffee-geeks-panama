@@ -41,6 +41,14 @@ marca como **Challenge** devuelven `3D1` igual:
 Probamos también las variantes *frictionless* y las de resultado declinado:
 todas responden lo mismo.
 
+## Descartamos que sea un parámetro nuestro
+
+Enviamos la solicitud con los cuatro valores posibles de
+`ExtendedData.ThreeDSecure.ChallengeIndicator` —`01` sin preferencia, `02`
+sin desafío, `03` desafío solicitado y `04` desafío por mandato—. **Los
+cuatro devuelven el mismo `3D1`**, incluido el `04`, que según el estándar
+obliga al emisor a presentar el desafío.
+
 ## Por qué nos preocupa
 
 Su correo de incorporación indica que la cuenta **está configurada para 3DS
