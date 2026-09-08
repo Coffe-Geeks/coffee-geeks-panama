@@ -1,0 +1,39 @@
+# WORKFLOW TEMPORAL DE DIAGNÓSTICO
+# Lista solo los NOMBRES de las variables del proyecto y en qué entornos
+# están. No imprime ningún valor y no modifica nada.
+name: Diagnóstico temporal
+
+on:
+  push:
+    branches: [test]
+  workflow_dispatch:
+
+jobs:
+  listar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Variables del proyecto
+        run: |
+          # La API pide solo el id del proyecto, sin enlazar carpeta
+          respuesta=$(curl -s \
+            -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN }}" \
+            "https://api.vercel.com/v9/projects/${{ secrets.DEPLOY_PROJECT }}/env?teamId=${{ secrets.DEPLOY_ORG }}")
+
+          echo "── Variables configuradas (nombre → entornos) ──"
+          echo "$respuesta" | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+if 'error' in d:
+    print('ERROR:', d['error'].get('message', d['error']))
+    sys.exit(0)
+filas = sorted(d.get('envs', []), key=lambda e: e['key'])
+for e in filas:
+    print(f\"  {e['key']:<34} {','.join(e.get('target', []))}\")
+print()
+print(f'total: {len(filas)}')
+esperadas = ['POWERTRANZ_ID','POWERTRANZ_PASSWORD','POWERTRANZ_PAGE_SET','POWERTRANZ_PAGE_NAME',
+             'POWERTRANZ_BASE_URL','POWERTRANZ_CURRENCY','PASAPORTE_API_KEY','PASAPORTE_API_URL']
+hay = {e['key'] for e in filas}
+faltan = [k for k in esperadas if k not in hay]
+print('FALTAN: ' + (', '.join(faltan) if faltan else 'ninguna'))
+"
