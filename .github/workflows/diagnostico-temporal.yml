@@ -11,12 +11,15 @@ on:
 jobs:
   listar:
     runs-on: ubuntu-latest
-    env:
-      VERCEL_ORG_ID: ${{ secrets.DEPLOY_ORG }}
-      VERCEL_PROJECT_ID: ${{ secrets.DEPLOY_PROJECT }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Variables configuradas en el proyecto
         run: |
           npm install -g vercel@latest > /dev/null 2>&1
+          # El CLI necesita el enlace al proyecto para poder consultarlo
+          mkdir -p .vercel
+          printf '{"projectId":"%s","orgId":"%s"}' \
+            "${{ secrets.DEPLOY_PROJECT }}" "${{ secrets.DEPLOY_ORG }}" > .vercel/project.json
           echo "── Variables del proyecto, solo nombres y entornos ──"
           vercel env ls --token="${{ secrets.DEPLOY_TOKEN }}" 2>&1 | sed 's/[A-Za-z0-9_-]\{24,\}/<oculto>/g'
