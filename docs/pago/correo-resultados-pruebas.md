@@ -21,7 +21,17 @@ Completamos las tres transacciones, una por marca:
 
 Las tres con `Approved: true`, `3D0 · 3D-Secure complete` y protocolo 2.1.0.
 
-**Identificadores para rastrear:**
+Las repetimos además **por el flujo operativo completo de la tienda**
+—carrito, checkout, página alojada, cobro y confirmación—, que es como las
+verá un cliente:
+
+| Marca | Pedido | TransactionIdentifier | 3DS |
+|---|---|---|---|
+| Visa | `CG-260909-0003` | `cd7b0015-bad4-4919-816c-6b5b575f6fce` | `Y` · ECI 05 |
+| MasterCard | `CG-260909-0004` | `6dec675c-f6cc-4aa0-bd3b-5449af47f153` | `Y` · ECI 02 |
+| Amex | `CG-260909-0005` | `436a571a-1e98-4686-9bd5-87d42be2a843` | `Y` · ECI 05 |
+
+Identificadores de las primeras tres, hechas contra la API directamente:
 
 - Visa `d161e5a3-7652-4239-bd0a-98fe19b45997`
 - MasterCard `ab562a10-2056-4388-a8e0-c58fb4af2131`
