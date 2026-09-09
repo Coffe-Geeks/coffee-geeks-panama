@@ -1,13 +1,19 @@
 /**
- * Email templates for the Coffee Geeks platform.
- * You can modify the content and design of the emails here.
+ * Plantillas de correo de Coffee Geeks.
+ *
+ * Los colores viven aquí arriba y no dentro de cada plantilla: cuatro
+ * copias del mismo valor terminan desincronizadas, que es justo lo que
+ * había pasado —los correos usaban un vino y un azul distintos a los del
+ * sitio—.
+ *
+ * Son los mismos tokens que usa la web:
+ *   #38050e vino de marca · #cddbf2 azul pálido · #f4efe4 crema
  */
+const brandColor = "#38050e";
+const accentColor = "#cddbf2";
+const buttonTextColor = "#38050e";
 
 export const getWelcomeEmailTemplate = (name: string) => {
-  const brandColor = "#4c000a"; // Background
-  const accentColor = "#bedcf8"; // Text and Button BG
-  const buttonTextColor = "#4c000a"; // Button Text
-
   return `
     <!DOCTYPE html>
     <html lang="es">
@@ -40,7 +46,7 @@ export const getWelcomeEmailTemplate = (name: string) => {
           background-color: rgba(0, 0, 0, 0.2);
           padding: 40px;
           border-radius: 12px;
-          border: 1px solid rgba(190, 220, 248, 0.1);
+          border: 1px solid rgba(205, 219, 242, 0.1);
         }
         h1 {
           font-size: 24px;
@@ -91,8 +97,6 @@ export const getWelcomeEmailTemplate = (name: string) => {
 };
 
 export const getAdminNotificationEmailTemplate = (userData: { name: string; email: string; role: string; lastName?: string }) => {
-  const brandColor = "#4c000a";
-  const accentColor = "#bedcf8";
   const textColor = "#ffffff";
   
   const registrationType = userData.role === "cafeteria" ? "Participante" : "Usuario";
@@ -152,7 +156,7 @@ export const getAdminNotificationEmailTemplate = (userData: { name: string; emai
           background-color: rgba(255, 255, 255, 0.05);
           padding: 30px;
           border-radius: 16px;
-          border: 1px solid rgba(190, 220, 248, 0.1);
+          border: 1px solid rgba(205, 219, 242, 0.1);
         }
         .info-item {
           margin-bottom: 20px;
@@ -214,10 +218,6 @@ export const getAdminNotificationEmailTemplate = (userData: { name: string; emai
 };
 
 export const getPasswordResetEmailTemplate = (name: string, resetUrl: string) => {
-  const brandColor = "#4c000a";
-  const accentColor = "#bedcf8";
-  const buttonTextColor = "#4c000a";
-
   return `
     <!DOCTYPE html>
     <html lang="es">
@@ -231,7 +231,7 @@ export const getPasswordResetEmailTemplate = (name: string, resetUrl: string) =>
         <div style="font-size:28px;font-weight:bold;margin-bottom:30px;letter-spacing:2px;text-transform:uppercase;">
           Coffee Geeks Panamá
         </div>
-        <div style="background-color:rgba(0,0,0,0.2);padding:40px;border-radius:12px;border:1px solid rgba(190,220,248,0.1);">
+        <div style="background-color:rgba(0,0,0,0.2);padding:40px;border-radius:12px;border:1px solid rgba(205,219,242,0.1);">
           <h1 style="font-size:24px;margin-bottom:20px;color:${accentColor};">Restablece tu contraseña</h1>
           <p style="font-size:16px;line-height:1.6;">
             ${name ? `Hola ${name},` : "Hola,"} recibimos una solicitud para cambiar la contraseña
@@ -290,17 +290,14 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
   /** Establecimientos donde retirar lo físico, si aplica */
   puntosRetiro?: { nombre: string; ubicacion: string }[];
 }) => {
-  const brandColor = "#4c000a";
-  const accentColor = "#bedcf8";
-
   const filas = pedido.items
     .map(
       (i) => `
         <tr>
-          <td style="padding:12px 0;border-bottom:1px solid rgba(190,220,248,0.12);font-size:15px;">
+          <td style="padding:12px 0;border-bottom:1px solid rgba(205,219,242,0.12);font-size:15px;">
             ${i.quantity} × ${i.name}${i.variant ? ` <span style="opacity:0.6;">· ${i.variant}</span>` : ""}
           </td>
-          <td style="padding:12px 0;border-bottom:1px solid rgba(190,220,248,0.12);font-size:15px;text-align:right;white-space:nowrap;">
+          <td style="padding:12px 0;border-bottom:1px solid rgba(205,219,242,0.12);font-size:15px;text-align:right;white-space:nowrap;">
             $${(i.unitPrice * i.quantity).toFixed(2)}
           </td>
         </tr>`
@@ -346,7 +343,7 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
               .map(
                 (p) => `
               <tr>
-                <td style="padding:7px 0;border-bottom:1px solid rgba(190,220,248,0.10);font-size:14px;">
+                <td style="padding:7px 0;border-bottom:1px solid rgba(205,219,242,0.10);font-size:14px;">
                   ${p.nombre}
                   <span style="opacity:0.6;"> · ${p.ubicacion}</span>
                 </td>
@@ -400,7 +397,7 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
           Coffee Geeks Panamá
         </div>
 
-        <div style="background-color:rgba(0,0,0,0.2);padding:36px;border-radius:12px;border:1px solid rgba(190,220,248,0.1);">
+        <div style="background-color:rgba(0,0,0,0.2);padding:36px;border-radius:12px;border:1px solid rgba(205,219,242,0.1);">
           <h1 style="font-size:24px;margin:0 0 14px;color:${accentColor};text-align:center;">¡Gracias por tu compra!</h1>
           <p style="font-size:16px;line-height:1.6;text-align:center;margin:0 0 24px;">
             ${pedido.customer.name ? `${pedido.customer.name}, tu` : "Tu"} pago fue aprobado y ya estamos preparando tu pedido.
@@ -428,8 +425,8 @@ export const getOrderConfirmationEmailTemplate = (pedido: {
               </td>
             </tr>
             <tr>
-              <td style="padding:16px 0 0;border-top:2px solid rgba(190,220,248,0.3);font-size:19px;font-weight:bold;">Total</td>
-              <td style="padding:16px 0 0;border-top:2px solid rgba(190,220,248,0.3);font-size:19px;font-weight:bold;text-align:right;">
+              <td style="padding:16px 0 0;border-top:2px solid rgba(205,219,242,0.3);font-size:19px;font-weight:bold;">Total</td>
+              <td style="padding:16px 0 0;border-top:2px solid rgba(205,219,242,0.3);font-size:19px;font-weight:bold;text-align:right;">
                 $${pedido.total.toFixed(2)} USD
               </td>
             </tr>
