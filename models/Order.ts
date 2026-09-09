@@ -103,6 +103,15 @@ const PagoSchema = new Schema(
     fraudResponseCode: { type: String, default: "" },
     fraudScore: { type: String, default: "" },
     paidAt: { type: Date, default: null },
+    /**
+     * Respuesta cruda de la pasarela, tal como llegó.
+     *
+     * No contiene datos de tarjeta: la Hosted Page nunca nos los manda, solo
+     * identificadores y códigos. Se guarda porque cuando hay que abrir un
+     * ticket con FAC lo primero que piden es el request y el response, y
+     * reconstruirlo después es imposible.
+     */
+    respuestaCruda: { type: String, default: "" },
   },
   { _id: false }
 );

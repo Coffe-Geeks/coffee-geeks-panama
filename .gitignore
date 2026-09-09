@@ -44,3 +44,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Contraseña generada por scripts/cambiar-password-admin.mjs
+.password-admin-nueva.txt

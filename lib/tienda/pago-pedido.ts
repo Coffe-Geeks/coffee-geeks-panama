@@ -29,6 +29,7 @@ export type DatosPago = {
   cardholderInfo?: string;
   fraudResponseCode?: string;
   fraudScore?: string;
+  respuestaCruda?: string;
 };
 
 /**
@@ -87,6 +88,7 @@ function camposDePago(
     "payment.cardholderInfo": datos.cardholderInfo,
     "payment.fraudResponseCode": datos.fraudResponseCode,
     "payment.fraudScore": datos.fraudScore,
+    "payment.respuestaCruda": datos.respuestaCruda,
   };
 
   for (const [ruta, valor] of Object.entries(mapa)) {
