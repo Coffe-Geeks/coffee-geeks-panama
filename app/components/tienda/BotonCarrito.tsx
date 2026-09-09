@@ -26,7 +26,9 @@ export default function BotonCarrito() {
     <>
       <style>{`
         .cg-cart{
-          position:fixed; right:clamp(16px,3vw,28px); bottom:clamp(16px,3vw,28px); z-index:180;
+          position:fixed; right:clamp(16px,3vw,28px); z-index:180;
+          /* Deja libre la esquina: ahí vive el botón de WhatsApp */
+          bottom:calc(clamp(16px,3vw,28px) + 68px);
           display:inline-flex; align-items:center; gap:12px;
           height:54px; padding:0 24px; border-radius:50px;
           background:#38050e; color:#cddbf2; text-decoration:none;
@@ -45,7 +47,7 @@ export default function BotonCarrito() {
           border:2px solid #38050e;
         }
         @media(max-width:640px){
-          .cg-cart{height:52px; left:16px; right:16px; justify-content:center}
+          .cg-cart{height:52px; left:16px; right:84px; justify-content:center}
         }
         @media (prefers-reduced-motion: reduce){ .cg-cart:hover{transform:none} }
       `}</style>

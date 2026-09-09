@@ -21,7 +21,9 @@ export default function AplicaFlotante() {
     <>
       <style>{`
         .aplica{
-          position:fixed; right:clamp(16px,3vw,28px); bottom:clamp(16px,3vw,28px); z-index:180;
+          position:fixed; right:clamp(16px,3vw,28px); z-index:180;
+          /* Deja libre la esquina: ahí vive el botón de WhatsApp */
+          bottom:calc(clamp(16px,3vw,28px) + 68px);
           display:inline-flex; align-items:center; gap:10px;
           height:54px; padding:0 26px; border-radius:50px;
           background:#38050e; color:#cddbf2; text-decoration:none;
@@ -35,7 +37,7 @@ export default function AplicaFlotante() {
         .aplica-sub{display:block; font-size:11px; letter-spacing:.1em; text-transform:uppercase; opacity:.7; line-height:1}
         .aplica-txt{display:flex; flex-direction:column; gap:3px; line-height:1}
         @media(max-width:640px){
-          .aplica{height:50px; padding:0 20px; font-size:14px; left:16px; right:16px; justify-content:center}
+          .aplica{height:50px; padding:0 20px; font-size:14px; left:16px; right:84px; justify-content:center}
         }
         @media (prefers-reduced-motion: reduce){
           .aplica{transition:opacity .3s ease}

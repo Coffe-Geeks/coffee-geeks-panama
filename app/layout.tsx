@@ -5,6 +5,7 @@ import Script from "next/script";
 import "./globals.css";
 import { getSiteConfig } from "@/lib/siteConfig";
 import RegistroGate from "@/app/components/RegistroGate";
+import WhatsAppFlotante from "@/app/components/WhatsAppFlotante";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,6 +67,17 @@ export default async function RootLayout({
   // Quien ya se registró (cookie) o tiene sesión iniciada pasa directo.
   // DESHABILITADA por ahora (pedido 21-ago): poner en true para reactivarla.
   const GATE_ACTIVO = false;
+
+  /**
+   * Número de atención por WhatsApp.
+   *
+   * Va fijo y no desde `contactWhatsApp` de la configuración porque ese
+   * campo arrastra un número viejo y no se muestra en ninguna otra parte
+   * del sitio. Cuando se actualice desde /admin/settings, basta cambiar
+   * esta línea por `cfg.contactWhatsApp` para que se gestione desde ahí.
+   */
+  const whatsapp = "+507 6732-6715";
+
   const cookieStore = await cookies();
   const yaRegistrado =
     !GATE_ACTIVO || cookieStore.has("cg_registro") || cookieStore.has("session");
@@ -76,6 +88,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        <WhatsAppFlotante numero={whatsapp} />
         {!yaRegistrado && <RegistroGate />}
         <Script id="matomo-tracker" strategy="afterInteractive">
           {`
