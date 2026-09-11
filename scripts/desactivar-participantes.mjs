@@ -6,8 +6,13 @@
  * cualquier referencia; uno desactivado desaparece del sitio y se puede
  * revertir en un segundo.
  *
- *   node scripts/desactivar-participantes.mjs "<MONGODB_URI>" correo1 correo2 …
- *   node scripts/desactivar-participantes.mjs "<MONGODB_URI>" --aplicar correo1 …
+ * Acepta correos o nombres. Los nombres se buscan de forma aproximada
+ * —sin acentos y sin distinguir mayúsculas— porque en la base están
+ * escritos de maneras distintas; por eso la simulación es obligatoria
+ * antes de escribir: hay que leer a quién encontró.
+ *
+ *   node scripts/desactivar-participantes.mjs "<URI>" "Angie Aparicio" …
+ *   node scripts/desactivar-participantes.mjs "<URI>" --aplicar "Angie Aparicio" …
  *
  * También acepta --revertir para volver a activarlos.
  */
@@ -16,9 +21,9 @@ import { MongoClient } from "mongodb";
 const [, , uri, ...resto] = process.argv;
 const aplicar = resto.includes("--aplicar");
 const revertir = resto.includes("--revertir");
-const correos = resto.filter((a) => !a.startsWith("--")).map((c) => c.toLowerCase());
+const buscados = resto.filter((a) => !a.startsWith("--"));
 
-if (!uri || !correos.length) {
+if (!uri || !buscados.length) {
   console.error('Uso: node scripts/desactivar-participantes.mjs "<MONGODB_URI>" [--aplicar] [--revertir] correo1 correo2 …');
   process.exit(1);
 }
@@ -28,25 +33,41 @@ try {
   await client.connect();
   const users = client.db().collection("users");
 
-  console.log(revertir ? "Se reactivarían:" : "Se desactivarían:");
-  let encontrados = 0;
+  // Sin acentos y en minúsculas: en la base los nombres están dispares
+  const normalizar = (t) =>
+    (t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-  for (const correo of correos) {
-    const u = await users.findOne({ email: correo });
-    if (!u) { console.log(`  ✗ no existe: ${correo}`); continue; }
-    encontrados++;
-    const estado = u.isActive === false ? "inactivo" : "activo";
-    console.log(`  · ${(u.name || "")} ${(u.lastName || "")}`.trimEnd() +
-                `  <${u.email}>  rol: ${u.role}  estado actual: ${estado}`);
+  const todos = await users.find({}, { projection: { name: 1, lastName: 1, email: 1, role: 1, isActive: 1 } }).toArray();
+
+  console.log(revertir ? "Se reactivarían:" : "Se desactivarían:");
+  const ids = [];
+
+  for (const termino of buscados) {
+    const t = normalizar(termino);
+    const coincidencias = todos.filter((u) => {
+      if (normalizar(u.email) === t) return true;
+      const completo = normalizar(`${u.name || ""} ${u.lastName || ""}`);
+      // Todas las palabras del término deben estar en el nombre
+      return t.split(/\s+/).every((palabra) => completo.includes(palabra));
+    });
+
+    if (!coincidencias.length) { console.log(`  ✗ sin coincidencia: ${termino}`); continue; }
+    if (coincidencias.length > 1) console.log(`  ⚠ ${termino} coincide con ${coincidencias.length}:`);
+
+    for (const u of coincidencias) {
+      ids.push(u._id);
+      const estado = u.isActive === false ? "inactivo" : "ACTIVO";
+      console.log(`  · ${`${u.name || ""} ${u.lastName || ""}`.trim().padEnd(28)} <${u.email}>  rol: ${(u.role || "?").padEnd(10)} ${estado}`);
+    }
   }
 
   if (!aplicar) {
-    console.log(`\n${encontrados} coincidencias. Simulación: agrega --aplicar para escribir.`);
+    console.log(`\n${ids.length} registros encontrados. Simulación: agrega --aplicar para escribir.`);
     process.exit(0);
   }
 
   const r = await users.updateMany(
-    { email: { $in: correos } },
+    { _id: { $in: ids } },
     { $set: { isActive: revertir } }
   );
   console.log(`\n${r.modifiedCount} registros ${revertir ? "reactivados" : "desactivados"}. No se borró nada.`);
