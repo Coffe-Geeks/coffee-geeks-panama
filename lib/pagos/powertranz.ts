@@ -53,6 +53,17 @@ export type ResultadoAutenticacion = {
   };
 };
 
+/**
+ * El teléfono del BillingAddress debe incluir el código de país, sin signos.
+ * Panamá es 507; un número local de ocho dígitos se completa solo.
+ */
+function telefonoConPais(bruto: string): string {
+  const soloDigitos = (bruto || "").replace(/\D/g, "");
+  if (!soloDigitos) return "";
+  if (soloDigitos.startsWith("507")) return soloDigitos;
+  return `507${soloDigitos}`;
+}
+
 function credenciales() {
   const id = process.env.POWERTRANZ_ID;
   const password = process.env.POWERTRANZ_PASSWORD;
@@ -118,6 +129,8 @@ export async function iniciarPago(params: {
   orderIdentifier: string;
   total: number;
   merchantResponseUrl: string;
+  /** Datos del comprador: sin correo, 3DS no autentica */
+  cliente?: { nombre: string; correo: string; telefono?: string };
 }) {
   const pageSet = process.env.POWERTRANZ_PAGE_SET;
   const pageName = process.env.POWERTRANZ_PAGE_NAME;
@@ -136,6 +149,35 @@ export async function iniciarPago(params: {
    */
   const pageSetCompleto = pageSet.startsWith("Ptz/") ? pageSet : `Ptz/${pageSet}`;
 
+  /**
+   * BillingAddress con el correo del comprador.
+   *
+   * No es un adorno: la especificación de PowerTranz exige correo y/o
+   * teléfono en la dirección de facturación para que 3DS autentique, y las
+   * marcas tratan el correo como obligatorio. Sin este objeto la
+   * transacción se aprueba igual en staging, pero FAC la rechaza para
+   * producción —lo reportaron el 11 de septiembre de 2026— porque el dato
+   * nunca viaja.
+   *
+   * El correo lo pide nuestro checkout, así que no hace falta que la página
+   * alojada lo recoja: su plantilla no ofrece ningún campo para eso.
+   *
+   * CountryCode es el ISO numérico de tres dígitos, no las letras: Panamá
+   * es 591. State se omite a propósito, porque la especificación solo lo
+   * exige cuando viene acompañado de país en formato de subdivisión.
+   */
+  const cliente = params.cliente;
+  const partesNombre = (cliente?.nombre || "").trim().split(/\s+/);
+  const billingAddress = cliente
+    ? {
+        FirstName: partesNombre[0] || cliente.nombre,
+        LastName: partesNombre.slice(1).join(" ") || partesNombre[0] || "",
+        EmailAddress: cliente.correo,
+        PhoneNumber: telefonoConPais(cliente.telefono || ""),
+        CountryCode: "591",
+      }
+    : undefined;
+
   const respuesta = await llamar("sale", {
     TransactionIdentifier: params.transactionIdentifier,
     TotalAmount: Number(params.total.toFixed(2)),
@@ -144,6 +186,7 @@ export async function iniciarPago(params: {
     fraudCheck: ANTIFRAUDE,
     OrderIdentifier: params.orderIdentifier,
     AddressMatch: false,
+    ...(billingAddress ? { BillingAddress: billingAddress } : {}),
     ExtendedData: {
       ThreeDSecure: { ChallengeWindowSize: 4, ChallengeIndicator: "01" },
       HostedPage: { PageSet: pageSetCompleto, PageName: pageName },
