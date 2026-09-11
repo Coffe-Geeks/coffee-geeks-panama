@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/app/components/layout/Navbar";
 import Footer from "@/app/components/layout/Footer";
 import { getCourses } from "@/app/actions/elearning";
+import ComiteForm from "./ComiteForm";
 
 export const dynamic = "force-dynamic";
 
@@ -165,6 +166,9 @@ export default async function AcademiaPage() {
               </svg>
             </a>
           </section>
+
+          {/* ── Invitación al Comité Nacional País ── */}
+          <ComiteForm />
 
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: 32 }}>
