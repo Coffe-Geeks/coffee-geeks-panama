@@ -22,6 +22,14 @@ const NAV_LINKS: NavLink[] = [
       { label: "Nuestro Método", href: "/nuestro-metodo" },
     ],
   },
+  {
+    label: "El Concurso",
+    href: "/el-concurso/guia-del-consumidor",
+    children: [
+      { label: "Guía del Consumidor", href: "/el-concurso/guia-del-consumidor" },
+      { label: "Términos del Concurso", href: "/el-concurso/terminos" },
+    ],
+  },
   { label: "Miembros", href: "/participantes" },
   { label: "Guía de Experiencias", href: "/guia-de-experiencias" },
   { label: "Academia", href: "/academia" },
