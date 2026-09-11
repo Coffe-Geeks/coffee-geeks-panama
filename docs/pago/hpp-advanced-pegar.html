@@ -34,7 +34,7 @@
 <!-- ─────────────── CAMPO "HTML" ─────────────── -->
 
 <div class="cg-cab">
-  <img class="cg-logo" src="https://pruebas-coffee-geeks.vercel.app/logo-vino.png" alt="Coffee Geeks Panamá">
+  <img class="cg-logo" src="https://coffeegeekspanama.com/logo-vino.png" alt="Coffee Geeks Panamá">
   <span class="cg-eyebrow">Pago seguro</span>
 </div>
 
@@ -79,7 +79,12 @@
 body{background:#f4efe4;color:#38050e;font-family:'Barlow',system-ui,sans-serif;font-size:15px;margin:0;padding:24px 16px}
 
 .cg-cab{text-align:center;padding:4px 0 20px}
-.cg-logo{height:50px;width:auto;display:inline-block}
+/* El archivo mide 577x287: sin tope se dibuja a tamano natural y tapa el
+   formulario en pantallas angostas. Va acotado por alto y por ancho, y por
+   selector de elemento ademas de por clase, para que no dependa de que el
+   editor del Portal conserve la clase. */
+img{max-width:100%;height:auto}
+.cg-cab img,.cg-logo{display:inline-block;width:auto;height:auto;max-height:50px;max-width:62%}
 .cg-eyebrow{display:block;margin-top:10px;font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;opacity:.55}
 
 .cg-caja{max-width:460px;margin:0 auto}
@@ -106,6 +111,6 @@ input.submit-btn:hover,input[type=button]:hover,button:hover{background:#24060c}
 
 .cg-pie{margin-top:22px;padding-top:18px;border-top:1px solid #cddbf2;font-size:12px;line-height:1.55;text-align:center;opacity:.6}
 
-@media(max-width:420px){ .cg-fila{gap:10px} h1{font-size:26px} }
+@media(max-width:420px){ .cg-fila{gap:10px} h1{font-size:26px} .cg-cab{padding-bottom:14px} .cg-cab img,.cg-logo{max-height:36px;max-width:56%} }
 
 ─────────────────────────────────────────────────────── -->
