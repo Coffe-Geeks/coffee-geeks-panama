@@ -214,9 +214,22 @@ export async function registerCafeteria(state: any, formData: FormData) {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  // Si no hay usuarios aún, el primero siempre será admin
+  /**
+   * Quien se inscribe por aquí queda como usuario general, NO como
+   * participante del concurso.
+   *
+   * Hasta el 11 de septiembre de 2026 esta ruta otorgaba el rol `cafeteria`
+   * de inmediato, sin aprobación ni contrato: bastaba abrir la página para
+   * quedar inscrito como establecimiento y aparecer en la votación. Así se
+   * llenó la lista pública de personas que no son establecimientos.
+   *
+   * Ser participante exige firmar un contrato, así que ese rol lo otorga un
+   * administrador desde /admin/users una vez firmado. Mientras tanto la
+   * persona conserva su cuenta y puede comprar y votar, que es lo que
+   * necesita la mayoría.
+   */
   const userCount = await User.countDocuments();
-  const role = userCount === 0 ? "admin" : "cafeteria";
+  const role = userCount === 0 ? "admin" : "user";
 
   const newUser = await User.create({
     name,
@@ -248,7 +261,7 @@ export async function registerCafeteria(state: any, formData: FormData) {
     if (adminEmail) {
       await sendEmail({
         to: adminEmail,
-        subject: `Nuevo Registro (Participante): ${newUser.name} ${newUser.lastName || ""}`,
+        subject: `Solicitud de participación: ${newUser.name} ${newUser.lastName || ""}`,
         html: getAdminNotificationEmailTemplate({
           name: newUser.name,
           lastName: newUser.lastName,

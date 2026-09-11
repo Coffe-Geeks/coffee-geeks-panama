@@ -91,6 +91,33 @@ export async function updateUserAdmin(userId: string, formData: FormData) {
   return { success: "Usuario modificado" };
 }
 
+/**
+ * Cambia el rol de una cuenta sin tocar ningún otro dato.
+ *
+ * Va aparte de `updateUserAdmin` porque aquella espera además nombre y
+ * correo: llamarla solo con el rol los dejaría en blanco. Aquí no se borra
+ * nada —los datos de la ficha siguen guardados—, así que devolver a alguien
+ * a participante es cambiar el rol de vuelta.
+ */
+export async function cambiarRolUsuario(userId: string, nuevoRol: string) {
+  const session = await getSession();
+  if (session?.role !== "admin") return { error: "No autorizado" };
+
+  if (!isUserRole(nuevoRol)) return { error: "Rol inválido" };
+
+  // Que nadie se deje a sí mismo fuera del panel
+  if (session.userId === userId && nuevoRol !== "admin") {
+    return { error: "No puedes quitarte tu propio rol de administrador." };
+  }
+
+  await dbConnect();
+  await User.findByIdAndUpdate(userId, { role: nuevoRol });
+
+  revalidatePath("/admin/users");
+  revalidatePath("/participantes");
+  return { success: "Rol actualizado" };
+}
+
 export async function createUserByAdmin(formData: FormData) {
   const session = await getSession();
   if (session?.role !== "admin") return { error: "No autorizado" };
