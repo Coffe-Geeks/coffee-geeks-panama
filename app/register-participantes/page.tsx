@@ -54,10 +54,10 @@ export default function RegisterParticipantesPage() {
           inscrito en el concurso por llenar este formulario.
         */}
         <div className="mb-6 p-4 rounded-xl bg-[#cddbf2]/10 border border-[#cddbf2]/20 text-[#cddbf2]/85 text-sm leading-relaxed">
-          <strong className="text-[#cddbf2]">Este formulario crea tu cuenta, no tu participación.</strong>{" "}
-          Ser participante del concurso requiere firmar un acuerdo con la organización. Una vez
-          firmado, activamos tu perfil de establecimiento y podrás cargar tus fotos, tu barista y
-          tus bebidas. Te contactaremos a este correo para continuar.
+          <strong className="text-[#cddbf2]">Cuenta inactiva hasta aprobación.</strong>{" "}
+          Al registrarte, tu cuenta de participante queda inactiva por defecto. Una vez firmado
+          el acuerdo con la organización, la administración activará tu perfil manualmente para
+          que tu establecimiento aparezca públicamente en el concurso y en las votaciones.
         </div>
 
         <div className="mt-0 mb-6 text-center text-sm text-[#cddbf2]/70 flex flex-col gap-4">

@@ -39,15 +39,18 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
     if (qParam !== null) setSearchQuery(qParam);
   }, [searchParams]);
 
-  // Sincronizar el usuario detallado si cambian los props (después de router.refresh)
+  // Sincronizar el usuario detallado y en edición si cambian los props (después de router.refresh)
   useEffect(() => {
     if (detailedUser) {
       const updated = initialUsers.find(u => u.id === (detailedUser.id || detailedUser._id));
-      if (updated && updated.updatedAt !== detailedUser.updatedAt) {
-        setDetailedUser(updated);
-      }
+      if (updated) setDetailedUser(updated);
     }
-  }, [initialUsers, detailedUser]);
+    if (editingUser) {
+      const updated = initialUsers.find(u => u.id === (editingUser.id || editingUser._id));
+      if (updated) setEditingUser(updated);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialUsers]);
 
   async function handleDelete(id: string) {
     if (!confirm("¿Está seguro de que desea eliminar este usuario?")) return;
@@ -113,8 +116,57 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
     return true;
   });
 
+  // Participantes con rol cafeteria pero inactivos: están bloqueados para votar
+  // y además ocultos del público. El admin necesita ver estos casos claramente.
+  const votingBlocked = initialUsers.filter(
+    (u) => u.role === "cafeteria" && !u.isActive
+  );
+
   return (
     <div className="relative">
+
+      {/* ── Panel de alerta: participantes bloqueados para votar ── */}
+      {votingBlocked.length > 0 && (
+        <div className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/8 backdrop-blur-sm overflow-hidden">
+          <div className="flex items-start gap-4 px-5 py-4 border-b border-amber-500/20 bg-amber-500/10">
+            <span className="text-2xl mt-0.5 flex-shrink-0">⚠️</span>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-amber-300 text-sm tracking-wide">
+                {votingBlocked.length === 1
+                  ? "1 participante no puede votar"
+                  : `${votingBlocked.length} participantes no pueden votar`}
+              </p>
+              <p className="text-amber-200/70 text-xs mt-1 leading-relaxed">
+                Los usuarios con rol <span className="font-bold text-amber-300">Participante</span> (cafetería) están bloqueados para emitir votos por el sistema, aunque tengan cuenta activa.
+                Si no competirán o se registraron por error, usa <span className="font-semibold text-white">«Convertir a Usuario»</span> para que puedan votar con normalidad.
+                Desactivarlos solo los oculta del público, pero <em>no</em> les devuelve el voto.
+              </p>
+            </div>
+          </div>
+          <div className="divide-y divide-amber-500/10">
+            {votingBlocked.map((u) => (
+              <div
+                key={u.id}
+                className="flex items-center justify-between gap-4 px-5 py-3 hover:bg-amber-500/5 transition-colors"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[#cddbf2] truncate">
+                    {u.cafeteriaName || `${u.name} ${u.lastName || ""}`.trim()}
+                  </p>
+                  <p className="text-xs text-[#cddbf2]/50 truncate">{u.email}</p>
+                </div>
+                <button
+                  onClick={() => handleCambiarRol(u, "user")}
+                  disabled={loading || isPending}
+                  className="flex-shrink-0 px-4 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 border border-amber-500/40 text-amber-300 text-xs font-bold tracking-wide transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                >
+                  ↩️ Convertir a Usuario
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <div className="flex flex-wrap gap-4 w-full md:w-auto flex-1">
           {/* Campo de búsqueda abierta por texto */}
@@ -337,7 +389,11 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
               
               {editingUser.role === 'cafeteria' ? (
                  <div className="pr-2">
-                    <ProfileForm user={editingUser} maxGalleryImages={maxGalleryImages} />
+                    <ProfileForm 
+                      key={(editingUser.id || editingUser._id) + (editingUser.updatedAt || "")}
+                      user={editingUser} 
+                      maxGalleryImages={maxGalleryImages} 
+                    />
                  </div>
               ) : (
                 <form action={async (fd) => {

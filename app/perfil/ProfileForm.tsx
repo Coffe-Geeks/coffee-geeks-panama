@@ -56,6 +56,21 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
   const [cafMsg, setCafMsg] = useState("");
   const [cafErr, setCafErr] = useState("");
   const [coverPreview, setCoverPreview] = useState<string>(user.coverImage || "");
+  const [drinkPreviews, setDrinkPreviews] = useState({
+    espressoPhoto: user.espressoPhoto || "",
+    filtradoPhoto: user.filtradoPhoto || "",
+    signatureDrinkPhoto: user.signatureDrinkPhoto || "",
+  });
+
+  useEffect(() => {
+    setCoverPreview(user.coverImage || "");
+    setDrinkPreviews({
+      espressoPhoto: user.espressoPhoto || "",
+      filtradoPhoto: user.filtradoPhoto || "",
+      signatureDrinkPhoto: user.signatureDrinkPhoto || "",
+    });
+  }, [user.coverImage, user.espressoPhoto, user.filtradoPhoto, user.signatureDrinkPhoto]);
+
   // Estado controlado para que el select NO se limpie tras el submit
   const [categories, setCategories] = useState<string[]>(
     Array.isArray(user.competitionCategory) ? user.competitionCategory : (user.competitionCategory ? [user.competitionCategory] : [])
@@ -236,6 +251,19 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
   return (
     <div className="flex flex-col gap-6">
       
+      {/* Aviso de cuenta inactiva */}
+      {user.role === "cafeteria" && !user.isActive && (
+        <div className="p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-200 text-xs sm:text-sm flex items-start gap-3">
+          <span className="text-xl">⏳</span>
+          <div>
+            <strong className="font-bold text-yellow-100">Cuenta de participante pendiente de activación</strong>
+            <p className="opacity-80 mt-0.5">
+              Tu perfil está inactivo hasta que la administración active tu cuenta manualmente. Puedes ir completando tus datos, fotos y baristas mientras tanto.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ─── Acciones Rápidas ─── */}
       {user.role === "cafeteria" && (
         <div className="flex justify-end">
@@ -625,31 +653,36 @@ export default function ProfileForm({ user, maxGalleryImages = 3 }: { user: any,
                 <div className="flex flex-col gap-3 pt-2 border-t border-white/10">
                   <p className="text-[#cddbf2]/70 text-xs font-semibold uppercase tracking-wider">Fotos de tus bebidas</p>
                   {([
-                    { name: "espressoPhoto", label: "Espresso", current: user.espressoPhoto },
-                    { name: "filtradoPhoto", label: "Filtrado", current: user.filtradoPhoto },
-                    { name: "signatureDrinkPhoto", label: "Signature Drink", current: user.signatureDrinkPhoto },
-                  ] as const).map((b) => (
-                    <div key={b.name} className="flex items-center gap-3">
+                    { name: "espressoPhoto" as const, label: "Espresso", current: drinkPreviews.espressoPhoto },
+                    { name: "filtradoPhoto" as const, label: "Filtrado", current: drinkPreviews.filtradoPhoto },
+                    { name: "signatureDrinkPhoto" as const, label: "Signature Drink", current: drinkPreviews.signatureDrinkPhoto },
+                  ]).map((b) => (
+                    <div key={b.name} className="flex items-center gap-3 p-2.5 rounded-xl bg-black/20 border border-white/5">
                       {b.current ? (
-                        <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
+                        <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-white/20 flex-shrink-0 bg-black/40">
                           <Image src={b.current} alt={b.label} fill className="object-cover" />
                         </div>
                       ) : (
-                        <div className="w-14 h-14 rounded-lg border border-dashed border-white/15 flex items-center justify-center text-[#cddbf2]/30 text-[10px] flex-shrink-0">Sin foto</div>
+                        <div className="w-14 h-14 rounded-lg border border-dashed border-white/15 flex items-center justify-center text-[#cddbf2]/30 text-[10px] flex-shrink-0 text-center px-1">Sin foto</div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] text-[#cddbf2]/60 uppercase tracking-wider mb-1">{b.label}</p>
+                        <p className="text-[11px] text-[#cddbf2]/70 uppercase tracking-wider mb-1 font-semibold">{b.label}</p>
                         <input
                           name={b.name} type="file" accept="image/jpeg,image/png,image/webp"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file && file.size > 2 * 1024 * 1024) {
-                              alert("La imagen no debe exceder los 2MB");
-                              e.target.value = "";
+                            if (file) {
+                              if (file.size > 2 * 1024 * 1024) {
+                                alert("La imagen no debe exceder los 2MB");
+                                e.target.value = "";
+                                return;
+                              }
+                              setDrinkPreviews(prev => ({ ...prev, [b.name]: URL.createObjectURL(file) }));
                             }
                           }}
                           className="w-full text-xs text-[#cddbf2]/60 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#cddbf2]/20 file:text-[#cddbf2] file:text-xs file:font-medium file:cursor-pointer hover:file:bg-[#cddbf2]/30 transition-all cursor-pointer"
                         />
+                        <p className="text-[9px] text-[#cddbf2]/40 mt-1 italic">Si no seleccionas un archivo, se conserva la foto actual.</p>
                       </div>
                     </div>
                   ))}

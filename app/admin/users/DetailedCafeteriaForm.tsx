@@ -20,6 +20,19 @@ export default function DetailedCafeteriaForm({
   const [state, action, pending] = useActionState(updateDetailedCafeteriaProfile, null);
   const [locationLat, setLocationLat] = useState<number | null>(user.locationLat);
   const [locationLng, setLocationLng] = useState<number | null>(user.locationLng);
+  const [drinkPreviews, setDrinkPreviews] = useState({
+    espressoPhoto: user.espressoPhoto || "",
+    filtradoPhoto: user.filtradoPhoto || "",
+    signatureDrinkPhoto: user.signatureDrinkPhoto || "",
+  });
+
+  useEffect(() => {
+    setDrinkPreviews({
+      espressoPhoto: user.espressoPhoto || "",
+      filtradoPhoto: user.filtradoPhoto || "",
+      signatureDrinkPhoto: user.signatureDrinkPhoto || "",
+    });
+  }, [user]);
 
   useEffect(() => {
     if (state?.success) {
@@ -75,23 +88,123 @@ export default function DetailedCafeteriaForm({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className={labelCls}>Espresso <span className="opacity-50">(origen, variedad, notas)</span></label>
-                <textarea name="espresso" defaultValue={user.espresso} rows={4} className={`${inputCls} resize-none`} />
+              <div className="space-y-3">
+                <div>
+                  <label className={labelCls}>Espresso <span className="opacity-50">(origen, variedad, notas)</span></label>
+                  <textarea name="espresso" defaultValue={user.espresso} rows={4} className={`${inputCls} resize-none`} />
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-black/30 border border-white/10">
+                  {drinkPreviews.espressoPhoto ? (
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-white/20 flex-shrink-0 bg-black/50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={drinkPreviews.espressoPhoto} alt="Espresso" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg border border-dashed border-white/20 flex items-center justify-center text-[#cddbf2]/40 text-[10px] flex-shrink-0 text-center px-1">Sin foto</div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-semibold text-[#cddbf2]/70 uppercase tracking-wider mb-1">Foto de Espresso</p>
+                    <input
+                      name="espressoPhoto"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (file.size > 2 * 1024 * 1024) {
+                            alert("La foto no debe exceder los 2MB");
+                            e.target.value = "";
+                            return;
+                          }
+                          setDrinkPreviews((p) => ({ ...p, espressoPhoto: URL.createObjectURL(file) }));
+                        }
+                      }}
+                      className="w-full text-xs text-[#cddbf2]/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#cddbf2]/20 file:text-[#cddbf2] file:text-xs file:font-medium file:cursor-pointer hover:file:bg-[#cddbf2]/30 transition-all cursor-pointer"
+                    />
+                    <p className="text-[10px] text-[#cddbf2]/40 mt-1 italic">Máx 2MB. Si no eliges archivo, se conserva la foto actual.</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className={labelCls}>Filtrado <span className="opacity-50">(método, origen, perfil)</span></label>
-                <textarea name="filtrado" defaultValue={user.filtrado} rows={4} className={`${inputCls} resize-none`} />
+
+              <div className="space-y-3">
+                <div>
+                  <label className={labelCls}>Filtrado <span className="opacity-50">(método, origen, perfil)</span></label>
+                  <textarea name="filtrado" defaultValue={user.filtrado} rows={4} className={`${inputCls} resize-none`} />
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-black/30 border border-white/10">
+                  {drinkPreviews.filtradoPhoto ? (
+                    <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-white/20 flex-shrink-0 bg-black/50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={drinkPreviews.filtradoPhoto} alt="Filtrado" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg border border-dashed border-white/20 flex items-center justify-center text-[#cddbf2]/40 text-[10px] flex-shrink-0 text-center px-1">Sin foto</div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-semibold text-[#cddbf2]/70 uppercase tracking-wider mb-1">Foto de Filtrado</p>
+                    <input
+                      name="filtradoPhoto"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          if (file.size > 2 * 1024 * 1024) {
+                            alert("La foto no debe exceder los 2MB");
+                            e.target.value = "";
+                            return;
+                          }
+                          setDrinkPreviews((p) => ({ ...p, filtradoPhoto: URL.createObjectURL(file) }));
+                        }
+                      }}
+                      className="w-full text-xs text-[#cddbf2]/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#cddbf2]/20 file:text-[#cddbf2] file:text-xs file:font-medium file:cursor-pointer hover:file:bg-[#cddbf2]/30 transition-all cursor-pointer"
+                    />
+                    <p className="text-[10px] text-[#cddbf2]/40 mt-1 italic">Máx 2MB. Si no eliges archivo, se conserva la foto actual.</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className={labelCls}>Nombre del Signature Drink</label>
-              <input name="signatureDrinkName" defaultValue={user.signatureDrinkName} placeholder='Ej: "Geisha Pearl"' className={inputCls} />
-            </div>
-            <div>
-              <label className={labelCls}>Descripción del Signature Drink</label>
-              <textarea name="signatureDrink" defaultValue={user.signatureDrink} rows={3} className={`${inputCls} resize-none`} />
+            <div className="space-y-3">
+              <div>
+                <label className={labelCls}>Nombre del Signature Drink</label>
+                <input name="signatureDrinkName" defaultValue={user.signatureDrinkName} placeholder='Ej: "Geisha Pearl"' className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Descripción del Signature Drink</label>
+                <textarea name="signatureDrink" defaultValue={user.signatureDrink} rows={3} className={`${inputCls} resize-none`} />
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-black/30 border border-white/10">
+                {drinkPreviews.signatureDrinkPhoto ? (
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-white/20 flex-shrink-0 bg-black/50">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={drinkPreviews.signatureDrinkPhoto} alt="Signature Drink" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-lg border border-dashed border-white/20 flex items-center justify-center text-[#cddbf2]/40 text-[10px] flex-shrink-0 text-center px-1">Sin foto</div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-semibold text-[#cddbf2]/70 uppercase tracking-wider mb-1">Foto de Signature Drink</p>
+                  <input
+                    name="signatureDrinkPhoto"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                          alert("La foto no debe exceder los 2MB");
+                          e.target.value = "";
+                          return;
+                        }
+                        setDrinkPreviews((p) => ({ ...p, signatureDrinkPhoto: URL.createObjectURL(file) }));
+                      }
+                    }}
+                    className="w-full text-xs text-[#cddbf2]/70 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-[#cddbf2]/20 file:text-[#cddbf2] file:text-xs file:font-medium file:cursor-pointer hover:file:bg-[#cddbf2]/30 transition-all cursor-pointer"
+                  />
+                  <p className="text-[10px] text-[#cddbf2]/40 mt-1 italic">Máx 2MB. Si no eliges archivo, se conserva la foto actual.</p>
+                </div>
+              </div>
             </div>
           </div>
 

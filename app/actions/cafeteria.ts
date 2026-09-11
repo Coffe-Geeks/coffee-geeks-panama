@@ -23,6 +23,8 @@ async function getTargetUser(session: any, formData?: FormData, explicitTargetId
 function doRevalidate(isAdmin: boolean) {
   if (isAdmin) revalidatePath("/admin/users");
   revalidatePath("/perfil");
+  revalidatePath("/participantes");
+  revalidatePath("/");
 }
 
 // ─── Actualizar perfil base de cafetería ──────────────────────────────────────
@@ -336,6 +338,21 @@ export async function updateDetailedCafeteriaProfile(state: any, formData: FormD
       wantsToJoinCommittee: formData.get("wantsToJoinCommittee") === "true",
       hasDisabledStaff: formData.get("hasDisabledStaff") === "true",
     };
+
+    // Fotos de las bebidas de competencia en el formulario detallado
+    for (const campoFoto of ["espressoPhoto", "filtradoPhoto", "signatureDrinkPhoto"]) {
+      const foto = formData.get(campoFoto) as File | null;
+      if (foto && foto.size > 0) {
+        if (foto.size > 2 * 1024 * 1024) {
+          return { error: `La foto de ${campoFoto} no debe exceder los 2MB.` };
+        }
+        const formatos = ["image/jpeg", "image/png", "image/webp"];
+        if (!formatos.includes(foto.type)) {
+          return { error: "Formato de imagen no permitido. Usa .jpg, .png o .webp." };
+        }
+        updateData[campoFoto] = await saveUploadedFile(foto, "bebidas");
+      }
+    }
 
     await User.findByIdAndUpdate(targetUserId, { $set: updateData });
     doRevalidate(isAdmin);

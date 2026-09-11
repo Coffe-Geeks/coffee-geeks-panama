@@ -215,21 +215,16 @@ export async function registerCafeteria(state: any, formData: FormData) {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   /**
-   * Quien se inscribe por aquí queda como usuario general, NO como
-   * participante del concurso.
+   * Quien se inscribe por /register-participantes queda con rol `cafeteria`
+   * pero INACTIVO por defecto (`isActive: false`).
    *
-   * Hasta el 11 de septiembre de 2026 esta ruta otorgaba el rol `cafeteria`
-   * de inmediato, sin aprobación ni contrato: bastaba abrir la página para
-   * quedar inscrito como establecimiento y aparecer en la votación. Así se
-   * llenó la lista pública de personas que no son establecimientos.
-   *
-   * Ser participante exige firmar un contrato, así que ese rol lo otorga un
-   * administrador desde /admin/users una vez firmado. Mientras tanto la
-   * persona conserva su cuenta y puede comprar y votar, que es lo que
-   * necesita la mayoría.
+   * Esto requiere que el administrador lo active manualmente desde
+   * /admin/users (haciendo clic en el botón de estado) una vez revisada
+   * su solicitud y firmado el acuerdo de participación.
+   * Mientras esté inactivo, no aparecerá en la votación pública ni en la lista.
    */
   const userCount = await User.countDocuments();
-  const role = userCount === 0 ? "admin" : "user";
+  const role = userCount === 0 ? "admin" : "cafeteria";
 
   const newUser = await User.create({
     name,
@@ -237,6 +232,7 @@ export async function registerCafeteria(state: any, formData: FormData) {
     email,
     password: hashedPassword,
     role,
+    isActive: false, // Inactivo por defecto: requiere activación manual por el admin
   });
 
   // El participante queda también en la lista de Brevo

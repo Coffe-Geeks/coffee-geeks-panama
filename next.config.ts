@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Archivos subidos desde el entorno de pruebas, que van a Vercel Blob
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      // Imágenes locales en desarrollo (localhost)
+      { protocol: "http", hostname: "localhost" },
+      { protocol: "https", hostname: "localhost" },
+      // Imágenes servidas desde el droplet de producción (cualquier dominio)
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" },
     ],
   },
   async redirects() {
