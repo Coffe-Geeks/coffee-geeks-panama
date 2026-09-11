@@ -48,6 +48,11 @@ export default async function PagoPage({ params }: { params: Promise<{ numero: s
         orderIdentifier: pedido.orderNumber,
         total: pedido.total,
         merchantResponseUrl: `${base}/api/pagos/powertranz/respuesta`,
+        cliente: {
+          nombre: pedido.customer.name,
+          correo: pedido.customer.email,
+          telefono: pedido.customer.phone,
+        },
       });
 
       await registrarInicioDePago(pedido.orderNumber, {

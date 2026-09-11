@@ -23,18 +23,33 @@
   que incluye correo, y el campo debe quedar marcado como obligatorio con
   su validación activa en el Portal del Comercio.
 
-  OJO CON EL NOMBRE DEL TOKEN: abajo va como @Email@, que es lo que
-  corresponde al resto de la nomenclatura, pero **hay que confirmarlo en la
-  lista de tokens que muestra el editor del Portal** antes de guardar. Si
-  el portal lo llama de otro modo, se cambia ahí y nada más: el estilo
-  cuelga del atributo type, no del nombre.
+  DOS TRAMPAS DEL EDITOR, COMPROBADAS EL 11 DE SEPTIEMBRE DE 2026
+
+  a) **El correo va como campo HTML, no como token.** Escribirlo como
+     @Email@ no funciona: al no pertenecer a la plantilla, el editor lo
+     dibuja como texto literal, que fue lo que pasó el 11 de septiembre.
+     Va entonces un <input type="email"> escrito a mano, dentro de
+     @FormStart@ / @FormEnd@ para que viaje con el envío del formulario.
+
+     LO ÚNICO POR CONFIRMAR ES EL name. Va como name="Email", que es lo
+     que espera PowerTranz según el nombre del campo en su API. Si al
+     probar la transacción el correo no llega, el name es otro: se mira
+     cómo lo nombra la configuración del campo en el Portal y se cambia
+     ahí. El aspecto no depende del name: cuelga de input[type=email].
+
+  b) **El editor no interpreta UTF-8.** Los acentos escritos como
+     caracteres salieron rotos en la página publicada ("ELECTRÃ³NICO",
+     "NÃºMERO", "aÃ±o"). Por eso todo el texto visible va con entidades
+     HTML (&oacute;, &uacute;, &ntilde;, &aacute;, &mdash;), que se ven
+     bien sea cual sea la codificación con que el portal sirva la página.
+     No reemplazarlas por letras acentuadas.
   ══════════════════════════════════════════════════════════════════════
 -->
 
 <!-- ─────────────── CAMPO "HTML" ─────────────── -->
 
 <div class="cg-cab">
-  <img class="cg-logo" src="https://coffeegeekspanama.com/logo-vino.png" alt="Coffee Geeks Panamá">
+  <img class="cg-logo" src="https://coffeegeekspanama.com/logo-vino.png" alt="Coffee Geeks Panam&aacute;">
   <span class="cg-eyebrow">Pago seguro</span>
 </div>
 
@@ -45,13 +60,13 @@
     @Invalid@
     <label>Nombre del tarjetahabiente</label>
     @CardHolderName@
-    <label>Correo electrónico <span class="cg-nota">para el comprobante de tu pago</span></label>
-    @Email@
-    <label>Número de tarjeta</label>
+    <label>Correo electr&oacute;nico <span class="cg-nota">para el comprobante de tu pago</span></label>
+    <input type="email" id="Email" name="Email" required placeholder="tucorreo@ejemplo.com">
+    <label>N&uacute;mero de tarjeta</label>
     @CardNo@
     <div class="cg-fila">
       <div class="cg-col">
-        <label>Vence <span class="cg-nota">mes y año, sin barra — ej. 1229</span></label>
+        <label>Vence <span class="cg-nota">mes y a&ntilde;o, sin barra &mdash; ej. 1229</span></label>
         @CardExpDate@
       </div>
       <div class="cg-col">
@@ -68,7 +83,7 @@
 
   <div class="cg-pie">
     Tus datos viajan cifrados y son procesados por BAC Credomatic.<br>
-    Coffee Geeks Panamá no almacena información de tu tarjeta.
+    Coffee Geeks Panam&aacute; no almacena informaci&oacute;n de tu tarjeta.
   </div>
 </div>
 
