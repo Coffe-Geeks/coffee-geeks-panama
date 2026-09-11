@@ -14,8 +14,20 @@
   4. Su script oculta #invalid al cargar y lo muestra con display:block
      cuando hay error, así que no hay que forzarlo desde CSS.
 
-  Los nueve tokens @...@ son obligatorios: el portal rechaza el guardado
-  si falta alguno.
+  Los nueve tokens @...@ del formulario son obligatorios: el portal
+  rechaza el guardado si falta alguno.
+
+  AJUSTE PEDIDO POR FAC EL 11 DE SEPTIEMBRE DE 2026
+  El correo electrónico es obligatorio para las marcas y la plantilla
+  anterior no lo enviaba. Por eso la página debe crearse con la plantilla
+  que incluye correo, y el campo debe quedar marcado como obligatorio con
+  su validación activa en el Portal del Comercio.
+
+  OJO CON EL NOMBRE DEL TOKEN: abajo va como @Email@, que es lo que
+  corresponde al resto de la nomenclatura, pero **hay que confirmarlo en la
+  lista de tokens que muestra el editor del Portal** antes de guardar. Si
+  el portal lo llama de otro modo, se cambia ahí y nada más: el estilo
+  cuelga del atributo type, no del nombre.
   ══════════════════════════════════════════════════════════════════════
 -->
 
@@ -33,6 +45,8 @@
     @Invalid@
     <label>Nombre del tarjetahabiente</label>
     @CardHolderName@
+    <label>Correo electrónico <span class="cg-nota">para el comprobante de tu pago</span></label>
+    @Email@
     <label>Número de tarjeta</label>
     @CardNo@
     <div class="cg-fila">
@@ -74,8 +88,8 @@ h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;text
 label{display:block;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;opacity:.65;margin-bottom:6px}
 .cg-nota{letter-spacing:0;text-transform:none;opacity:.7}
 
-input.text-field,input[type=text],select{width:100%;box-sizing:border-box;font-family:'Barlow',sans-serif;font-size:16px;color:#38050e;background:#fff;border:1px solid #cddbf2;border-radius:14px;padding:13px 15px;margin-bottom:16px}
-input.text-field:focus,input[type=text]:focus{outline:none;border-color:#38050e;box-shadow:0 0 0 3px rgba(56,5,14,.10)}
+input.text-field,input[type=text],input[type=email],select{width:100%;box-sizing:border-box;font-family:'Barlow',sans-serif;font-size:16px;color:#38050e;background:#fff;border:1px solid #cddbf2;border-radius:14px;padding:13px 15px;margin-bottom:16px}
+input.text-field:focus,input[type=text]:focus,input[type=email]:focus{outline:none;border-color:#38050e;box-shadow:0 0 0 3px rgba(56,5,14,.10)}
 #CardNo,#CardExpDate,#CardCVV2{font-variant-numeric:tabular-nums;letter-spacing:.06em}
 
 .cg-fila{display:flex;gap:14px}

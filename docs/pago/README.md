@@ -192,6 +192,12 @@ posible.
 
 ## Pendiente
 
+- **El correo electrónico debe ir en la página alojada.** FAC lo pidió el 11
+  de septiembre de 2026: la plantilla publicada no lo envía y las marcas lo
+  exigen. Hay que republicar la página con la plantilla que lo incluye, con el
+  campo y su validación obligatorios, y hacer una transacción de prueba antes
+  de que entreguen las credenciales de producción. Los pasos están en
+  [`ajuste-correo-obligatorio.md`](ajuste-correo-obligatorio.md).
 - FAC debe crear el `PageSet` / `PageName` en el Portal del Comercio. Sin
   eso el cliente nunca ve el formulario de tarjeta (`757 · Hosted page not
   found`), aunque el resto del recorrido ya quedó probado.
