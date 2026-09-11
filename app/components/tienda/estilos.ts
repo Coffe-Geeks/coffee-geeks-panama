@@ -86,6 +86,13 @@ export const estilosTienda = `
 
 .error{font-family:'Barlow',sans-serif;font-size:14px;line-height:1.5;color:#8a1220;background:#fdecee;border:1px solid #f3c9ce;border-radius:12px;padding:13px 16px;margin-bottom:18px}
 
+/* ── Aceptación de términos antes de pagar ── */
+.acepto{display:flex;gap:10px;align-items:flex-start;margin-top:18px;cursor:pointer}
+.acepto input{width:18px;height:18px;margin:2px 0 0;flex-shrink:0;accent-color:#38050e;cursor:pointer}
+.acepto span{font-family:'Barlow',sans-serif;font-size:13px;line-height:1.5;color:#38050e;opacity:.8}
+.acepto a{color:#38050e;text-decoration:underline;text-underline-offset:2px}
+.acepto a:hover{opacity:.7}
+
 /* ── Estados vacíos y mensajes ── */
 .vacio{text-align:center;padding:70px 20px;font-family:'Barlow',sans-serif;color:#38050e}
 .vacio-h{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;text-transform:uppercase;margin:0 0 8px}

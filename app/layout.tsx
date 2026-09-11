@@ -6,6 +6,7 @@ import "./globals.css";
 import { getSiteConfig } from "@/lib/siteConfig";
 import RegistroGate from "@/app/components/RegistroGate";
 import WhatsAppFlotante from "@/app/components/WhatsAppFlotante";
+import AvisoLegal from "@/app/components/AvisoLegal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,6 +90,7 @@ export default async function RootLayout({
       >
         {children}
         <WhatsAppFlotante numero={whatsapp} />
+        <AvisoLegal />
         {!yaRegistrado && <RegistroGate />}
         <Script id="matomo-tracker" strategy="afterInteractive">
           {`

@@ -34,6 +34,22 @@ export default async function AcademiaPage() {
         .bread-i span{color:#22191A;opacity:.6}
 
         .main-page{padding:44px 0 64px;background:#f4efe4;min-height:400px}
+
+        /* ── Alianza ITSE ── */
+        .alianza{background:#fff;border:1px solid #cddbf2;border-radius:24px;padding:clamp(26px,4vw,44px);margin-bottom:48px}
+        .alianza-logos{display:flex;align-items:center;justify-content:center;gap:clamp(22px,5vw,52px);flex-wrap:wrap;padding-bottom:28px;border-bottom:1px solid #f4efe4;margin-bottom:28px}
+        .alianza-logos img{height:clamp(52px,7vw,74px);width:auto;display:block}
+        .alianza-logos a{display:block;transition:opacity .2s,transform .2s}
+        .alianza-logos a:hover{opacity:.75;transform:translateY(-2px)}
+        .alianza-mas{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:#38050e;opacity:.28;line-height:1}
+        .alianza h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(25px,3.6vw,38px);font-weight:900;text-transform:uppercase;color:#38050e;line-height:1.02;margin:0 0 18px;text-wrap:balance;max-width:820px}
+        .alianza p{font-family:'Barlow',sans-serif;font-size:16px;line-height:1.72;color:#38050e;opacity:.85;margin:0 0 15px;max-width:820px}
+        .alianza p:last-of-type{margin-bottom:0}
+        .alianza .destacado{background:#f4efe4;border-left:3px solid #38050e;padding:18px 22px;margin:20px 0;font-size:16px;opacity:1}
+        .alianza .cierre{font-family:'Barlow Condensed',sans-serif;font-size:clamp(19px,2.6vw,25px);font-weight:900;text-transform:uppercase;color:#38050e;line-height:1.15;margin-top:26px;opacity:1;max-width:760px}
+        .alianza-cta{display:inline-flex;align-items:center;gap:9px;height:50px;padding:0 28px;margin-top:24px;background:#38050e;color:#fff;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;border-radius:50px;text-decoration:none;box-shadow:0 4px 14px rgba(56,5,14,.18);transition:background .2s,transform .2s}
+        .alianza-cta:hover{background:#24060c;transform:translateY(-2px)}
+        @media (prefers-reduced-motion: reduce){ .alianza-cta:hover,.alianza-logos a:hover{transform:none} }
         .wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 clamp(20px,5vw,60px)}
         .eyebrow-row{display:flex;align-items:center;gap:9px;margin-bottom:6px;justify-content:center}
         .eyebrow-line{width:24px;height:2px;background:#38050e;flex-shrink:0}
@@ -76,6 +92,80 @@ export default async function AcademiaPage() {
       {/* Content */}
       <main className="main-page">
         <div className="wrap">
+
+          {/* ── Alianza con el ITSE ── */}
+          <section className="alianza">
+            <div className="alianza-logos">
+              <a href="https://www.itse.ac.pa" target="_blank" rel="noopener noreferrer" aria-label="Instituto Técnico Superior Especializado">
+                <img src="/logo-itse.png" alt="Instituto Técnico Superior Especializado (ITSE)" />
+              </a>
+              <span className="alianza-mas" aria-hidden="true">+</span>
+              <img src="/logo-vino.png" alt="Coffee Geeks Panamá" />
+            </div>
+
+            <h2>
+              ITSE y Coffee Geeks Panamá unen esfuerzos para impulsar la formación y la innovación
+              en la industria del café
+            </h2>
+
+            <p>
+              El Instituto Técnico Superior Especializado (ITSE) y PAN-INTL. (Coffee Geeks Panamá)
+              firmaron un acuerdo de colaboración orientado a impulsar proyectos de formación,
+              innovación y desarrollo del talento humano vinculado a la industria del café y al
+              sector de servicios en Panamá.
+            </p>
+
+            <p className="destacado">
+              Como parte de esta alianza, ambas organizaciones establecen un marco de cooperación
+              para la planificación, diseño, validación técnica y eventual ejecución del proyecto{" "}
+              <strong>“Primera Academia de Baristas Certificados Internacionalmente en la
+              República de Panamá”</strong>, que tendrá como sede las instalaciones del ITSE.
+            </p>
+
+            <p>
+              Esta iniciativa busca crear un espacio de formación especializada que contribuya a
+              elevar las competencias profesionales de los baristas panameños, promoviendo
+              estándares internacionales de calidad, excelencia e innovación, y fortaleciendo la
+              conexión entre la educación, la industria y las nuevas oportunidades del mercado.
+            </p>
+
+            <p>
+              A través de este acuerdo, el ITSE y Coffee Geeks Panamá también promoverán iniciativas
+              académicas, intercambio de conocimientos y proyectos colaborativos que aporten al
+              desarrollo del talento humano y al fortalecimiento de toda la cadena de valor del
+              café: desde la producción y transformación hasta la experiencia en coffee shops,
+              hoteles, restaurantes y otros espacios de servicio.
+            </p>
+
+            <p>
+              Con esta alianza, el ITSE reafirma su compromiso con una educación integral y de
+              excelencia, orientada a formar profesionales con liderazgo, espíritu emprendedor y
+              competencias alineadas con las necesidades del mercado laboral y el desarrollo
+              sostenible.
+            </p>
+
+            <p>
+              Por su parte, Coffee Geeks Panamá fortalece su propósito de contribuir a la
+              profesionalización, promoción y crecimiento del ecosistema del café en Panamá,
+              conectando a productores, tostadores, baristas, coffee shops, restaurantes, hoteles y
+              demás actores de la industria.
+            </p>
+
+            <p className="cierre">
+              Una alianza que apuesta por el talento, la educación y el café panameño como motores
+              de innovación, oportunidades y desarrollo.
+            </p>
+
+            <a className="alianza-cta" href="https://www.itse.ac.pa" target="_blank" rel="noopener noreferrer">
+              Visitar el sitio del ITSE
+              <svg viewBox="0 0 24 24" style={{ width: 15, height: 15, stroke: "currentColor", fill: "none", strokeWidth: 2.2 }}>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+          </section>
+
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div className="eyebrow-row">

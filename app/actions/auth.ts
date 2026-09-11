@@ -1,7 +1,7 @@
 "use server";
 
 import dbConnect from "@/lib/mongodb";
-import User, { type UserRole } from "@/models/User";
+import User, { type UserRole, isUserRole } from "@/models/User";
 import bcrypt from "bcryptjs";
 import { createSession, deleteSession } from "@/lib/session";
 import { redirect } from "next/navigation";
@@ -106,23 +106,30 @@ export async function register(state: any, formData: FormData) {
   // Si no hay usuarios en la base de datos, el primero será admin por defecto 
   const userCount = await User.countDocuments();
   
+  /**
+   * El rol NO se toma del formulario salvo que lo pida un administrador.
+   *
+   * Hasta el 11 de septiembre de 2026 bastaba con enviar `role=cafeteria`
+   * en el registro para quedar inscrito como participante del concurso —y,
+   * por tanto, votable—. Así entraron once personas que no son
+   * establecimientos.
+   *
+   * Ser participante exige firmar un contrato, así que ese rol lo otorga un
+   * administrador desde /admin/users después de la firma. Quien se registre
+   * por su cuenta queda como usuario general, que es lo que necesita para
+   * comprar y votar.
+   */
   let role: UserRole = "user";
+
   if (userCount === 0) {
-     role = "admin";
-  } else {
-     if (selectedRole === "cafeteria" || selectedRole === "user") {
-        role = selectedRole;
-     } else if (
-        selectedRole === "admin" ||
-        selectedRole === "juez_local" ||
-        selectedRole === "juez_internacional"
-     ) {
-        const { getSession } = await import("@/lib/session");
-        const session = await getSession();
-        if (session && session.role === "admin") {
-           role = selectedRole;
-        }
-     }
+    // La primera cuenta de una instalación vacía es la del administrador
+    role = "admin";
+  } else if (selectedRole && selectedRole !== "user") {
+    const { getSession } = await import("@/lib/session");
+    const session = await getSession();
+    if (session && session.role === "admin" && isUserRole(selectedRole)) {
+      role = selectedRole;
+    }
   }
 
   const newUser = await User.create({

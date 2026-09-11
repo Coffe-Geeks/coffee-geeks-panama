@@ -233,6 +233,21 @@ export default function CheckoutClient({
                   <span>${total.toFixed(2)} USD</span>
                 </div>
 
+                <label className="acepto">
+                  <input type="checkbox" name="acepto" required />
+                  <span>
+                    He leído y acepto los{" "}
+                    <a href="/terminos" target="_blank" rel="noopener noreferrer">
+                      Términos y Condiciones
+                    </a>{" "}
+                    y la{" "}
+                    <a href="/privacidad" target="_blank" rel="noopener noreferrer">
+                      Política de Privacidad
+                    </a>
+                    .
+                  </span>
+                </label>
+
                 <button type="submit" className="btn-primario" disabled={enviando}>
                   {enviando ? "Registrando tu pedido…" : "Ir a pagar"}
                 </button>
