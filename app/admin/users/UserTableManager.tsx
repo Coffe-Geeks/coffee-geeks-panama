@@ -80,9 +80,15 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
     }
   }
 
-  async function handleToggleStatus(id: string) {
+  async function handleToggleStatus(u: any) {
+    const nombre = u.cafeteriaName || `${u.name} ${u.lastName || ""}`.trim();
+    const aviso = u.isActive
+      ? `¿Desactivar a "${nombre}"?\n\nDejará de aparecer en la página pública y de ser votable.`
+      : `¿Activar a "${nombre}"?\n\nVolverá a aparecer en la página pública y será votable.`;
+    if (!confirm(aviso)) return;
+
     setLoading(true);
-    const res = await toggleCafeteriaStatus(id);
+    const res = await toggleCafeteriaStatus(u.id);
     if (res?.error) {
       alert("Error: " + res.error);
       setLoading(false);
@@ -218,13 +224,25 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
                 </td>
                 <td className="px-6 py-5 text-center">
                   {u.role === 'cafeteria' ? (
-                    <button 
-                      onClick={() => handleToggleStatus(u.id)}
-                      disabled={loading || isPending}
-                      className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 shadow-md border ${u.isActive ? 'bg-green-500/10 text-green-400 border-green-500/50 hover:bg-green-500/20' : 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'} ${(loading || isPending) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:-translate-y-0.5'}`}
-                    >
-                      {u.isActive ? '✅ Activa' : '❌ Inactiva'}
-                    </button>
+                    /**
+                     * El estado se muestra y la acción se pulsa, por separado.
+                     * Antes eran un mismo botón rotulado con el estado: quien
+                     * veía "❌ Inactiva" y hacía clic para desactivar la
+                     * estaba activando. Así volvieron a la página pública
+                     * fichas que ya se habían retirado.
+                     */
+                    <div className="flex flex-col items-center gap-1.5">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase border ${u.isActive ? 'bg-green-500/10 text-green-400 border-green-500/50' : 'bg-red-500/10 text-red-400 border-red-500/30'}`}>
+                        {u.isActive ? '✅ Activa' : '❌ Inactiva'}
+                      </span>
+                      <button
+                        onClick={() => handleToggleStatus(u)}
+                        disabled={loading || isPending}
+                        className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase border border-[#cddbf2]/25 text-[#cddbf2]/80 hover:bg-[#cddbf2]/10 hover:text-[#cddbf2] transition-colors ${(loading || isPending) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      >
+                        {u.isActive ? 'Desactivar' : 'Activar'}
+                      </button>
+                    </div>
                   ) : (
                     <span className="text-neutral-500">-</span>
                   )}
