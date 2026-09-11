@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
-import { deleteUser, updateUserAdmin, createUserByAdmin } from "@/app/actions/user";
+import { deleteUser, updateUserAdmin, createUserByAdmin, cambiarRolUsuario } from "@/app/actions/user";
 import { toggleCafeteriaStatus } from "@/app/actions/cafeteria";
 import { register } from "@/app/actions/auth";
 import AdminMenuModal from "./AdminMenuModal";
@@ -54,6 +54,30 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
     setLoading(true);
     await deleteUser(id);
     setLoading(false);
+  }
+
+  /**
+   * Mueve una cuenta entre participante y usuario general. No borra nada: los
+   * datos de la ficha quedan guardados por si hay que devolverla.
+   */
+  async function handleCambiarRol(u: any, nuevoRol: string) {
+    const aviso =
+      nuevoRol === "user"
+        ? `¿Pasar a "${u.cafeteriaName || `${u.name} ${u.lastName || ""}`.trim()}" a usuario general?\n\nDejará de aparecer entre los participantes y de ser votable. Conserva su cuenta, su ficha y podrá votar.`
+        : `¿Dar el rol de participante a "${`${u.name} ${u.lastName || ""}`.trim()}"?\n\nAparecerá en la página pública y será votable. Hazlo solo si ya firmó el contrato.`;
+    if (!confirm(aviso)) return;
+
+    setLoading(true);
+    const res = await cambiarRolUsuario(u.id, nuevoRol);
+    if (res?.error) {
+      alert("Error: " + res.error);
+      setLoading(false);
+    } else {
+      startTransition(() => {
+        router.refresh();
+        setLoading(false);
+      });
+    }
   }
 
   async function handleToggleStatus(id: string) {
@@ -227,7 +251,15 @@ export default function UserTableManager({ initialUsers, maxGalleryImages }: { i
                              <button onClick={() => { setSelectedQrParticipant(u); setQrModalMode("single"); setOpenDropdown(null); }} className="px-4 py-2.5 text-green-400 hover:bg-white/5 text-left text-sm transition-colors border-b border-white/5" disabled={loading}>
                                📱 Ver / Imprimir QR
                              </button>
+                             <button onClick={() => { handleCambiarRol(u, "user"); setOpenDropdown(null); }} className="px-4 py-2.5 text-yellow-400 hover:bg-white/5 text-left text-sm transition-colors border-b border-white/5" disabled={loading}>
+                               ↩️ Pasar a usuario
+                             </button>
                            </>
+                         )}
+                         {u.role === "user" && (
+                           <button onClick={() => { handleCambiarRol(u, "cafeteria"); setOpenDropdown(null); }} className="px-4 py-2.5 text-orange-300 hover:bg-white/5 text-left text-sm transition-colors border-b border-white/5" disabled={loading}>
+                             ⭐ Hacer participante
+                           </button>
                          )}
                          
                          <button onClick={() => { handleDelete(u.id); setOpenDropdown(null); }} className="px-4 py-2.5 text-red-400 hover:bg-red-500/10 text-left text-sm transition-colors" disabled={loading}>
