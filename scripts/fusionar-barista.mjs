@@ -34,19 +34,23 @@ try {
   const users = client.db().collection("users");
   const todos = await users.find({}).toArray();
 
+  // Una cafetería se muestra por `cafeteriaName`, no por nombre y apellido
+  // de su dueño. Buscar solo en name/lastName la dejaba invisible.
   const buscar = (termino) => {
     const t = norm(termino);
     return todos.filter((u) => {
-      const completo = norm(`${u.name || ""} ${u.lastName || ""}`);
+      const completo = norm(`${u.name || ""} ${u.lastName || ""} ${u.cafeteriaName || ""}`);
       return t.split(/\s+/).every((p) => completo.includes(p));
     });
   };
+
+  const rotulo = (u) => u.cafeteriaName || `${u.name || ""} ${u.lastName || ""}`.trim();
 
   const pers = buscar(persona);
   const cafs = buscar(cafeteria);
 
   const describir = (u) =>
-    `${`${u.name || ""} ${u.lastName || ""}`.trim()}  <${u.email}>  rol: ${u.role}  ` +
+    `${rotulo(u)}  <${u.email}>  rol: ${u.role}  ` +
     `${u.isActive === false ? "inactivo" : "ACTIVO"}  baristas: ${(u.baristas || []).length}` +
     `${u.coverImage ? "  con portada" : "  sin portada"}`;
 
@@ -66,7 +70,7 @@ try {
   const yaEsta = (c.baristas || []).some((b) => norm(b.fullName) === norm(nombrePersona));
 
   console.log("\nQUÉ SE HARÍA");
-  console.log(`  1. Agregar "${nombrePersona}" como barista destacado de "${c.name}"` +
+  console.log(`  1. Agregar "${nombrePersona}" como barista destacado de "${rotulo(c)}"` +
               (yaEsta ? "  → YA ESTÁ, se omite" : ""));
   console.log(`     foto: ${p.coverImage || p.photo || "(no tiene, queda vacía)"}`);
   console.log(`  2. Cambiar el rol de ${p.email}: ${p.role} → user   (conserva su cuenta y contraseña)`);
