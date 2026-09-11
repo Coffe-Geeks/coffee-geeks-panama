@@ -60,6 +60,38 @@ El pedido guarda la respuesta cruda de la pasarela en
 `payment.respuestaCruda`, que es lo primero que pide FAC cuando hay que
 sustentar algo.
 
+## Cómo se resolvió, y la prueba
+
+**El problema no estaba en la página alojada.** La especificación de PowerTranz
+define el request de `sale` con un objeto `BillingAddress` obligatorio que
+lleva `EmailAddress` y `PhoneNumber`, y nosotros nunca lo enviábamos. El
+correo no viajaba porque el request no lo llevaba.
+
+Descartada la página alojada por dos vías: la plantilla asignada a nuestro
+PageSet solo ofrece nueve tokens —`@FormStart@`, `@Invalid@`,
+`@CardHolderName@`, `@CardNo@`, `@CardExpDate@`, `@CardCVV2@`, `@Amount@`,
+`@Submit@`, `@FormEnd@`— ninguno de correo, y el editor del Portal elimina
+cualquier `<input>` escrito a mano.
+
+Las tres transacciones del 11 de septiembre de 2026, por el flujo completo de
+la tienda en producción, con la pasarela devolviendo el correo:
+
+| Marca | Pedido | Transaction Id | 3DS | ECI | Protocolo |
+|---|---|---|---|---|---|
+| Visa | `CG-260911-0005` | `085ecbae-24e3-4e85-ab72-511d84863199` | Y | 05 | 2.1.0 |
+| MasterCard | `CG-260911-0006` | `966ff868-fe60-4486-88a3-21b07e7ef609` | Y | 02 | 2.1.0 |
+| Amex | `CG-260911-0007` | `c63ec786-59ef-4bef-a264-e652fce7d39e` | Y | 05 | 2.1.0 |
+
+Las tres con `3D0 · 3D-Secure complete` y el `BillingAddress` de vuelta en la
+respuesta:
+
+```json
+{"FirstName":"Tester","LastName":"Visa","CountryCode":"591",
+ "EmailAddress":"info@ewebpanama.com","PhoneNumber":"50767326715"}
+```
+
+Esa devolución es la evidencia de que el dato llegó.
+
 ## Qué responderle a José
 
 Borrador, a completar con los datos de la prueba:
