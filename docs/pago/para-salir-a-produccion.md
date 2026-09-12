@@ -11,14 +11,22 @@ con tarjetas reales**, antes del visto bueno final de BAC.
 | Variable | Valor |
 |---|---|
 | `POWERTRANZ_BASE_URL` | `https://gateway.ptranz.com/api/spi` |
-| `POWERTRANZ_ID` | el de producción, distinto al de staging |
-| `POWERTRANZ_PASSWORD` | la de producción |
+| `POWERTRANZ_ID` | **otro número**, no el de staging |
+| `POWERTRANZ_PASSWORD` | **otra cadena**, no la de staging |
 | `POWERTRANZ_PAGE_SET` | `CoffeeGeeks` — **recreado en el portal de producción** |
 | `POWERTRANZ_PAGE_NAME` | `Checkout` |
 | `POWERTRANZ_MODO_PRUEBA` | **no debe existir** |
 
 Las credenciales se cargan en Vercel marcadas como sensibles. **Nunca al
 repositorio**, ni siquiera en `.env.example`.
+
+**Las credenciales de producción no son las de staging.** El `Ptz Id` de
+staging es el que aparece en sus Reportes de Transacciones; el de producción
+es otro número y otra contraseña, en el correo del 11 de septiembre de 2026.
+Las tres variables se cambian juntas: con la URL de producción y las
+credenciales de staging la pasarela responde 401 y ninguna transacción se
+abre; al revés, los pagos siguen yendo a staging con credenciales que allí no
+existen.
 
 ---
 
