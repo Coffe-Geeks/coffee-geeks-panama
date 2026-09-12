@@ -93,6 +93,15 @@ export default async function RootLayout({
    */
   const whatsapp = "+507 6732-6715";
 
+  /**
+   * El entorno de pruebas no debe medirse: su tráfico es nuestro y
+   * distorsionaría las métricas del sitio real. Se detecta igual que en
+   * `generateMetadata` y en `robots.ts`, por el host tras el proxy.
+   */
+  const cabeceras = await headers();
+  const anfitrion = cabeceras.get("x-forwarded-host") || cabeceras.get("host") || "";
+  const esPruebas = anfitrion.endsWith(".vercel.app");
+
   const cookieStore = await cookies();
   const yaRegistrado =
     !GATE_ACTIVO || cookieStore.has("cg_registro") || cookieStore.has("session");
@@ -106,6 +115,22 @@ export default async function RootLayout({
         <WhatsAppFlotante numero={whatsapp} />
         <AvisoLegal />
         {!yaRegistrado && <RegistroGate />}
+        {!esPruebas && (
+          <>
+            <Script
+              src="https://www.googletagmanager.com/gtag/js?id=G-HCWYYJFS4L"
+              strategy="afterInteractive"
+            />
+            <Script id="ga4" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-HCWYYJFS4L');
+              `}
+            </Script>
+          </>
+        )}
         <Script id="matomo-tracker" strategy="afterInteractive">
           {`
             var _paq = window._paq = window._paq || [];

@@ -25,5 +25,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       // Zonas privadas o sin valor de búsqueda
       disallow: ["/admin/", "/perfil", "/api/", "/datos-personales"],
     },
+    sitemap: `https://${host}/sitemap.xml`,
   };
 }
