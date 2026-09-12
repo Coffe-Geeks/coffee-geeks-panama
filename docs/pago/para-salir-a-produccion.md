@@ -1,78 +1,107 @@
-# Qué falta para cobrar en producción
+# Salida a producción — FAC entregó las credenciales
 
-Estado al 8 de septiembre de 2026. La integración está completa y probada
-contra staging: el cobro se ejecutó con `Approved: true`, `Iso 00`,
-autorización `123456`, RRN `625021379114`.
-
----
-
-## Bloqueos que dependen de FAC
-
-**1. 3DS no se está ejecutando.** Todas las transacciones devuelven
-`3D1 · 3DS not supported`, en navegador real y con las dos marcas
-habilitadas, incluso con las tarjetas que su anexo marca como *Challenge*.
-Sin 3DS el comercio no conserva la protección ante contracargos: cada
-disputa la responde Coffee Geeks. **Este es el bloqueo serio**, no un
-trámite.
-
-**2. Antifraude sin aprovisionar.** Con `fraudCheck: true` responde
-`FC3 · 1011 Invalid Provider` y ninguna transacción llega a abrirse.
-
-**3. Faltan las tarjetas de prueba de American Express.** La cuenta está
-habilitada para Amex y FAC exige probar aprobadas y denegadas **de cada
-marca** antes de habilitar producción. Sin esas tarjetas la batería no se
-puede cerrar.
-
-**4. El visto bueno de FAC.** Su proceso es: se completan las pruebas en
-staging → FAC las valida → habilita el ambiente de producción → avisa a BAC
-Credomatic para la aprobación final.
-
-**5. Credenciales y página alojada de producción.** Son distintas de las de
-staging. El `PageSet` hay que volver a crearlo en el portal de producción,
-con los mismos nombres para que solo cambie la URL base.
+Estado al 11 de septiembre de 2026. FAC validó las pruebas de staging y envió
+las credenciales del ambiente real. Lo que sigue son pruebas **en producción,
+con tarjetas reales**, antes del visto bueno final de BAC.
 
 ---
 
-## Lo que nos toca a nosotros
+## Lo que cambia en el entorno
 
-**6. Apuntar la pasarela al ambiente real.** Hoy `POWERTRANZ_BASE_URL`
-apunta a `https://staging.ptranz.com/api/spi`. Hay que cambiarlo por el de
-producción **solo cuando FAC lo habilite**.
+| Variable | Valor |
+|---|---|
+| `POWERTRANZ_BASE_URL` | `https://gateway.ptranz.com/api/spi` |
+| `POWERTRANZ_ID` | el de producción, distinto al de staging |
+| `POWERTRANZ_PASSWORD` | la de producción |
+| `POWERTRANZ_PAGE_SET` | `CoffeeGeeks` — **recreado en el portal de producción** |
+| `POWERTRANZ_PAGE_NAME` | `Checkout` |
+| `POWERTRANZ_MODO_PRUEBA` | **no debe existir** |
 
-**7. Verificar que producción no tenga configuración de pruebas.**
-`POWERTRANZ_MODO_PRUEBA` no debe existir ahí — permite simular un cobro
-aprobado sin pasarela.
+Las credenciales se cargan en Vercel marcadas como sensibles. **Nunca al
+repositorio**, ni siquiera en `.env.example`.
 
-**8. Mover el logo del formulario alojado.** Hoy apunta a
-`pruebas-coffee-geeks.vercel.app`. En producción debe ser
-`coffeegeekspanama.com/logo-vino.png`, o mejor, subirlo por *Upload
-Resource* del portal para no depender de ningún dominio nuestro.
+---
 
-**9. Dos decisiones de negocio**, hoy apagadas porque trasladan el riesgo al
-comercio:
+## La trampa que va a aparecer
 
-- `POWERTRANZ_ACEPTAR_3DS_U` — cobrar cuando 3DS responde `U` (falla
-  técnica). FAC lo permite, pero advierte que se pierde la protección y que
-  debe revisarse con el adquirente.
+**El portal de producción es otro portal.** La página alojada que se publicó
+—plantilla Basic, con «Make email mandatory» marcado— vive en el portal de
+staging y **no existe** del otro lado. Si solo se cambian las credenciales y
+la URL, la pasarela responderá `757 · Hosted page not found`, igual que el 7
+de septiembre.
+
+Hay que volver a crearla en el portal de producción:
+
+1. Page Set `CoffeeGeeks`, página `Checkout` — los mismos nombres, para que
+   las variables no cambien.
+2. Plantilla **Basic**, no Advanced: es la única que trae el campo de correo.
+3. Marcar **«Make email mandatory»**. Sin eso la página declara
+   `data-email-required="false"` y vuelve el reclamo de las marcas.
+4. Copiar los colores y el bloque de Custom Styles desde el portal de
+   staging.
+
+---
+
+## Las pruebas que exige FAC
+
+- **Tarjetas reales.** FAC no entrega tarjetas de prueba para producción, y
+  las de staging no sirven.
+- **Montos pequeños**, US$1.00, al menos una transacción por marca: Visa,
+  MasterCard y American Express.
+- **En horario hábil de FAC**, lunes a viernes de 8:30 a 17:30 hora del
+  Atlántico, para tener a su personal disponible si algo falla.
+- **Verificar en el Reporte de Transacciones** del Portal del Comercio que
+  las transacciones quedaron **capturadas**: la captura es lo que hace que
+  BAC acredite la cuenta. La liquidación toma de dos a tres días hábiles.
+
+Nuestro módulo usa el endpoint `sale`, que cobra y captura en un solo paso,
+así que el requisito de captura se cumple por diseño.
+
+**El producto cuesta US$20.** Para probar con US$1.00 hay que crear un
+producto de prueba con ese precio, o bajar el del pasaporte mientras dure la
+prueba y devolverlo después. Son cobros reales: alguien va a pagarlos.
+
+---
+
+## Acceso al Portal del Comercio
+
+Hay que enviar a FAC **dos cuentas de correo** que tendrán acceso; ellos
+responden con un enlace para crear la contraseña. La dirección que indican es
+`bacsopore@fac.bm` —parece faltarle una `t`, conviene confirmarla antes de
+escribir, o usar `BACSoporte@fac.bm`.
+
+Hay además un video de capacitación del portal:
+`https://www.screencast.com/t/mC4dlK3O`, contraseña `FACTraining23`.
+
+---
+
+## Decisiones de negocio, que siguen apagadas
+
+FAC permite completar el pago con `AuthenticationStatus` en `Y`, `A` o `U`, y
+lo prohíbe con `N` o `R`. El campo `AuthenticationStatus` **tiene prioridad
+sobre el ECI**, que es como está implementado.
+
+- `POWERTRANZ_ACEPTAR_3DS_U` — cobrar cuando 3DS responde `U`. FAC lo
+  permite, pero advierte por escrito que la transacción **no queda protegida**
+  ante contracargos y que debe revisarse con el banco. Apagada.
 - `POWERTRANZ_ACEPTAR_SIN_3DS` — cobrar cuando la tarjeta no admite 3DS.
-
-**Mientras 3DS no funcione, con las dos apagadas la tienda no puede cobrar
-nada.** Encenderlas sería salir a producción sin protección ante
-contracargos. Por eso el punto 1 es el que de verdad manda.
+  Apagada, por lo mismo.
 
 ---
 
-## Riesgo abierto hoy
+## Riesgo que conviene mirar
 
-La tienda ya está publicada en `coffeegeekspanama.com` con el módulo de
-pago. Conviene confirmar en `/admin/pedidos` de producción que el recuadro
-del ambiente **no** diga *"pruebas (staging)"*: si lo dice, un cliente real
-que compre sería enviado a la pasarela de pruebas de BAC.
+`lib/pagos/powertranz.ts` toma `https://staging.ptranz.com/api/spi` por
+omisión si falta `POWERTRANZ_BASE_URL`. Después del paso a producción esa
+omisión se vuelve peligrosa: un despliegue sin la variable mandaría clientes
+reales a la pasarela de pruebas sin avisar. El recuadro de `/admin/pedidos`
+lo delata —debe decir **«Ambiente: PRODUCCIÓN»**, no «pruebas (staging)»—,
+pero conviene revisarlo después de cada despliegue.
 
 ---
 
-## Calendario de FAC
+## Calendario
 
-No hacen pasos a producción los viernes, fines de semana ni festivos de
-Bermuda, y las pruebas en producción son solo de lunes a viernes de 8:30 a
-17:30 hora del Atlántico. Conviene no agendar la salida cerca de un viernes.
+FAC no traslada comercios a producción los viernes, sábados, domingos ni
+festivos de Bermuda. Las pruebas sí se pueden hacer un viernes en horario
+hábil; el paso final hay que agendarlo de lunes a jueves.
