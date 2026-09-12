@@ -60,6 +60,70 @@ El pedido guarda la respuesta cruda de la pasarela en
 `payment.respuestaCruda`, que es lo primero que pide FAC cuando hay que
 sustentar algo.
 
+## Cómo se resolvió, y la prueba
+
+**El problema no estaba en la página alojada.** La especificación de PowerTranz
+define el request de `sale` con un objeto `BillingAddress` obligatorio que
+lleva `EmailAddress` y `PhoneNumber`, y nosotros nunca lo enviábamos. El
+correo no viajaba porque el request no lo llevaba.
+
+Descartada la página alojada por dos vías: la plantilla asignada a nuestro
+PageSet solo ofrece nueve tokens —`@FormStart@`, `@Invalid@`,
+`@CardHolderName@`, `@CardNo@`, `@CardExpDate@`, `@CardCVV2@`, `@Amount@`,
+`@Submit@`, `@FormEnd@`— ninguno de correo, y el editor del Portal elimina
+cualquier `<input>` escrito a mano.
+
+Las tres transacciones del 11 de septiembre de 2026, por el flujo completo de
+la tienda en producción, con la pasarela devolviendo el correo:
+
+| Marca | Pedido | Transaction Id | 3DS | ECI | Protocolo |
+|---|---|---|---|---|---|
+| Visa | `CG-260911-0005` | `085ecbae-24e3-4e85-ab72-511d84863199` | Y | 05 | 2.1.0 |
+| MasterCard | `CG-260911-0006` | `966ff868-fe60-4486-88a3-21b07e7ef609` | Y | 02 | 2.1.0 |
+| Amex | `CG-260911-0007` | `c63ec786-59ef-4bef-a264-e652fce7d39e` | Y | 05 | 2.1.0 |
+
+Las tres con `3D0 · 3D-Secure complete` y el `BillingAddress` de vuelta en la
+respuesta:
+
+```json
+{"FirstName":"Tester","LastName":"Visa","CountryCode":"591",
+ "EmailAddress":"info@ewebpanama.com","PhoneNumber":"50767326715"}
+```
+
+Esa devolución es la evidencia de que el dato llegó.
+
+## La plantilla Basic, que sí trae el campo
+
+El Portal ofrece dos plantillas y la diferencia estaba ahí: **Advanced** es el
+editor de HTML con nueve tokens y ningún campo de correo; **Basic** es el
+formulario propio de PowerTranz, que trae `BillToEmail` incorporado y una
+casilla **«Make email mandatory»** en Field Requirements.
+
+Sin marcar esa casilla la página declara `data-email-required="false"` y el
+campo existe pero no obliga. Marcada, queda en `true`.
+
+Basic conserva personalización: selectores de color para fondo, título,
+subtítulo, etiquetas y botón, más un cuadro de Custom Styles. Usa Tailwind por
+CDN, así que el CSS propio necesita `!important` en lo que compita. Los
+ganchos son `.titleColor`, `.subtitleColor`, `.labelColor`, `.backgroundColor`
+y `#BtnSubmit`. El logo entra por `h3.titleColor::before`, porque la plantilla
+no tiene dónde colocarlo.
+
+Las tres transacciones con la página nueva, el 11 de septiembre de 2026:
+
+| Marca | Pedido | Transaction Id | 3DS | ECI |
+|---|---|---|---|---|
+| Visa | `CG-260911-0011` | `6b008cdc-4dad-434b-b9f6-d9014ab81884` | Y | 05 |
+| MasterCard | `CG-260911-0012` | `642b548e-c2f2-4fc9-af31-1d6058f322aa` | Y | 02 |
+| Amex | `CG-260911-0013` | `6c415e21-8469-4cdf-9e49-6fce6e8c5198` | Y | 05 |
+
+Con el correo capturado en la página alojada llegando de vuelta en la
+respuesta, por encima del que enviamos nosotros:
+
+```json
+"BillingAddress": {"EmailAddress": "info@ewebpanama.com"}
+```
+
 ## Qué responderle a José
 
 Borrador, a completar con los datos de la prueba:

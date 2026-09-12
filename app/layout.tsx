@@ -42,6 +42,20 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: {
       icon: "/fav.png",
     },
+    /**
+     * Verificación de propiedad para Google Search Console.
+     *
+     * Es el mismo token que Google ofrece como registro TXT de DNS; aquí va
+     * como etiqueta en el <head>, que es la vía que controlamos nosotros sin
+     * depender de quien administre el dominio. El token no es secreto: solo
+     * sirve para demostrar control sobre coffeegeekspanama.com.
+     *
+     * No quitarla después de verificar: Google revisa la señal cada tanto y
+     * retira la propiedad si desaparece.
+     */
+    verification: {
+      google: "WUriNR3lmL7-mP4FIU7nI7s6F-GOP2BQKqIEnmvLO4A",
+    },
     openGraph: {
       title,
       description,
