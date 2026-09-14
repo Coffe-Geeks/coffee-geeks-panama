@@ -13,6 +13,7 @@ tabla dice dónde va cada una, para no interpretar.
 | Pregunta | Campo |
 |---|---|
 | Nombre del establecimiento | `cafeteriaName` |
+| Correo de contacto | `email` — el de su cuenta en el sitio |
 | Tipo de negocio | `businessType` — Cafetería `coffee`, Hotel `hotel`, Restaurante `rest` |
 | Frase corta que los describa | `tagline` |
 | Años de existencia | `yearsOfExistence` |
@@ -112,6 +113,18 @@ desde el panel.
 
 **Sin `coverImage` la ficha sale con una foto de archivo de Unsplash**, que es
 lo que hoy afea el listado público.
+
+## Dos trampas del workspace
+
+**No usar «Recopilar direcciones de correo» de Google.** En un dominio de
+Workspace eso obliga a iniciar sesión, y el formulario existe justo para
+quitarle fricción a quien no quiere pelear con la web. Por eso el correo va
+como pregunta normal.
+
+**Revisar que no quede restringido al dominio.** Google Workspace marca por
+omisión «Restringir a usuarios de Coffee Geeks»: con eso encendido ninguna
+cafetería externa puede abrir el formulario, y lo que ven es un mensaje de
+permisos.
 
 ## Lo que el formulario no pregunta a propósito
 

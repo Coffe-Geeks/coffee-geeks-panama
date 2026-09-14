@@ -23,13 +23,27 @@ function crearFormulario() {
     'Si algo no aplica a tu negocio, déjalo en blanco.'
   );
   form.setProgressBar(true);
-  form.setCollectEmail(true);
   form.setAllowResponseEdits(true);
+
+  /**
+   * El correo se pide como pregunta normal y NO con `setCollectEmail`.
+   *
+   * En un dominio de Workspace, recolectar el correo automáticamente obliga a
+   * iniciar sesión con Google, y el formulario existe justo para quitarle
+   * fricción a quien no quiere pelear con la web. Como pregunta, cualquiera
+   * responde.
+   *
+   * Al publicarlo hay que revisar además que NO quede marcado «Restringir a
+   * usuarios de Coffee Geeks»: con eso encendido, ninguna cafetería externa
+   * puede abrirlo.
+   */
 
   // ─────────────────────────── 1. El establecimiento
   seccion(form, 'El establecimiento', 'Lo básico: cómo se llama y qué es.');
 
   texto(form, 'Nombre del establecimiento', 'Tal como quieres que aparezca en la página.', true);
+  texto(form, 'Correo de contacto',
+        'A este correo les escribimos si falta algo. Es el mismo con el que entran al sitio.', true);
   opcion(form, 'Tipo de negocio', ['Cafetería', 'Hotel', 'Restaurante'], true);
   texto(form, 'Frase corta que los describa',
         'Una línea, la que va bajo el nombre. Ej: "Tostaduría y barra de especialidad en Casco Viejo".', false);
