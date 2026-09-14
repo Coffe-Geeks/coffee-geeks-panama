@@ -5,8 +5,36 @@ ficha en el sitio. Se crea con [`crear-formulario.gs`](crear-formulario.gs):
 se pega en `script.google.com`, se ejecuta `crearFormulario` y queda armado
 con sus secciones y validaciones.
 
-Las respuestas se trasladan a mano desde `/admin/users` → **Detallado**. Esta
-tabla dice dónde va cada una, para no interpretar.
+**Las respuestas se cargan solas.** Un disparador de Apps Script entrega cada
+envío a `POST /api/formulario/participante`, que llena la ficha. La tabla de
+abajo es el mapa que usa esa ruta, y sirve además para revisar a mano lo que
+llegó.
+
+### Qué hace la carga automática
+
+- **Si el correo ya tiene cuenta**, actualiza su ficha. No toca el rol ni el
+  estado: un formulario público no puede reactivar ni degradar una cuenta.
+- **Si no existe**, crea la cuenta con rol `user` e `isActive: false` — no
+  aparece en la página pública ni es votable. La contraseña es una cadena al
+  azar que nadie conoce; la persona entra por «recuperar contraseña», que
+  verifica el correo. Así un envío no crea un acceso.
+- **Avisa por correo a `ADMIN_EMAIL`** con el enlace de las fotos, que no se
+  guarda en la ficha.
+
+El rol de participante lo sigue otorgando un administrador tras la firma del
+contrato. El formulario acerca los datos; publicar sigue siendo decisión de
+una persona.
+
+### Lo que hay que configurar
+
+| Dónde | Qué |
+|---|---|
+| Vercel, entorno Production | `FORMULARIO_TOKEN` |
+| Apps Script, constante `TOKEN` | el mismo valor |
+
+Sin la variable, la ruta responde `503` y se niega a funcionar en vez de
+quedar abierta. Sin el token en el script, el formulario sigue recogiendo
+respuestas en la hoja pero no las manda.
 
 ## El establecimiento
 

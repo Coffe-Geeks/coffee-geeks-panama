@@ -9,9 +9,21 @@
  *      edición y la que se le manda a las cafeterías.
  *
  * Las preguntas están en el mismo orden y con los mismos nombres que la ficha
- * del sitio, para que trasladar las respuestas sea copiar y pegar sin
- * interpretar. El mapa de cada pregunta a su campo está en `campos.md`.
+ * del sitio. El mapa de cada pregunta a su campo está en `campos.md`.
+ *
+ * ENVÍO AUTOMÁTICO A LA FICHA
+ * Cada respuesta se manda sola al sitio y llena la ficha, sin que nadie
+ * transcriba nada. Para que funcione hay que pegar el token en la constante
+ * TOKEN de aquí abajo; es el mismo valor que la variable FORMULARIO_TOKEN del
+ * entorno. Sin él el formulario sigue funcionando, pero las respuestas se
+ * quedan solo en la hoja de cálculo.
  */
+
+/** Dónde entrega las respuestas. */
+var ENDPOINT = 'https://coffeegeekspanama.com/api/formulario/participante';
+
+/** El secreto compartido con el sitio. Pegar aquí el mismo FORMULARIO_TOKEN. */
+var TOKEN = '';
 
 function crearFormulario() {
   var form = FormApp.create('Coffee Geeks Panamá · Ficha del participante');
@@ -142,9 +154,69 @@ function crearFormulario() {
     'y una de cada bebida con la que compiten. Cuanto mejor la luz, mejor queda la página.',
     false);
 
+  // El disparador que manda cada respuesta al sitio
+  ScriptApp.newTrigger('alEnviarRespuesta').forForm(form).onFormSubmit().create();
+
   Logger.log('Formulario creado.');
   Logger.log('Para editarlo:  ' + form.getEditUrl());
   Logger.log('Para enviarlo:  ' + form.getPublishedUrl());
+  if (!TOKEN) {
+    Logger.log('AVISO: falta pegar el TOKEN. Las respuestas no llegarán a la ficha.');
+  }
+}
+
+/**
+ * Se ejecuta con cada envío y entrega las respuestas al sitio.
+ *
+ * Manda un objeto con el texto de la pregunta como clave, que es lo que el
+ * endpoint espera: así cambiar el orden de las preguntas no rompe nada, y
+ * agregar una nueva solo exige mapearla del otro lado.
+ *
+ * Nunca lanza: si el sitio no responde, el error queda en el registro y la
+ * respuesta sigue guardada en la hoja de cálculo. Perder la respuesta de una
+ * cafetería porque el servidor estaba caído sería el peor resultado posible.
+ */
+function alEnviarRespuesta(e) {
+  if (!TOKEN) {
+    Logger.log('Sin TOKEN: la respuesta no se envió al sitio.');
+    return;
+  }
+
+  var datos = {};
+  var respuestas = e.response.getItemResponses();
+  for (var i = 0; i < respuestas.length; i++) {
+    var titulo = respuestas[i].getItem().getTitle();
+    var valor = respuestas[i].getResponse();
+    if (valor !== null && valor !== '') datos[titulo] = valor;
+  }
+
+  try {
+    var r = UrlFetchApp.fetch(ENDPOINT, {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'x-cg-token': TOKEN },
+      payload: JSON.stringify(datos),
+      muteHttpExceptions: true,
+    });
+    Logger.log('Sitio respondió ' + r.getResponseCode() + ': ' + r.getContentText().slice(0, 300));
+  } catch (err) {
+    Logger.log('No se pudo entregar la respuesta al sitio: ' + err);
+  }
+}
+
+/**
+ * Para instalar el disparador en un formulario que ya existe, sin volver a
+ * crearlo. Se pega la dirección de edición del formulario y se ejecuta.
+ */
+function instalarDisparador() {
+  var URL_DEL_FORMULARIO = '';  // pegar aquí la dirección de edición
+  if (!URL_DEL_FORMULARIO) {
+    Logger.log('Falta pegar la dirección de edición del formulario.');
+    return;
+  }
+  var form = FormApp.openByUrl(URL_DEL_FORMULARIO);
+  ScriptApp.newTrigger('alEnviarRespuesta').forForm(form).onFormSubmit().create();
+  Logger.log('Disparador instalado.');
 }
 
 // ─────────────────────────── ayudantes
