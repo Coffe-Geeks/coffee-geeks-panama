@@ -44,6 +44,7 @@ const SOCIAL_ICONS = [
 
 import { getSiteConfig } from "@/lib/siteConfig";
 import { enlaceExterno } from "@/lib/utils";
+import BotonAppStore from "@/app/components/BotonAppStore";
 
 export default async function Footer() {
   const config = await getSiteConfig();
@@ -66,6 +67,9 @@ export default async function Footer() {
         }
         .ftc { display: flex; align-items: center; gap: 7px; font-size: 13px; color: rgba(255,255,255,.35); font-family: 'Barlow', sans-serif; }
         .ft-soc { display: flex; gap: 7px; flex-shrink: 0; }
+        .ft-app { display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+        .ft-app-lbl { font-family:'Barlow',sans-serif; font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(196,212,232,.55); }
+
         .fts {
           width: 30px; height: 30px; border-radius: 50px;
           border: 1px solid rgba(255,255,255,.1);
@@ -178,6 +182,11 @@ export default async function Footer() {
                   {config.address}
                 </div>
               )}
+            </div>
+
+            <div className="ft-app">
+              <div className="ft-app-lbl">Coffee Geeks Passport</div>
+              <BotonAppStore variante="claro" tamano="chico" />
             </div>
 
             <div className="ft-soc">

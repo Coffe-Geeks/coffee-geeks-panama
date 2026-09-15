@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navbar from "@/app/components/layout/Navbar";
 import Footer from "@/app/components/layout/Footer";
+import BannerApp from "@/app/components/BannerApp";
 
 export default async function PasaportePage() {
   return (
@@ -79,11 +80,14 @@ export default async function PasaportePage() {
               <div className="eyebrow-line" />
             </div>
             <h2 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "clamp(28px,4vw,42px)", fontWeight: 900, textTransform: "uppercase", color: "#22191A", lineHeight: ".92" }}>Mi Pasaporte Digital</h2>
-            <h3 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "clamp(18px,2.5vw,26px)", fontWeight: 700, textTransform: "uppercase", color: "#524345", marginTop: 2 }}>Próximamente disponible</h3>
+            <h3 style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: "clamp(18px,2.5vw,26px)", fontWeight: 700, textTransform: "uppercase", color: "#524345", marginTop: 2 }}>Ya disponible para iPhone</h3>
             <p style={{ fontFamily: "'Barlow',sans-serif", fontSize: 14, color: "#524345", marginTop: 6, maxWidth: "600px", margin: "6px auto 0" }}>
-              Muy pronto podrás registrar tus visitas a las cafeterías participantes, coleccionar sellos digitales exclusivos y desbloquear recompensas especiales por completar la ruta.
+              Registra tus visitas a las cafeterías participantes, colecciona sellos digitales exclusivos y desbloquea recompensas por completar la ruta.
             </p>
           </div>
+
+          {/* ── Descarga de la aplicación ── */}
+          <BannerApp />
         </div>
       </main>
 

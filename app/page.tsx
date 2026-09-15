@@ -8,6 +8,7 @@ import RankingSection from "@/app/components/home/RankingSection";
 import AcademiaSection from "@/app/components/home/AcademiaSection";
 import BlogSection from "@/app/components/home/BlogSection";
 import MapSection from "@/app/components/home/MapSection";
+import BannerApp from "@/app/components/BannerApp";
 import AlliesSection from "@/app/components/home/AlliesSection";
 import { getAllies } from "@/app/actions/ally";
 import { getFincas } from "@/app/actions/finca";
@@ -150,6 +151,13 @@ export default async function HomePage() {
 
         {/* 3.5 Mapa de la ruta */}
         <MapSection shops={SHOPS} />
+
+        {/* 3.7 Descarga de la aplicación del pasaporte.
+            Va después del mapa a propósito: quien acaba de ver la ruta es
+            quien más sentido le encuentra a llevarla en el teléfono. */}
+        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "48px clamp(20px,5vw,60px)" }}>
+          <BannerApp />
+        </div>
 
         {/* 3.6 Aliados */}
         <AlliesSection allies={ALLIES} />
