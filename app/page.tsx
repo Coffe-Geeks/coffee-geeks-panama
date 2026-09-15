@@ -155,8 +155,10 @@ export default async function HomePage() {
         {/* 3.7 Descarga de la aplicación del pasaporte.
             Va después del mapa a propósito: quien acaba de ver la ruta es
             quien más sentido le encuentra a llevarla en el teléfono. */}
-        <div style={{ maxWidth: 1160, margin: "0 auto", padding: "48px clamp(20px,5vw,60px)" }}>
-          <BannerApp />
+        <div style={{ background: "#38050e" }}>
+          <div style={{ maxWidth: 1160, margin: "0 auto", padding: "56px clamp(20px,5vw,60px)" }}>
+            <BannerApp />
+          </div>
         </div>
 
         {/* 3.6 Aliados */}
